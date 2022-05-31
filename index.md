@@ -15,10 +15,10 @@ title: home
         <p>bits and symbols</p>
     </div>
 
-    <div class="git">
-        <a href="https://www.github.com/lbeckman314"></a>
-        <h1>github / <a class="relative git" href="https://git.liambeckman.com/liam">gitea</a></h1>
-        <p>go straight to the source — checkout some repos</p>
+    <div class="notes">
+        <a href="/notes"></a>
+        <h1>notes</h1>
+        <p>this and that</p>
     </div>
 
     <div class="favorites">

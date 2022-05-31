@@ -12,14 +12,9 @@ title: about
 ## about me:
 I'm a sleepy human with a dark history of secrets and intrigue.
 
-Have a good book or movie recommendation or just want to chat? I'm available at:
+Have a good book or movie recommendation or just want to chat? I'm available at <a href="mailto:liam@liambeckman.com">liam@liambeckman.com</a>
 
-| e-mail | <a href="mailto:liam@liambeckman.com">liam@liambeckman.com</a> |
-| irc | [lbeckman314@irc.freenode.net](https://freenode.net/) |
-| matrix | [@lbeckman314:matrix.org](https://matrix.org/) |
-
-
-Are you looking for a plucky developer with a small propensity for segmentation faults? Here are some links of interest —
+Are you looking for a plucky developer with a small propensity for segmentation faults? Here are some links of interest:
 
 <div class="inline-block profiles">
     {% include block.html
@@ -46,6 +41,18 @@ Are you looking for a plucky developer with a small propensity for segmentation 
     url='https://www.linkedin.com/in/liam-beckman-ab3183a6/'
     img='/assets/svg/linkedin.svg'
     txt='LinkedIn' %}
+</div>
+
+---
+
+# ♡
+
+<div class="grid" id="grid">
+<!-- http://jekyllrb.com/docs/static-files/ -->
+{% assign imgs = site.static_files | where: "image", true %}
+{% for img in imgs %}
+<img class="grid-item" src="{{ img.path }}"/>
+{% endfor %}
 </div>
 
 ---
@@ -85,29 +92,7 @@ bundle exec jekyll serve
 # Now browse to http://localhost:4000
 
 # Then you can change the html/css files in your website directory (e.g. myblog/) to suit your tastes!
-# some cool templates → https://html5up.net/
 
 # Hosting is a whole 'nother beast, but services like github pages and gitlab pages make free hosting relatively easier.
 # self-hosting with apache and/or nginx is another cool possibility!
 ```
-
----
-
-## my setup:
-
-![Screenshot of desktop.](/assets/images/home.jpg)
-
-- bar ⇢ [Polybar](https://polybar.github.io/)
-- browser ⇢ [Firefox](https://www.mozilla.org/)
-- computer ⇢ [ThinkPad X220](https://en.wikipedia.org/wiki/ThinkPad_X_series)
-- dock ⇢ [Plank](https://launchpad.net/plank)
-- editor ⇢ [Vim](https://www.vim.org/) + [Emacs](https://www.gnu.org/software/emacs/)
-- icons ⇢ [Numix Circle](https://github.com/numixproject/numix-icon-theme-circle)
-- launcher ⇢ [Rofi](https://github.com/davatorium/rofi)
-- os ⇢ [Void (linux)](https://voidlinux.org/)
-- shell ⇢ [Zsh](http://zsh.sourceforge.net/) + [tmux](https://github.com/tmux/tmux)
-- terminal ⇢ [Alacritty](https://github.com/alacritty/alacritty)
-- wallpaper ⇢ [Firewatch theme](https://github.com/adi1090x/dynamic-wallpaper)
-- window manager ⇢ [bspwm](https://github.com/baskerville/bspwm)
-- [dotfiles](https://github.com/lbeckman314/dotfiles)
-

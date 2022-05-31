@@ -3,11 +3,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#000000">
-    <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+    <meta name="description"
+        content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
     <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
 
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
-    <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ "/feed.xml" | relative_url }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ " /feed.xml" |
+        relative_url }}">
     <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="stylesheet" id="dark" href="/assets/css/dark.css">
     <link rel="icon" type="image/png" href="/assets/images/iconLambda.png" />
@@ -16,5 +18,9 @@
     <script type="text/javascript" src="/assets/js/menu.js"></script>
     <script type="text/javascript" src="/assets/js/theme.js"></script>
     <script type="text/javascript" src="/assets/js/top.js"></script>
+    <script type="text/javascript" src="/assets/js/pics.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="/assets/js/grid.js"></script>
+    <script src="https://kit.fontawesome.com/c6a26782c8.js" crossorigin="anonymous"></script>
 </head>
-

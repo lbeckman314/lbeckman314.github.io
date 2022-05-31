@@ -38,7 +38,6 @@ collections:
     notes:
         label: notes
         output: true
-        permalink: /:collection/:name
 
 # https://stackoverflow.com/a/23555679/7656815
 defaults:
@@ -53,6 +52,12 @@ defaults:
     values:
       # https://jekyllrb.com/docs/collections/
       layout: default
+  - scope:
+      path: "showoff"
+    values:
+      image: true
 
 sass:
     sass_dir: _sass
+
+permalink: pretty

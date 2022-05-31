@@ -16,10 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('keydown', (e) => {
         e = e || window.event;
-        let key = e.which || e.keyCode;
+        let key = e.key;
         if (key == 27) {
             menu.style.display = '';
         }
     });
 });
-

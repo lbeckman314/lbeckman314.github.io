@@ -57,9 +57,8 @@ a {
     text-decoration: none;
     font-weight: $base-font-weight + 100;
     .about     { color: $pop-1; }
-    .notes     { color: $pop-2; }
     .code      { color: $pop-3; }
-    .git       { color: $pop-4; }
+    .notes     { color: $pop-4; }
     .favorites { color: $pop-5; }
     .secret {
         float: right;
@@ -93,14 +92,12 @@ td {
 // Div
 div.home {
     .about     { color: $pop-1; }
-    .notes     { color: $pop-2; }
     .code      { color: $pop-3; }
-    .git       { color: $pop-4; }
+    .notes     { color: $pop-4; }
     .favorites { color: $pop-5; }
     .about:hover     { background-color: $pop-1; }
-    .notes:hover     { background-color: $pop-2; }
     .code:hover      { background-color: $pop-3; }
-    .git:hover       { background-color: $pop-4; }
+    .notes:hover     { background-color: $pop-4; }
     .favorites:hover { background-color: $pop-5; }
 }
 
@@ -415,6 +412,16 @@ img.emily {
     border-radius: 0;
 }
 
+.grid {
+    margin: 0 auto;
+}
+
+.grid > img {
+    width: 30%;
+    padding: 0.5em;
+    cursor: pointer;
+}
+
 span.date:before {
     content: "|";
 }
@@ -424,6 +431,7 @@ span.date:before {
     flex-wrap: wrap;
     padding-bottom: 3%;
 }
+
 .fixed {
     width: 30%;
     word-wrap: break-word;
@@ -447,38 +455,65 @@ span.date:before {
 
 #menu { width: 100%; }
 
-#menu > li::after {
-    content: " )";
-    color: $gray;
+li#home > a {
+    font-size: 2em;
+    height: 1.3em;
+    width: 1.3em;
+    display: inline-block;
+    border-radius: 25%;
+    border: 2px solid white;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    transition: $tran;
 }
-#menu > li::before {
-    content: "( ";
-    color: $gray;
+
+li#home > a:hover {
+    transition: $tran;
+    color: #ff357a;
+    border: 2px solid #ff357a;
+}
+
+.carousel-cell {
+  width: 50%; /* half-width */
+  margin-right: 10px;
+}
+
+.carousel-cell > img {
+  height: 36em;
+  object-fit: contain;
+}
+
+.fullscreen-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.85);
+
+    img {
+        transform: translate(calc(50vw - 50%), calc(50vh - 50%));
+        max-width: 70%;
+        max-height: 70%;
+    }
+
+    .exit-button {
+        position: absolute;
+        top: 10px;
+        right: 40px;
+        font-size: 3em;
+        transition: $tran;
+        cursor: pointer;
+    }
+
+    .exit-button:hover {
+        color: $heart;
+        transition: $tran;
+    }
 }
 
 .zigzag-container { display: none; }
-
-#secret { float: right; }
-
-#menu > #secret::after, #menu > #secret::before {
-    content: none;
-}
-
-#drop-button, #theme {
-    padding: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 2.5em;
-    vertical-align: middle;
-    color: $light;
-    cursor: pointer;
-    transition: $tran;
-}
-
-#header #theme:hover {
-    color: $heart;
-    transition: $tran;
-}
 
 #fork {
     margin-left: auto;
@@ -496,6 +531,43 @@ span.date:before {
     top: 5px;
     left: 5px;
 }
+
+a:focus {
+    outline: 3px solid #ff357a;
+  }
+
+.menu-icons {
+    #drop-button,
+    #theme {
+        font-size: 2.5em;
+        vertical-align: middle;
+        color: $light;
+        cursor: pointer;
+        transition: $tran;
+    }
+
+    #theme:hover, i:hover {
+        color: $heart;
+        transition: $tran;
+    }
+
+    display: flex;
+    align-items: center;
+
+    a,
+    span {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    i {
+        font-size: 2em;
+        transition: $tran;
+    }
+}
+
 
 #myDropdown {
     a {

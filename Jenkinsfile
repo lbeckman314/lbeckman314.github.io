@@ -7,11 +7,8 @@ USER = 'lbeckman314'
 REPO = 'website'
 
 node {
-    stage('Update') {
-        git url: "$SRC/$REPO"
-        sh "git push git@github.com:$USER/$REPO"
-    }
     stage('Build') {
+        sh "$BUNDLE update --all"
         sh "$BUNDLE install"
         sh "$BUNDLE exec $JEKYLL build"
     }
