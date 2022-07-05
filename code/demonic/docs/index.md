@@ -6,6 +6,7 @@ title: demonic-docs demonstration
 <script>
     DemonicDocs.run({
         mode: 'jekyll',
+        url: 'ws://demonic.liambeckman.com',
     });
 </script>
 
