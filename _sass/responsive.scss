@@ -28,7 +28,7 @@
         top: 4em;
         background: black;
         outline: 1px solid gray;
-        z-index: 1;
+        z-index: 10;
         width: 70%;
         outline-offset: -1px;
 
@@ -39,6 +39,15 @@
             display: block;
             transition: $tran;
         }
+    }
+
+    li#home > a {
+        font-size: unset;
+        height: 100%;
+        width: 100%;
+        border-radius: unset;
+        border: unset;
+        text-align: left;
     }
 
     .grid > img {
@@ -87,39 +96,6 @@
     }
     #menu > li::before {
         content: "";
-    }
-
-    #menu > a:hover {
-        transition: $tran;
-    }
-
-    #menu > a {
-        transition: $tran;
-    }
-
-
-    #home > a:hover {
-        background-color: $pop-1
-    }
-
-    #about > a:hover {
-        background-color: $pop-2;
-    }
-
-    #code > a:hover {
-        background-color: $pop-3;
-    }
-
-    #vcs > a:hover {
-        background-color: $pop-4;
-    }
-
-    #favorites > a:hover {
-        background-color: $pop-5;
-    }
-
-    #secret > a:hover {
-        background-color: #ff357a;
     }
 
     img.slide {

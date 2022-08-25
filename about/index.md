@@ -33,11 +33,6 @@ Are you looking for a plucky developer with a small propensity for segmentation 
     txt='Github' %}
 
     {% include block.html
-    url='https://git.liambeckman.com/liam'
-    img='/assets/svg/gitea.svg'
-    txt='Gitea' %}
-
-    {% include block.html
     url='https://www.linkedin.com/in/liam-beckman-ab3183a6/'
     img='/assets/svg/linkedin.svg'
     txt='LinkedIn' %}

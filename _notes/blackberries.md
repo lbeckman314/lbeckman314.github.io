@@ -9,7 +9,7 @@ tags: poem
 Someone should tend the blackberries out front
 (they don't need anything, it's just nice to think of them)
 and fill the hummingbird feeders while you're there,
-three parts water to sugar, very important to get that right.
+four parts water to sugar, very important to get that right.
 make sure to pay the bill for the dance hall,
 (is it still there?) on the first of the month.
 

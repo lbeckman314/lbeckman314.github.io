@@ -464,14 +464,6 @@ li#home > a {
     border: 2px solid white;
     text-align: center;
     vertical-align: middle;
-    text-decoration: none;
-    transition: $tran;
-}
-
-li#home > a:hover {
-    transition: $tran;
-    color: #ff357a;
-    border: 2px solid #ff357a;
 }
 
 .carousel-cell {
