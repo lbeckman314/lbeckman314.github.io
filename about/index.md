@@ -18,14 +18,9 @@ Are you looking for a plucky developer with a small propensity for segmentation 
 
 <div class="inline-block profiles">
     {% include block.html
-    url='https://liambeckman.com/pkgs/resume/resume-liam-beckman.pdf'
+    url='https://raw.githubusercontent.com/lbeckman314/resume/master/build/resume-liam-beckman.pdf'
     img='/assets/svg/pdf.svg'
     txt='Resume (PDF)' %}
-
-    {% include block.html
-    url='https://git.liambeckman.com/liam/resume/src/branch/master/src/resume-liam-beckman.tex'
-    img='/assets/svg/tex.svg'
-    txt='Resume (LaTeX)' %}
 
     {% include block.html
     url='https://github.com/lbeckman314/'
