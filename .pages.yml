@@ -13,6 +13,21 @@ content:
     path: src/_data/authors.json
     type: file
 
+  - name: favorites
+    label: Favorites
+    path: _favorites
+    type: collection
+    
+  - name: code
+    label: Code
+    path: _code
+    type: collection
+
+  - name: notes
+    label: Notes
+    path: _notes
+    type: collection
+
 view:
   fields: [ title ]
   primary: title
