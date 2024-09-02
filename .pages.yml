@@ -7,6 +7,7 @@ content:
     label: Posts
     path: src/_posts
     type: collection
+    views: default
     
   - name: authors
     label: Authors
