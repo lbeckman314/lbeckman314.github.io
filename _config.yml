@@ -31,13 +31,19 @@ exclude:
 
 # https://jekyllrb.com/docs/collections/
 collections:
-    favorites:
-        label: favorites
-    code:
-        label: code
-    notes:
-        label: notes
-        output: true
+  posts:
+    output: true
+    label: Posts
+  authors:
+    output: false
+    label: Authors
+  favorites:
+    label: favorites
+  code:
+    label: code
+  notes:
+    label: notes
+    output: true
 
 # https://stackoverflow.com/a/23555679/7656815
 defaults:
