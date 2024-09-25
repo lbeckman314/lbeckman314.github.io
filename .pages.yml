@@ -2,10 +2,20 @@
 
 media: media
 content:
-  - name: posts
-    label: Posts
+  - name: favorites
+    label: Favorites
+    path: _favorites
     type: collection
-    path: '_posts'
+    
+  - name: code
+    label: Code
+    path: _code
+    type: collection
+
+  - name: notes
+    label: Notes
+    path: _notes
+    type: collection
     view:
       fields: [ title, published, date ]
     fields:
@@ -21,7 +31,8 @@ content:
         type: string
       - name: body
         label: Body
-        type: rich-text
+        type: rich-text    
+        
   - name: config
     label: Jekyll config
     path: _config.yml
