@@ -6,4 +6,4 @@ img-src: https://falseknees.com/351.html
 author: Joshua Barkman
 ---
 
-Comics about birds.
+Comics about birds 🪶
