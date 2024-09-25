@@ -17,7 +17,7 @@ content:
     path: _notes
     type: collection
     view:
-      fields: [ title, published, date ]
+      fields: [ title, published, date, tags ]
     fields:
       - name: published
         label: Published
@@ -32,7 +32,10 @@ content:
       - name: body
         label: Body
         type: rich-text    
-        
+      - name: tags
+        label: Tags
+        type: string
+
   - name: config
     label: Jekyll config
     path: _config.yml
