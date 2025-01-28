@@ -1,6 +1,6 @@
 ---
 title: If I Could Only Fly
-src: https://www.youtube.com/watch?v=mH66DfUis4w
+src: https://youtu.be/iAFonCX59tg
 img: blaze-foley.jpg
 author: Blaze Foley
 ---
