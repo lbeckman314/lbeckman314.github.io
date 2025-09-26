@@ -2,50 +2,62 @@
 
 # About
 
-A small Jekyll site for showing off personal projects!
+A personal website built with Astro for showing off personal projects, notes, and favorites! 
+
+Previously built with Jekyll, now migrated to [Astro](https://astro.build/) for modern performance and developer experience.
 
 # Building
 
 ## Requirements
 
-- [Ruby](https://www.ruby-lang.org/en/): for building the site with Jekyll and Bundler.
-- [Jekyll](https://jekyllrb.com/): static site generator.
-- [Bundler](https://bundler.io/): dependency management.
-- [Git](https://www.ruby-lang.org/en/): source code management.
+- [Node.js 18+](https://nodejs.org/): for building the site with Astro.
+- [npm](https://www.npmjs.com/): dependency management.
+- [Git](https://git-scm.com/): source code management.
 
 ## Instructions
 
-Source code can be found [here](https://github.com/lbeckman314/website). To spin up your own site, follow [the jekyll quick-start quide](https://jekyllrb.com/docs/quickstart/) (adapted below):
+Source code can be found [here](https://github.com/lbeckman314/website). To spin up your own site:
 
 ```shell
-# install ruby
-# for OS-specific instructions, check out https://www.ruby-lang.org/en/downloads/
+# Clone the repository
+git clone https://github.com/lbeckman314/website
+cd website
 
-# Install Jekyll and Bundler gems through RubyGems
-gem install jekyll bundler
+# Install dependencies
+npm install
 
-# install dependencies
-bundle install
+# Start development server
+npm run dev
 
-# Create a new Jekyll site at ./myblog
-jekyll new myblog
+# Now browse to http://localhost:4321
 
-# alternatively, clone an existing jekyll site
-# git clone https://liambeckman.com/cgit/website.git
+# Build for production
+npm run build
 
-# Change into your new directory
-cd myblog
-
-# Build the site on the preview server
-bundle exec jekyll serve
-
-# Now browse to http://localhost:4000
-
-# then you can change the html/css files in the myblog directory to suit your tastes!
-
-# hosting is a whole 'nother beast, but services like github pages
-# and gitlab pages make free hosting relatively easier.
+# Preview production build
+npm run preview
 ```
+
+## Development
+
+- **Pages**: Located in `src/pages/` - includes homepage, about, notes, code, and favorites
+- **Content**: Managed through Astro Content Collections in `src/content/`
+  - `notes/` - Blog posts and thoughts
+  - `code/` - Project showcases  
+  - `favorites/` - Curated recommendations (books, movies, poems, etc.)
+- **Components**: Reusable Astro components in `src/components/`
+- **Layouts**: Base layouts for different page types in `src/layouts/`
+- **Styling**: SCSS files in `src/styles/` with the main styles in `main.scss`
+- **Assets**: Static assets (images, js, css) in `src/assets/`
+
+## Migration from Jekyll
+
+This site was successfully migrated from Jekyll to Astro while preserving:
+- ✅ All original content and metadata
+- ✅ Visual design and styling
+- ✅ URL structure and navigation
+- ✅ Content collections for notes, code projects, and favorites
+- ✅ Responsive design and theme switching
 
 # CI/CD
 

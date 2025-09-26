@@ -28,6 +28,10 @@ const favorites = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
+    author: z.string().optional(),
+    src: z.string().optional(),
+    img: z.string().optional(),
+    'img-src': z.string().optional(),
     category: z.string().optional(),
     url: z.string().optional(),
     description: z.string().optional(),

@@ -1,10 +1,87 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get all favorites and organize them by category
+const favorites = await getCollection('favorites');
+
+// Group favorites by directory/category
+const favoritesByCategory: Record<string, any[]> = {};
+for (const favorite of favorites) {
+  const pathParts = favorite.id.split('/');
+  const category = pathParts[0];
+  
+  if (!favoritesByCategory[category]) {
+    favoritesByCategory[category] = [];
+  }
+  favoritesByCategory[category].push(favorite);
+}
+
+// Get favorites with images for slideshow
+const favoritesWithImages = favorites.filter(f => f.data.img);
 ---
 
 <BaseLayout title="favorites">
-  <h1>favorites</h1>
-  <p>the bee's knees</p>
-  
-  <p>Note: This page needs to be enhanced to display the favorites collection properly.</p>
+  <h1>Favorites</h1>
+
+  {favoritesWithImages.length > 0 && (
+    <div class="slideshow-container">
+      {favoritesWithImages.map((favorite, index) => (
+        <div class={`mySlides fade ${index === 0 ? 'active' : ''}`}>
+          <div class="black-fade">
+            {favorite.data.src && (
+              <a class="slide-src" href={favorite.data.src}></a>
+            )}
+            <img class="slide" src={`/src/assets/favorites/${favorite.data.img}`} alt={favorite.data.title} />
+            <a class="prev-slideshow" onclick="changeSlides(-1)">〈</a>
+            <a class="next-slideshow" onclick="changeSlides(1)">〉</a>
+          </div>
+          <div class="text">
+            {favorite.data.src ? (
+              <a href={favorite.data.src}>{favorite.data.title}</a>
+            ) : (
+              favorite.data.title
+            )}
+          </div>
+          {favorite.data.author && (
+            <div class="text"><em>{favorite.data.author}</em></div>
+          )}
+          {favorite.data['img-src'] && (
+            <a id="img-src" href={favorite.data['img-src']} title="Image source">ⓘ</a>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div>
+    {Object.entries(favoritesByCategory).map(([category, items]) => (
+      <>
+        <h2>{category}</h2>
+        {items.map(async (favorite) => {
+          const { Content } = await favorite.render();
+          
+          if (category === 'poems') {
+            return (
+              <div>
+                <p>※ <a href={favorite.data.src || '#'}>{favorite.data.title}</a> by {favorite.data.author}</p>
+                <pre class="poem"><Content /></pre>
+              </div>
+            );
+          } else {
+            return (
+              <div class="favorite-list">
+                <span>※ <a href={favorite.data.src || '#'}>{favorite.data.title}</a> ⇢ </span>
+                <Content />
+              </div>
+            );
+          }
+        })}
+      </>
+    ))}
+  </div>
+
+  <h1>※</h1>
+
+  <script src="/src/assets/js/slideshow.js"></script>
 </BaseLayout>
