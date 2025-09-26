@@ -1,0 +1,34 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  date: Date;
+  tags?: string;
+}
+
+const { title, date, tags } = Astro.props;
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric', 
+    month: 'long',
+    day: 'numeric'
+  });
+}
+---
+
+<BaseLayout title={title}>
+  <h2>{title}</h2>
+  <p class="notes-info">
+    {formatDate(date)}
+    {tags && (
+      <>
+        <span class="sub">※</span>
+        {tags}
+      </>
+    )}
+  </p>
+  <slot />
+</BaseLayout>

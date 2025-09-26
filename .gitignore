@@ -1,8 +1,20 @@
+# Jekyll build artifacts (legacy)
 _site
 .sass-cache
 .jekyll-metadata
 .jekyll-cache
+
+# Astro build artifacts
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Editor files
 *.sw*
-tags
 *~
+
+# Other
+tags
 *.map

@@ -1,0 +1,96 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<!--Louis, I think this is the beginning of a beautiful friendship.-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content={description || "🌈 :(){:|:&};:"} />
+    <title>{title ? `${title} | hello!` : 'hello!'}</title>
+
+    <link rel="canonical" href={Astro.url} />
+    <link rel="alternate" type="application/rss+xml" title="hello!" href="/feed.xml" />
+    <link rel="stylesheet" href="/src/styles/main.scss" />
+    <link rel="stylesheet" id="dark" href="/src/assets/css/dark.css" />
+    <link rel="icon" type="image/png" href="/src/assets/images/iconLambda.png" />
+
+    <script type="text/javascript" src="/src/assets/js/copy.js"></script>
+    <script type="text/javascript" src="/src/assets/js/menu.js"></script>
+    <script type="text/javascript" src="/src/assets/js/theme.js"></script>
+    <script type="text/javascript" src="/src/assets/js/top.js"></script>
+    <script type="text/javascript" src="/src/assets/js/pics.js"></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="/src/assets/js/grid.js"></script>
+    <script src="https://kit.fontawesome.com/c6a26782c8.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header">
+        <span id="drop-button">☰</span>
+        <ul id="menu">
+          <li id="home"><a href="/" title="home">λ</a></li>
+          <li id="about"><a href="/about">about</a></li>
+          <li id="code"><a href="/code">code</a></li>
+          <li id="notes"><a href="/notes">notes</a></li>
+          <li id="favorites"><a href="/favorites">favorites</a></li>
+        </ul>
+
+        <div class="zigzag-container">
+          <object id="zigzag" type="image/svg+xml" data="/src/assets/svg/zigzag.svg"></object>
+        </div>
+
+        <div class="menu-icons">
+          <a href="https://github.com/lbeckman314" title="My Github"><i class="fa-brands fa-github"></i></a>
+          <a href="https://instagram.com/lbeckman314" title="My Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <span id="theme" title="Toggle theme">☾</span>
+        </div>
+      </div>
+      <div class="popstripe"></div>
+      <a href="#" class="circle fade-out">↑</a>
+      <div id="content">
+        <slot />
+      </div>
+      {title === 'about' && (
+        <img id="mst3k" src="/src/assets/images/mst3k.png" alt="MST3K" />
+      )}
+      <div id="footer">
+        <footer class="site-footer">
+          <div>
+            <a href="https://liambeckman.com/jenkins/job/git.liambeckman.com/job/website/job/master/">
+              made with lots of <object type="image/svg+xml" data="/src/assets/svg/heart.svg"></object>
+            </a>
+            ~ <a href="https://www.github.com/lbeckman314/website">open-source and free</a>
+          </div>
+          <div>
+            <span>© <span id="date">{new Date().getFullYear()}</span> liam beckman ~ </span>
+            <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+              <img src="/src/assets/images/cc.png" alt="Creative Commons License" />
+            </a>
+            <span class="quote">
+              <a href="/src/assets/images/moomin.jpg">"I only want to live in peace and plant potatoes and dream!" -Tove Jansson</a>
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="bottom"></div>
+
+    <script>
+      let date = document.getElementById('date');
+      if (date) {
+        date.innerHTML = parseInt(date.innerHTML).toString(16);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+"Mary wished to say something very sensible, but knew not how." (Pride and Prejudice, Jane Austen)
+"I only want to live in peace, plant potatoes and dream!" (Moomin: The Complete Tove Jansson Comic Strip, Vol. 1)
+"Computers make excellent and efficient servants, but I have no wish to serve under them." (Star Trek 2.24 The Ultimate Computer)
+"Louis, I think this is the beginning of a beautiful friendship" (Casablanca)
+"Gort! Klaatu barada nikto!" (The Day The Earth Stood Still)

@@ -1,0 +1,87 @@
+---
+---
+
+// Dark themes
+
+@import 'vars';
+
+body {
+    background-color: $dark;
+}
+
+#header, #footer, .site-footer {
+    background-color: black;
+}
+
+p, .text, pre, dd, dt, li, ul, ol, label, td, div {
+    color: $light;
+}
+
+pre.src:before {
+    background-color: black;
+    color: $light;
+}
+
+div.text {
+    background: $dark;
+}
+
+#align p {
+    color: $light;
+}
+
+.safety {
+    background-color: #282a36;
+}
+
+.active, .dot:hover {
+    background-color: $gray;
+}
+
+.code-title, .code-type {
+    color: $light;
+}
+
+.featured:hover {
+    background-color: $dark-blue;
+}
+
+#lightswitch {
+    border: none;
+}
+
+#lightswitch:hover {
+    border: none;
+    border: 1px solid $heart;
+}
+
+#darkswitch {
+    border: 1px solid $heart;
+}
+
+.dark {
+    background-color: black;
+}
+
+.config-content, .dropdown-content, .header:hover {
+    background-color: black;
+}
+
+.poem {
+    background-color: #282A36;
+}
+
+.black-fade:after {
+    background: black;
+}
+
+.mySlides {
+    background: black;
+}
+
+.circle {
+    background-color: $dark;
+}
+
+@import 'codedark';
+
