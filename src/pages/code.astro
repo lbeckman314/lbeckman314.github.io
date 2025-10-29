@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const codeProjects = await getCollection('code');
+---
+
+<BaseLayout title="code">
+  <h1>code</h1>
+  <p>bits and symbols</p>
+  
+  {codeProjects.map(async (project) => {
+    const { Content } = await project.render();
+    
+    return (
+      <div class="project">
+        <h2>{project.data.title || project.data.name}</h2>
+        {project.data.description && <p>{project.data.description}</p>}
+        <Content />
+        {project.data.src && (
+          <p><a href={project.data.src}>View Project</a></p>
+        )}
+        {project.data.github && (
+          <p><a href={project.data.github}>View on GitHub</a></p>
+        )}
+      </div>
+    );
+  })}
+</BaseLayout>

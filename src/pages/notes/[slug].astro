@@ -1,0 +1,23 @@
+---
+import NotesLayout from '../../layouts/NotesLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: note,
+  }));
+}
+
+const note = Astro.props;
+const { Content } = await note.render();
+---
+
+<NotesLayout 
+  title={note.data.title} 
+  date={note.data.date}
+  tags={note.data.tags}
+>
+  <Content />
+</NotesLayout>

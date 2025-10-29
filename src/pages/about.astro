@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Block from '../components/Block.astro';
+---
+
+<BaseLayout title="about">
+  <div class="center">
+    <span id="hello" class="big rainbow">Hello, I'm liam.</span>
+    <object id="smile" type="image/svg+xml" data="/src/assets/svg/icon-smile.svg"></object>
+  </div>
+
+  <div id="stuck-up">A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</div>
+
+  <h2>about me:</h2>
+  <p>I'm a sleepy human with a dark history of secrets and intrigue.</p>
+
+  <p>Have a good book or movie recommendation or just want to chat? I'm available at <a href="mailto:liam@liambeckman.com">liam@liambeckman.com</a></p>
+
+  <p>Are you looking for a plucky developer with a small propensity for segmentation faults? Here are some links of interest:</p>
+
+  <div class="inline-block profiles">
+    <Block 
+      url='https://raw.githubusercontent.com/lbeckman314/resume/master/build/resume-liam-beckman.pdf'
+      img='/src/assets/svg/pdf.svg'
+      txt='Resume (PDF)' 
+    />
+
+    <Block 
+      url='https://github.com/lbeckman314/'
+      img='/src/assets/svg/github.svg'
+      txt='Github' 
+    />
+
+    <Block 
+      url='https://www.linkedin.com/in/liam-beckman-ab3183a6/'
+      img='/src/assets/svg/linkedin.svg'
+      txt='LinkedIn' 
+    />
+  </div>
+
+  <hr />
+
+  <h1>♡</h1>
+
+  <div class="grid" id="grid">
+    <!-- Note: This will need to be updated to work with Astro's static file handling -->
+    <!-- For now, manually adding images from showoff directory -->
+  </div>
+
+  <hr />
+
+  <h2>about the website:</h2>
+
+  <p>This website stores and presents various projects. It originally got up and running thanks to Jonathan McGlone's wonderfully helpful <a href="http://jmcglone.com/guides/github-pages/">guide</a>.</p>
+
+  <p>The site is now built with <a href="https://astro.build/">Astro</a>, hosted on a personal server (Debian Testing on a ThinkPad X230), and encrypted by <a href="https://letsencrypt.org/">Let's Encrypt</a>/<a href="https://certbot.eff.org/">Certbot</a>.</p>
+
+  <h3>installation</h3>
+
+  <p>The <a href="https://github.com/lbeckman314/website">website's source code</a> is yours. Feel free to copy and paste, fork, clone, or anything you like! To spin up your own site, follow the Astro quick-start guide (adapted below) —</p>
+
+  <pre><code class="language-shell"># Install Node.js
+# for OS-specific instructions, check out https://nodejs.org/
+
+# Clone the site
+git clone https://github.com/lbeckman314/website
+
+# Change into your new directory
+cd website
+
+# Install dependencies
+npm install
+
+# Build the site on the preview server
+npm run dev
+
+# Now browse to http://localhost:4321
+
+# Then you can change the astro/html/css files to suit your tastes!
+
+# Hosting is a whole 'nother beast, but services like github pages, netlify, and vercel make free hosting relatively easier.
+# self-hosting with apache and/or nginx is another cool possibility!</code></pre>
+</BaseLayout>
