@@ -1,62 +1,68 @@
-[![Jenkins Badge][badge]][jenkins]
+# Astro Starter Kit: Blog
 
-# About
-
-A small Jekyll site for showing off personal projects!
-
-# Building
-
-## Requirements
-
-- [Ruby](https://www.ruby-lang.org/en/): for building the site with Jekyll and Bundler.
-- [Jekyll](https://jekyllrb.com/): static site generator.
-- [Bundler](https://bundler.io/): dependency management.
-- [Git](https://www.ruby-lang.org/en/): source code management.
-
-## Instructions
-
-Source code can be found [here](https://github.com/lbeckman314/website). To spin up your own site, follow [the jekyll quick-start quide](https://jekyllrb.com/docs/quickstart/) (adapted below):
-
-```shell
-# install ruby
-# for OS-specific instructions, check out https://www.ruby-lang.org/en/downloads/
-
-# Install Jekyll and Bundler gems through RubyGems
-gem install jekyll bundler
-
-# install dependencies
-bundle install
-
-# Create a new Jekyll site at ./myblog
-jekyll new myblog
-
-# alternatively, clone an existing jekyll site
-# git clone https://liambeckman.com/cgit/website.git
-
-# Change into your new directory
-cd myblog
-
-# Build the site on the preview server
-bundle exec jekyll serve
-
-# Now browse to http://localhost:4000
-
-# then you can change the html/css files in the myblog directory to suit your tastes!
-
-# hosting is a whole 'nother beast, but services like github pages
-# and gitlab pages make free hosting relatively easier.
+```sh
+npm create astro@latest -- --template blog
 ```
 
-# CI/CD
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
+[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
 
-The website is updated every time a push is made to the `master` branch. Build commands are defined in the [Jenkinsfile](./Jenkinsfile), and build results can be viewed at either of the following URL's.
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-- [Jenkins (standard)][jenkins]
-- [Jenkins (Blue Ocean)][blue]
+![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
 
-[![Jenkins screenshot](./build.png)][blue]
+Features:
 
-[jenkins]: https://liambeckman.com/jenkins/job/git.liambeckman.com/job/website/job/master/
-[blue]: https://liambeckman.com/jenkins/blue/organizations/jenkins/git.liambeckman.com%2Fwebsite
-[badge]: https://liambeckman.com/jenkins/job/git.liambeckman.com/job/website/job/master/badge/icon?
+- ✅ Minimal styling (make it your own!)
+- ✅ 100/100 Lighthouse performance
+- ✅ SEO-friendly with canonical URLs and OpenGraph data
+- ✅ Sitemap support
+- ✅ RSS Feed support
+- ✅ Markdown & MDX support
 
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+├── public/
+├── src/
+│   ├── components/
+│   ├── content/
+│   ├── layouts/
+│   └── pages/
+├── astro.config.mjs
+├── README.md
+├── package.json
+└── tsconfig.json
+```
+
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+
+The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+
+Any static assets, like images, can be placed in the `public/` directory.
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Credit
+
+This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).

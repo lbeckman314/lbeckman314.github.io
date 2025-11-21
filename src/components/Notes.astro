@@ -1,0 +1,21 @@
+---
+import { getCollection } from "astro:content";
+
+let notes = await getCollection("notes");
+notes = notes.sort((a, b) => a.id.localeCompare(b.id));
+---
+
+{notes.map(async (note) => {
+    const { Content } = await note.render();
+    return (
+    <div class="notes">
+      <div class="bot">
+        <h2 class="notes-title"><a href={`/notes/${note.slug}`}>{note.data.title}</a></h2>
+      </div>
+      <p class="bot">{ note.data.excerpt }</p>
+      <Content />
+    </div>
+    <h2 class="snow center">~//~</h2>
+    );
+  })
+}

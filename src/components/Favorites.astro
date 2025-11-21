@@ -1,0 +1,77 @@
+---
+// src/pages/notes/index.astro
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+type DirectoryItem = {
+    type: 'dir';
+    name: string;
+}
+
+type FavoriteItem = {
+    type: 'favorite';
+    data: CollectionEntry<'favorites'>;
+};
+
+type OutputItem = DirectoryItem | FavoriteItem;
+
+function getDir(id: string) {
+    return id.split('/')[0];
+}
+
+let favorites = await getCollection('favorites');
+favorites = favorites.sort((a, b) => a.id.localeCompare(b.id));
+
+let output: OutputItem[] = [];
+let currentDir = '';
+
+favorites.forEach((favorite) => {
+    const dir = getDir(favorite.id);
+    if (dir !== currentDir) {
+        currentDir = dir;
+        output.push({ type: 'dir', name: currentDir });
+    }
+    output.push({ type: 'favorite', data: favorite });
+});
+---
+
+
+<div class = "slideshow-container">
+    {favorites.filter(favorite => favorite.data.img)
+    .map((favorite) => (
+        <div class="mySlides fade">
+            <div class="black-fade">
+                <a class="slide-src" href={ favorite.data.src }></a>
+                <img class="slide" src={`/src/assets/favorites/${favorite.data.img}`}/>
+                <a class="prev-slideshow" onclick="changeSlides(-1)">〈</a>
+                <a class="next-slideshow" onclick="changeSlides(1)">〉</a>
+            </div>
+            <div class="text"><a href={ favorite.data.src }>{ favorite.data.title }</a></div>
+            <div class="text"><em>{ favorite.data.author }</em></div>
+            {favorite.data.imgSrc && <a id="img-src" href={ favorite.data.imgSrc } title="Image source">ⓘ</a>}
+        </div>
+    ))}
+</div>
+
+<!-- <pre>{JSON.stringify(output, null, 2)}</pre> -->
+{output.map((item) => {
+    if (item.type === 'dir') {
+        return <h2>{item.name}</h2>;
+    } else if (item.type === 'favorite') {
+        const favorite = item.data;
+        if (favorite.id.includes('poems')) {
+            return (
+                <p>※ <a href={favorite.data.src}>{favorite.data.title}</a> by {favorite.data.author}</p> 
+                <pre class="poem">{favorite.body}</pre>
+            )
+        }
+        return (
+        <div class="favorite-list">
+            <span>※ <a href={favorite.data.src}>{favorite.data.title}</a> ⇢ {favorite.body}</span>
+        </div>
+        );
+    }
+})}
+
+<script>
+  import '/src/assets/js/slideshow.js';
+</script>

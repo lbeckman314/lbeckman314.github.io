@@ -1,0 +1,27 @@
+---
+import HeaderLink from './HeaderLink.astro';
+import { SITE_TITLE } from '../consts';
+import '../styles/main.scss';
+---
+
+<header>
+	<nav>
+		<div class="internal-links">
+			<HeaderLink href="/">Home</HeaderLink>
+			<HeaderLink href="/about">About</HeaderLink>
+			<HeaderLink href="/notes">Notes</HeaderLink>
+			<HeaderLink href="/favoriets">Favorites</HeaderLink>
+		</div>
+		<div class="social-links">
+			<a href="https://github.com/withastro/astro">
+				<span>GitHub</span>
+			</a>
+			<a href="https://m.webtoo.ls/@astro">
+				<span>Instagram</span>
+			</a>
+			<a href="https://twitter.com/astrodotbuild">
+				<span>Theme</span>
+			</a>
+		</div>
+	</nav>
+</header>

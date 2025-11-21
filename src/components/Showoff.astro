@@ -1,0 +1,15 @@
+---
+const images = import.meta.glob('/src/assets/showoff/*', {eager: true, as: 'url'});
+const imagePaths = Object.values(images) as string[];
+---
+
+<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="/src/assets/js/grid.js"></script>
+<script type="text/javascript" src="/src/assets/js/pics.js"></script>
+
+<div class="grid" id="grid">
+  {imagePaths.map((path) => (
+    <img class="grid-item" src={path} alt="Gallery Image" loading="lazy" />
+  ))}
+</div>

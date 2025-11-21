@@ -1,0 +1,40 @@
+---
+// src/pages/notes/[...slug].astro
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const notes = await getCollection("notes");
+  return notes.map((note) => ({
+    params: { slug: note.slug },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+
+const { Content } = await note.render();
+
+const { title, date } = note.data;
+---
+
+<BaseLayout>
+  <h1>{title}</h1>
+  {
+    date && (
+      <p class="notes-info">
+        {date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          weekday: "long",
+        })}
+      </p>
+    )
+  }
+
+  <hr />
+
+  <Content />
+  <p class="snow center">· ※ · ※ · ※ ·</p>
+</BaseLayout>

@@ -1,0 +1,1053 @@
+// CSS I've cobbled together from the far corners of the world.
+// Feel free to copy and paste, fork, clone, or anything you like.
+
+// import partials
+@use 'vars' as *;
+@use 'codelight';
+@use 'footer';
+
+:root {
+    --theme-bg: snow;
+    --theme-bg-alt: #f1f1fc;
+    --theme-text: #111;
+    --theme-header-footer: #F1F1FC;
+    --theme-header-bg: #F1F1FC;
+    --theme-heart: #FF357A;
+    --theme-pop-bg: #FFF;
+    --theme-link-color: #4635F7;
+}
+
+// Basic stuff
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+    box-sizing: border-box;
+}
+
+body {
+    word-wrap: break-word;
+    background-color: $light;
+}
+
+.snow {
+    color: snow;
+}
+
+#content {
+    font-family: $font-stack;
+    padding-left: 6%;
+    padding-right: 6%;
+    padding-top: 4%;
+    margin: auto;
+    max-width: 1200px;
+    font-size: $base-font-size;
+    line-height: $base-line-height;
+    font-weight: $base-font-weight;
+    position: relative;
+}
+
+// Paragraphs
+p {
+    color: #333;
+    transition: $tran;
+    .code {
+        text-align: center;
+        padding: 0.5em;
+        font-size: $base-font-size;
+    }
+    .headers {
+        background-color: #D3D2E0;
+        border: 1px $gray solid;
+    }
+}
+
+// Anchors
+a {
+    color: $heart;
+    text-decoration: none;
+    font-weight: $base-font-weight + 100;
+    .about     { color: $pop-1; }
+    .code      { color: $pop-3; }
+    .notes     { color: $pop-4; }
+    .favorites { color: $pop-5; }
+    .secret {
+        float: right;
+        padding-right: 3em;
+    }
+}
+
+a:hover {
+    text-decoration: underline;
+    text-decoration-color: $heart;
+}
+
+#header a, #footer a { color: $light; }
+
+// Table
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 4%;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid grey;
+    padding: 0.5em;
+}
+
+// Div
+div.home {
+    .about     { color: $pop-1; }
+    .code      { color: $pop-3; }
+    .notes     { color: $pop-4; }
+    .favorites { color: $pop-5; }
+    .about:hover     { background-color: $pop-1; }
+    .code:hover      { background-color: $pop-3; }
+    .notes:hover     { background-color: $pop-4; }
+    .favorites:hover { background-color: $pop-5; }
+}
+
+// Home page
+#home:hover {
+    p, span, div {
+        color: $light;
+        transition: $tran;
+    }
+    div {
+        border-bottom: 1px solid $light;
+    }
+}
+
+#home {
+    width: 100%;
+    cursor: pointer;
+    p { text-align: center; }
+    div {
+        width: 90%;
+        margin: auto;
+        margin-bottom: 2%;
+        margin-top: 2%;
+    }
+    span {
+        transition: $tran;
+    }
+}
+
+%blocky {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.home {
+    div {
+        border: solid 1px currentColor;
+        margin-bottom: 1.5em;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1.5em;
+        position: relative;
+        text-align: center;
+        transition: $tran;
+        a {
+            @extend %blocky;
+        }
+        h1 {
+            border-bottom: 1px solid currentColor;
+            margin-left: 3%;
+            margin-right: 3%;
+            margin-bottom: 1%;
+            padding-bottom: 1%;
+            transition: $tran;
+            padding: 0.5em;
+            color: currentColor;
+            text-decoration: none;
+        }
+        h1 > a {
+            text-decoration: none;
+            transition: $tran;
+        }
+        .relative {
+            position: relative;
+            display: inline;
+        }
+    }
+    div:hover {
+        transition: $tran;
+        h1, a {
+            color: $light;
+            transition: $tran;
+        }
+    }
+}
+
+h1 {
+    text-decoration: underline wavy $pop-3;
+    padding: 1em 0 0.5em 0;
+}
+
+p {
+    padding-bottom: 1em;
+}
+
+.plain {
+    text-decoration: none;
+}
+
+// Headers
+h1, .big {
+    font-size: 3em;
+    font-family: $font-stack;
+    text-align: center;
+    font-weight: bold;
+    .home-page { padding-top: 2%; }
+}
+
+.special {
+    color: $gray;
+    text-decoration: underline dotted gray;
+}
+
+h2 {
+    font-size: $large-font-size - 0.7;
+}
+
+h3 {
+    font-size: $large-font-size - 1.2;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+
+// Lists
+ul {
+    padding-left: 5%;
+}
+
+li {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    list-style-type: circle;
+}
+
+nav ul, #footer ul, #header ul {
+    font-family: $font-stack;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    list-style: none;
+    font-weight: bold;
+    color: $gray;
+}
+
+#header ul { padding-bottom: 10px; }
+
+nav ul li, #footer ul li, #header ul li {
+    display: inline;
+    color: $gray;
+}
+
+ul.code, li.code {
+    text-align: center;
+    padding: 2%;
+}
+
+li.code {
+    list-style: none;
+    display: inline;
+}
+
+ul.notes {
+    margin: 20px auto 40px;
+    font-size: 1.5em;
+}
+
+ul.notes li { list-style: none; }
+
+li.quote {
+    float:right;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+#header li {
+    margin-right: 20px;
+}
+
+.inline-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+}
+
+.inline-block > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+object.showoff {
+    height: 2.5em;
+    margin: 1em;
+}
+
+.profiles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.profiles div {
+    border: 1px solid $gray;
+    margin: 1em;
+    width: 45%;
+    text-align: center;
+    list-style-type: none;
+}
+
+.profiles a, .code-src {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: block;
+}
+
+#zigzag {
+    width: 70%;
+    margin: auto;
+    margin-bottom: auto;
+    margin-bottom: -1em;
+}
+
+.hide {
+    visibility: hidden;
+    transition: $tran;
+}
+
+hr {
+    border-bottom: 1px dashed gray;
+    border-top: 0px;
+    transition: $tran;
+    padding: 2%;
+    width: 100%;
+}
+
+#header {
+    font-size: .8em;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    height: 4em;
+}
+
+.site-footer {
+    background-color: #000;
+    height:5.1em;
+    color: $light;
+    font-family: $font-stack;
+}
+
+.quote { float: right; }
+
+.site-footer div {
+    padding: 1em;
+    padding-bottom: 0;
+}
+
+.popstripe {
+    height: .25em;
+    background-size: 100%;
+    background-image: linear-gradient(to right, $pop-1 0%, $pop-1 20%, $pop-2 20%, $pop-2 40%, $pop-3 40%, $pop-3 60%, $pop-4 60%, $pop-4 80%, $pop-5 80%, $pop-5 100%);
+}
+
+.heart { color: $heart; }
+
+.rainbow:hover {
+    transition: $tran;
+    text-shadow: -1px -1px 0 #000,
+                 1px -1px 0 #000,
+                 -1px 1px 0 #000,
+                 1px 1px 0 #000;
+}
+
+.rainbow {
+    text-shadow: -1px -1px 0 #000,
+                 1px -1px 0 #000,
+                 -1px 1px 0 #000,
+                 1px 1px 0 #000,
+                 3px 3px 0px #4635f7,
+                 6px 6px 0px #678CFA,
+                 9px 9px 0px #49CCD4,
+                 12px 12px 0px #ED68D9,
+                 15px 15px 0px #DB37C4;
+    transition: 800ms;
+    color: white;
+}
+
+#stuck-up {
+    font-family: times;
+    font-size: 2.3em;
+}
+
+.cc-icon {
+    height: 2em;
+    vertical-align: middle;
+    pointer-events: none;
+}
+
+img {
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+img.center {
+    display: block;
+    margin: 0 auto;
+    width: 60%;
+    padding: 2%;
+    max-width: 400px;
+    border: 1px dashed $gray;
+    border-radius: 50%;
+    margin-top: 0.5em;
+}
+
+img.emily {
+    border-radius: 0;
+}
+
+.grid {
+    margin: 0 auto;
+}
+
+.grid > img {
+    width: 30%;
+    padding: 0.5em;
+    cursor: pointer;
+}
+
+span.date:before {
+    content: "|";
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 3%;
+}
+
+.fixed {
+    width: 30%;
+    word-wrap: break-word;
+    margin: 1.5em;
+    border: solid 1px $gray;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flex-item {
+    flex-grow: 1;
+}
+
+.code-main {
+    border: solid 1px $gray;
+    width: 100%;
+    margin: 0%;
+}
+
+.inline-content { text-align: center; }
+
+#menu { width: 100%; }
+
+li#home > a {
+    font-size: 2em;
+    height: 1.3em;
+    width: 1.3em;
+    display: inline-block;
+    border-radius: 25%;
+    border: 2px solid white;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.carousel-cell {
+  width: 50%; /* half-width */
+  margin-right: 10px;
+}
+
+.carousel-cell > img {
+  height: 36em;
+  object-fit: contain;
+}
+
+.fullscreen-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.85);
+
+    img {
+        transform: translate(calc(50vw - 50%), calc(50vh - 50%));
+        max-width: 70%;
+        max-height: 70%;
+    }
+
+    .exit-button {
+        position: absolute;
+        top: 10px;
+        right: 40px;
+        font-size: 3em;
+        transition: $tran;
+        cursor: pointer;
+    }
+
+    .exit-button:hover {
+        color: $heart;
+        transition: $tran;
+    }
+}
+
+.zigzag-container { display: none; }
+
+#fork {
+    margin-left: auto;
+    display: inline;
+}
+
+#menu-items {
+    display: none;
+    width: 100%;
+}
+
+.menu-container {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+a:focus {
+    outline: 3px solid #ff357a;
+  }
+
+.menu-icons {
+    #drop-button,
+    #theme {
+        font-size: 2.5em;
+        vertical-align: middle;
+        color: $light;
+        cursor: pointer;
+        transition: $tran;
+    }
+
+    #theme:hover, i:hover {
+        color: $heart;
+        transition: $tran;
+    }
+
+    display: flex;
+    align-items: center;
+
+    a,
+    span {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    i {
+        font-size: 2em;
+        transition: $tran;
+    }
+}
+
+
+#myDropdown {
+    a {
+        margin: 0;
+        padding: 10%;
+        transition: $tran * 1.5;
+    }
+    a:hover {
+        background-color: $pop-5;
+        transition: calc($tran / 2);
+        text-decoration: none;
+    }
+    .inline {
+        margin: 0;
+        padding: 10%;
+        transition: $tran * 1.5;
+    }
+    .inline:hover {
+        background-color: $pop-5;
+        transition: calc($tran / 2);
+    }
+}
+
+// Links inside the dropdown.
+.inline, .config-content span, .dropdown-content a {
+    margin: 15%;
+    margin-bottom: 5%;
+    margin-top: 5%;
+    display: block;
+}
+
+.dropdown-content > a {
+    margin-bottom: 5%;
+    margin-top: 15%;
+    margin-bottom: 15%;
+}
+
+.show { display:block; }
+
+.inline > a, .inline > span {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+.default {
+    color: $light;
+    padding: 1em;
+}
+
+svg { fill: $light; }
+
+input {
+    padding: 1em;
+    max-width: 100%;
+    .max {
+        height: 3.5em;
+        min-width: 70%;
+        min-width: 100%;
+    }
+}
+
+.center, #linker {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    text-align: center;
+    padding-top: 2em
+}
+
+// Arrow links for next and previous posts.
+.PageNavigation {
+    display: block;
+    width: auto;
+    overflow: hidden;
+}
+
+.PageNavigation a {
+    display: block;
+    width: 50%;
+    margin: 1em 0;
+    color: $gray;
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-top: 1%;
+}
+
+.PageNavigation .prev {
+    float: right;
+    text-align: right;
+}
+
+.PageNavigation .next {
+    float: left;
+    text-align: left;
+    padding-left: 4%;
+}
+
+.sub {
+    color: $gray;
+    line-height: $small-line-height;
+    padding: 0.5em;
+}
+
+div.sub {
+    float: right;
+    clear: right;
+    margin: 0px;
+}
+
+.safety {
+    background-color: $light-blue;
+    padding: 2em;
+    border: 1px solid gray;
+    margin: 5%;
+}
+
+.code-title {
+    font-size: $base-font-size;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    border-radius: 1em;
+    width: 60%;
+    background-color: #29208e;
+    border: 1px solid $light;
+}
+
+.type-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.code-type {
+    color: #333;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    border-radius: 1em;
+    width: 30%;
+    margin: 2%;
+}
+
+.featured {
+    transition: $tran;
+    cursor: pointer;
+    position: relative;
+}
+
+.featured:hover {
+    background-color: #ccccfc;
+    transition: $tran;
+}
+
+.featured > a { display: block; }
+
+.featured { text-align: center; }
+
+.featured > p {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.favorite-list > p {
+    display: inline;
+}
+
+.favorite-list {
+    padding: 0 1em 1em 0;
+}
+
+.cli     { border: 1px solid $pop-4; }
+.android { border: 1px solid $pop-3; }
+.web     { border: 1px solid $pop-1; }
+
+// Code formatting
+pre {
+    padding: 8px 12px;
+    overflow-x: auto;
+    $light-space: pre-wrap;
+}
+
+code {
+    overflow-x: auto;
+    $light-space: pre-wrap;
+    padding: 0.1em 0.4em 0.1em 0.4em;
+    line-height: 1.5em;
+    box-decoration-break: clone;
+    font-weight: bold;
+}
+
+p > code {
+    background: #f1f1fc;
+    outline: 1px solid gray;
+}
+
+// Slideshow
+#align a {
+    display: inline-block;
+}
+
+#align p {
+    padding-left: 1.5em;
+    color: #5e5e5e;
+}
+
+img.slide {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    height: 36em;
+    object-fit: contain;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+
+div.buttons {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0.5em;
+}
+
+span.gray {
+    color: #5e5e5e;
+}
+
+.slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+}
+
+.mySlides {
+    display: none;
+    background: $light;
+}
+
+.prev-slideshow, .next-slideshow {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    width: 20%;
+    height: 100%;
+    color: $gray;
+    font-weight: bold;
+    padding: 2%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    transition: $tran;
+    z-index: 1;
+}
+
+.prev-slideshow:hover, .next-slideshow:hover {
+    color: $heart;
+    text-decoration: none;
+}
+
+.next-slideshow {
+    right: 0;
+    text-align: right;
+}
+
+.prev-slideshow {
+    left: 0;
+}
+
+#img-src {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding-right: 2%;
+    font-size: larger;
+    z-index: 1;
+    color: lightgray;
+    transition: $tran
+}
+
+#img-src:hover {
+    color: $heart;
+    transition: $tran;
+    text-decoration: none;
+}
+
+.text {
+    padding-top: 0.5em;
+    height: 2em;
+    width: 100%;
+    text-align: center;
+    background: $light;
+}
+
+.black-fade {
+    position: relative;
+    border: 1px solid gray;
+
+    .slide-src {
+        @extend %blocky;
+        z-index: 1;
+    }
+}
+
+.black-fade:after {
+    content: '\A';
+    position: absolute;
+    width: 100%;
+    height:100%;
+    top:0;
+    left:0;
+    background: $light;
+    opacity: 0;
+    animation-name: fade-black;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade-black {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+#drop-button {
+    font-size: 3em;
+    color: $light;
+    cursor: pointer;
+}
+
+.copyContainer {
+    width: 5em;
+}
+
+.copySymbol {
+    position: absolute;
+    right: 10px;
+    transition: $tran;
+    font-size: 1.5em;
+}
+
+.copySymbol:hover {
+    transition: $tran;
+    cursor: pointer;
+    color: $heart;
+}
+
+.copyMsg {
+    color: #fff;
+    background-color: #333;
+    border-radius: 6px;
+    padding: 1em;
+    font-size: 0.8em;
+    position: absolute;
+    right: -5px;
+    top: -50px;
+    margin: 0;
+    transition: $tran;
+}
+
+div.highlight {
+    margin: 5%;
+    position: relative;
+}
+
+pre.highlight {
+    white-space: pre-wrap;
+}
+
+.tex sub, .latex sub, .latex sup {
+    text-transform: uppercase;
+}
+
+.tex sub, .latex sub {
+    vertical-align: -0.5ex;
+    margin-left: -0.1667em;
+    margin-right: -0.125em;
+}
+
+.tex, .latex, .tex sub, .latex sub {
+    font-size: 1em;
+}
+
+.latex sup {
+    font-size: 0.85em;
+    vertical-align: 0.15em;
+    margin-left: -0.36em;
+    margin-right: -0.15em;
+}
+
+#mst3k {
+    width:100%;
+}
+
+.circle {
+    padding: 1em;
+    background-color: $light;
+    border-radius: 50%;
+    position: fixed;
+    right: 5%;
+    height: 4em;
+    width: 4em;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1em;
+    bottom: 5%;
+    border: 1px solid;
+    z-index: 1;
+    animation-name: fadein;
+    transition: opacity 300ms;
+}
+
+.poem {
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-bottom: 8%;
+    border: 1px solid gray;
+    background-color: $light-blue;
+
+    p {
+        padding: 0;
+        margin-bottom: -1em;
+    }
+}
+
+.fade-out { opacity: 0; }
+
+.left {
+    position: absolute;
+    left: 0;
+}
+
+.right {
+    position: absolute;
+    right: 0;
+}
+
+.demonic-docs-container > .CodeMirror {
+    height: auto;
+}
+
+.notes {
+    border-bottom: 1px dashed gray;
+    margin: 1em;
+    position: relative;
+
+    a.abs {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+    }
+}
+
+.bot {
+    padding-bottom: 2em;
+}
+
+.notes-title {
+    padding: 0;
+    text-decoration: none;
+}
+
+.notes-info {
+    color: gray;
+    font-style: oblique;
+}
