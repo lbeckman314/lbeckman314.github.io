@@ -14,7 +14,7 @@ content="{{ page.excerpt | default: site.description | strip_html | normalize_wh
 <title>{Astro.props.title ? `${Astro.props.title} | ${SITE_TITLE}` : SITE_TITLE}</title>
 
 <link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
-<link rel="icon" type="image/png" href="/src/assets/images/iconLambda.png" />
+<link rel="icon" type="image/png" href="/public/assets/images/iconLambda.png" />
 
 <script type="text/javascript" src="/src/assets/js/copy.js"></script>
 <script type="text/javascript" src="/src/assets/js/menu.js"></script>
