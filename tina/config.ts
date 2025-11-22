@@ -19,6 +19,11 @@ export default defineConfig({
     outputFolder: "admin",
     publicFolder: "public",
   },
+  
+  // Enable local mode for development without TinaCloud
+  ...(process.env.TINA_PUBLIC_IS_LOCAL === "true" && {
+    contentApiUrlOverride: "/api/gql",
+  }),
   media: {
     tina: {
       mediaRoot: "",
@@ -151,4 +156,5 @@ export default defineConfig({
     ],
   },
 });
+
 
