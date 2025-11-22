@@ -1,68 +1,69 @@
-# Astro Starter Kit: Blog
+[![Build + Deploy](https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml/badge.svg)](https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml)
+
+# Overview 🌀
+
+This personal site is a way for me to collect my favorite things and show off personal projects and experiments!
+
+| Component | System |
+|---------------|------------------------------------------------------------------------------------------|
+| Build System | [Astro.js](https://astro.build/) + [GitHub Actions](https://github.com/features/actions) |
+| Host | [GitHub Pages](https://docs.github.com/en/pages) (https://lbeckman314.github.io) |
+| Custom Domain | [Porkbun](https://porkbun.com/) (https://liambeckman.com) |
+| Live Services | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets) |
+
+## Quick Start ⚡
 
 ```sh
-npm create astro@latest -- --template blog
+➜ git clone https://github.com/lbeckman314/lbeckman314.github.io
+
+➜ cd lbeckman314.github.io
+
+➜ npm install
+
+➜ npm run dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
+Then browse to http://localhost:4321 to see the site!
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+<p align="center">
+<a href="https://liambeckman.com">
+<img width="825" height="1115" alt="Website!" src="https://github.com/user-attachments/assets/1b9146b4-432c-4a01-874f-d87d7120cbc4" />
+</a>
+</p>
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+## GitHub Actions 📦
 
-Features:
+The build + deployment is triggered for every push to the `main` branch, as part of [`build.yaml`](https://github.com/lbeckman314/lbeckman314.github.io/blob/main/.github/workflows/build.yaml)
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+<p align="center">
+<a href="https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml">
+<img width="695" height="628" alt="foo" src="https://github.com/user-attachments/assets/80bb0841-be23-4513-9cbb-0de62b84e99d" />
+</a>
+</p>
 
-## 🚀 Project Structure
 
-Inside of your Astro project, you'll see the following folders and files:
+## Inspirations ✨
 
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
-```
+### Interactive + Beautiful Gardens!
+- [charm.land](https://charm.land)
+- [nan.fyi](https://www.nan.fyi)
+- [maggieappleton.com](https://maggieappleton.com)
+- [joshwcomeau.com: An Interactive Guide to SVG Paths](https://www.joshwcomeau.com/svg/interactive-guide-to-paths)
+- [blog.maximeheckel.com: On Crafting Painterly Shaders](https://blog.maximeheckel.com/posts/on-crafting-painterly-shaders)
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### Moving Things!
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- [animejs.com](https://animejs.com)
+- [threejs.org](https://threejs.org)
+- [blog.shashanktomar.com: Strange Attractors](https://blog.shashanktomar.com/posts/strange-attractors)
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+### Writing! 
+- [Binsider](https://binsider.dev/getting-started)
+- [drew.silcock.dev: How Postgres stores data on disk – this one's a page turner ](https://drew.silcock.dev/blog/how-postgres-stores-data-on-disk)
+- [nghiant3223.github.io: Memory Allocation in Go](https://nghiant3223.github.io/2025/06/03/memory_allocation_in_go.html)
+- [reverbmachine.com: How Brian Eno Created *Ambient 1: Music for Airports*](https://reverbmachine.com/blog/deconstructing-brian-eno-music-for-airports)
+- [aethermug.com: Linear Algebra Explains Why Some Words Are Effectively Untranslatable](https://aethermug.com/posts/linear-algebra-explains-why-some-words-are-effectively-untranslatable)
 
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+<p align="center">
+<img src="https://raw.githubusercontent.com/lbeckman314/lbeckman314.github.io/refs/heads/main/public/assets/svg/icon-smile.svg" alt="" style="max-width: 100%;">
+</p>
