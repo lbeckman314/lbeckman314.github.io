@@ -1,0 +1,15 @@
+---
+interface Props {
+  url: string;
+  img: string;
+  txt: string;
+}
+
+const { url, img, txt } = Astro.props;
+---
+
+<div class="featured">
+  <a href={url}></a>
+  <object class="showoff" type="image/svg+xml" data={img}></object>
+  <p>{txt}</p>
+</div>

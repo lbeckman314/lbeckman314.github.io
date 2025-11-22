@@ -1,0 +1,32 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Menu from "../components/Menu.astro";
+const { title, description } = Astro.props;
+import "remark-github-blockquote-alert/alert.css";
+---
+
+<!doctype html>
+<!--Louis, I think this is the beginning of a beautiful friendship.-->
+<html lang="en">
+  <BaseHead title={title} description={description} />
+  <body>
+    <div id="wrapper">
+      <Menu />
+      <div class="popstripe"></div>
+      <a href="#" class="circle fade-out">↑</a>
+      <div id="content"><slot /></div>
+      {
+        Astro.props.url === "/about" && (
+          <img
+            id="mst3k"
+            src="/assets/images/mst3k.png"
+            alt="MST3K reference"
+          />
+        )
+      }
+      <Footer />
+    </div>
+    <div id="bottom"></div>
+  </body>
+</html>

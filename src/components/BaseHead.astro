@@ -1,0 +1,32 @@
+---
+import { SITE_TITLE } from '../consts';
+import '../styles/main.scss';
+import '../styles/responsive.scss';
+import '../styles/dark.scss'; 
+---
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="description"
+content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+<title>{Astro.props.title ? `${Astro.props.title} | ${SITE_TITLE}` : SITE_TITLE}</title>
+
+<link rel="canonical" href="{{ page.url | replace:'index.html','' | absolute_url }}">
+<link rel="icon" type="image/png" href="/assets/images/iconLambda.png" />
+
+<script type="text/javascript" src="/assets/js/copy.js"></script>
+<script type="text/javascript" src="/assets/js/menu.js"></script>
+<script type="text/javascript" src="/assets/js/theme.js"></script>
+<script type="text/javascript" src="/assets/js/top.js"></script>
+<script src="https://kit.fontawesome.com/c6a26782c8.js" crossorigin="anonymous"></script>
+<script>
+const theme = localStorage.getItem('theme');
+const htmlElement = document.documentElement;
+if (theme === 'dark') {
+	htmlElement.classList.add('dark');
+} else if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+	htmlElement.classList.add('dark');
+}
+</script>

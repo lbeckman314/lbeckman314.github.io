@@ -1,0 +1,111 @@
+// Dark themes
+@use 'codedark';
+
+// Variables
+$font-stack: DejaVu Sans, DejaVu Serif, Liberation Sans, Helvetica, Ariral, Sans-Serif;
+
+$pop-1: #DB37C4; // pink
+$pop-2: #ED68D9; // purple
+$pop-3: #49CCD4; // teal
+$pop-4: #678CFA; // light blue
+$pop-5: #4635F7; // blue
+
+// Colors
+$dark:             #131516;
+$gray:             #AAA;
+$header-footer:    #2A2730;
+$heart:            #FF357A;
+$text-color:       #111;
+$light:            snow;
+$light-blue:       #F1F1FC;
+$dark-blue:        #29208E;
+
+.dark {
+    --theme-bg: #131516;
+    --theme-bg-alt: #282A36;
+    --theme-text: snow;
+    --theme-header-footer: #2A2730;
+    --theme-header-bg: black;
+    --theme-heart: #FF357A;
+    --theme-pop-bg: black;
+    --theme-link-color: #8be9fd;
+}
+
+body {
+    background-color: var(--theme-bg);
+}
+
+#header, #footer, .site-footer {
+    background-color: black;
+}
+
+p, .text, pre, dd, dt, li, ul, ol, label, td, div {
+    color: var(--theme-text);
+}
+
+pre.src:before {
+    background-color: var(--theme-header-bg);
+    color: var(--theme-text);
+}
+
+div.text {
+    background: var(--theme-bg);
+}
+
+#align p {
+    color: $light;
+}
+
+.safety {
+    background-color: #282a36;
+}
+
+.active, .dot:hover {
+    background-color: $gray;
+}
+
+.code-title, .code-type {
+    color: $light;
+}
+
+.featured:hover {
+    background-color: $dark-blue;
+}
+
+#lightswitch {
+    border: none;
+}
+
+#lightswitch:hover {
+    border: none;
+    border: 1px solid $heart;
+}
+
+#darkswitch {
+    border: 1px solid $heart;
+}
+
+.dark {
+    background-color: var(--theme-bg);
+}
+
+.config-content, .dropdown-content, .header:hover {
+    background-color: var(--theme-bg);
+}
+
+.poem {
+    background-color: var(--theme-bg-alt);
+}
+
+.black-fade:after {
+    background: var(--theme-bg);
+}
+
+.mySlides {
+    background: var(--theme-bg);
+}
+
+.circle {
+    background-color: var(--theme-bg);
+}
+

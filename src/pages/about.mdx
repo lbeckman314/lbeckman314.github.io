@@ -1,0 +1,89 @@
+---
+title: about
+layout: ../layouts/BaseLayout.astro
+---
+
+import Showoff from '../components/Showoff.astro';
+import Block from '../components/Block.astro';
+
+<div class="center">
+    <span id="hello" class="big rainbow">Hello, I'm liam.</span>
+    <object id="smile" type="image/svg+xml" data="/assets/svg/icon-smile.svg"></object>
+</div>
+
+<div id="stuck-up">A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</div>
+
+## about me:
+
+I'm a sleepy human with a dark history of secrets and intrigue.
+
+Have a good book or movie recommendation or just want to chat? I'm available at <a href="mailto:lbeckman314@gmail.com">lbeckman314@gmail.com</a>
+
+Are you looking for a plucky developer with a small propensity for segmentation faults? Here are some links of interest:
+
+<div class="inline-block profiles">
+  <Block
+    url="https://github.com/lbeckman314/resume/releases/latest/download/resume.pdf"
+    img="/assets/svg/pdf.svg"
+    txt="Resume"
+  />
+
+  <Block
+    url="https://github.com/lbeckman314/"
+    img="/assets/svg/github.svg"
+    txt="Github"
+  />
+
+  <Block
+    url="https://www.linkedin.com/in/liam-beckman-ab3183a6/"
+    img="/assets/svg/linkedin.svg"
+    txt="LinkedIn"
+  />
+</div>
+
+---
+
+# ♡
+
+<Showoff />
+
+---
+
+## about the website:
+
+This website stores and presents various projects!
+
+It originally got up and running thanks to Jonathan McGlone's [guide](http://jmcglone.com/guides/github-pages/).
+
+This site has gone through a couple iterations (all available on [Wayback Machine](https://web.archive.org/web/30000000000000*/liambeckman.com)), from being built with Jekyll and self-hosted on a trusty Thinkpad x230 running Debian, to now where it's built with [Astro](https://astro.build/) and hosted on [GitHub Pages](https://pages.github.com/).
+
+The [website's source code](https://github.com/lbeckman314/website) is yours.
+
+Feel free to copy and paste, fork, clone, or anything you like!
+
+To spin up your own site, follow [the Astro tutotial](https://docs.astro.build/en/tutorial/0-introduction/1/) (adapted below) —
+
+```sh
+# Install dependencies
+➜ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+➜ source ~/{.zshrc,.bashrc}
+
+➜ nvm install node
+
+➜ git clone https://github.com/lbeckman314/lbeckman314.github.io
+
+➜ cd lbeckman314.github.io
+
+➜ npm astro dev
+
+# Now browse to http://localhost:3000
+
+# Then you can change the html/css files in your website directory (e.g. src/styles/main.scss) to suit your tastes!
+
+# Hosting is a whole 'nother beast, but services like GitHub Pages make free hosting relatively easier.
+
+# Self-hosting with Apache and/or Nginx is another cool possibility!
+
+# TODO: Add additional resources/steps for hosting (i.e. how is this site hosted?)
+```

@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+
+let code = await getCollection("code");
+code = code.sort((a, b) => a.id.localeCompare(b.id));
+---
+
+<div>
+  <div class="container">
+    {
+      code.map((codeItem) => (
+        <div class="fixed pointer featured">
+          <a class="code-src" href={codeItem.data.src} />
+          <img class="center" src={`/assets/images/${codeItem.data.img}`} />
+          <p class="code-title">{codeItem.data.name}</p>
+          <div class="type-container">
+            {codeItem.data.type.map((type: string) => (
+              <span class={`code-type ${type}`}>{type}</span>
+            ))}
+          </div>
+          <p class="code">{codeItem.body}</p>
+        </div>
+      ))
+    }
+  </div>
+</div>

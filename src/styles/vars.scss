@@ -1,0 +1,35 @@
+// Variables
+$font-stack: DejaVu Sans, DejaVu Serif, Liberation Sans, Helvetica, Ariral, Sans-Serif;
+
+$pop-1: #DB37C4; // pink
+$pop-2: #ED68D9; // purple
+$pop-3: #49CCD4; // teal
+$pop-4: #678CFA; // light blue
+$pop-5: #4635F7; // blue
+
+// Colors
+$dark:             #131516;
+$gray:             #AAA;
+$header-footer:    #2A2730;
+$heart:            #FF357A;
+$text-color:       #111;
+$light:            snow;
+$light-blue:       #F1F1FC;
+$dark-blue:        #29208E;
+
+// Font and line spacing.
+$base-font-size:    1em;
+$large-font-size:   3em;
+$base-font-weight:  500;
+$small-font-size:   $base-font-size * 0.875;
+$base-line-height:  2;
+$small-line-height: $base-line-height - 0.2;
+$spacing-unit:      30px;
+
+// Animation duration.
+$tran: 800ms;
+
+// Width of the content area
+$content-width: 800px;
+$on-palm:       600px;
+$on-laptop:     800px;

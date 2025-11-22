@@ -1,5 +1,0 @@
----
-title: code
----
-
-# Secret Page!

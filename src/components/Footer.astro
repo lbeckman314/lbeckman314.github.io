@@ -1,0 +1,58 @@
+---
+const date = new Date().toUTCString();
+---
+
+<div id="footer">
+  <footer class="site-footer">
+    <div>
+      <a
+        href="https://github.com/lbeckman314/lbeckman314.github.io/actions"
+        >made with lots of <object
+          type="image/svg+xml"
+          data="/assets/svg/heart.svg"></object></a
+      > ~ <a href="https://www.github.com/lbeckman314/website">
+        open-source and free</a
+      >
+    </div>
+    <div>
+      <span>© <span id="date">{date}</span> liam beckman ~ </span>
+      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+        <img src="https://licensebuttons.net/l/by/3.0/80x15.png" />
+      </a>
+      <span class="quote"
+        ><a href="/assets/images/moomin.jpg"
+          >"I only want to live in peace and plant potatoes and dream!" -Tove
+          Jansson</a
+        ><span> </span>
+      </span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  function updateDate() {
+    const dateElement = document.getElementById('date');
+    if (dateElement) {
+      const now = new Date();
+      
+      // Get timezone name
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
+      const formatted = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZone: timezone,
+        timeZoneName: 'short'
+      }).format(now);
+      
+      dateElement.textContent = formatted;
+    }
+  }
+
+  updateDate();
+  setInterval(updateDate, 1000);
+</script>
