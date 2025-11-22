@@ -1,0 +1,48 @@
+media:
+  # 1. Media Input: The directory on your file system containing the original assets.
+  input: public/assets 
+  # 2. Media Output: The public URL path where these assets are served by the webserver.
+  output: /assets/
+content:
+  # --- 1. NOTES COLLECTION ---
+  # Corresponds to your src/content/notes/ directory
+  - name: notes
+    label: Notes/Blog Posts
+    type: collection
+    path: src/content/notes # Point to your Astro Content Collection directory
+    view:
+      fields: [ title, date, tags ] # Fields to show in the CMS list view
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: date, label: Publication Date, type: date, required: true }
+      - { name: excerpt, label: Excerpt (for lists), type: string }
+      - { name: tags, label: Tags, type: string, list: true } # Assumes tags are a list/array
+      - { name: body, label: Note Content, type: rich-text } # Use 'rich-text' for the main MDX body
+
+  # --- 2. FAVORITES COLLECTION (For individual items like poems, movies) ---
+  # Corresponds to your src/content/favorites/ directory
+  - name: favorites
+    label: Favorites Items
+    type: collection
+    path: src/content/favorites
+    view:
+      fields: [ title, author, src ]
+    fields:
+      - { name: title, label: Item Title, type: string, required: true }
+      - { name: author, label: Author/Director, type: string }
+      - { name: src, label: Source URL, type: string }
+      - { name: img, label: Image Filename, type: string, description: "e.g., moonlight.jpg" }
+      - { name: body, label: Description / Content, type: rich-text } # For long content like poems
+
+  # --- 3. ABOUT PAGE (Single File Editing) ---
+  # Corresponds to your single src/pages/about.mdx file
+  - name: about
+    label: About Page (Static)
+    type: file
+    # If it's a direct MDX page, point to it here:
+    path: src/pages/about.mdx 
+    fields:
+      # We assume the layout path is managed by your config. You can hide the frontmatter field
+      - { name: layout, type: string, hidden: true, default: "../layouts/BaseLayout.astro" }
+      - { name: title, label: Page Title, type: string, required: true }
+      - { name: body, label: Page Content, type: rich-text } # The main body of the MDX file
