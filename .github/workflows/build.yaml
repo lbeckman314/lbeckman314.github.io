@@ -38,6 +38,7 @@ jobs:
       
       - name: Build with Astro
         run: |
+            npx tinacms build
             npx --no-install astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
