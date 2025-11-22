@@ -26,6 +26,4 @@ pnpm-debug.log*
 # TinaCMS
 tina/__generated__
 public/admin
-content/
-
-node_modules
+content/posts/
