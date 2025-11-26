@@ -551,6 +551,7 @@ a:focus {
         color: $light;
         cursor: pointer;
         transition: $tran;
+        font-variant-emoji: text;
     }
 
     #theme:hover, i:hover {
