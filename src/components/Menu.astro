@@ -1,3 +1,7 @@
+---
+import Search from "./Search.astro";
+---
+
 <div id="header">
   <span id="drop-button">☰</span>
   <ul id="menu">
@@ -13,6 +17,8 @@
     ></object>
   </div>
 
+  <Search />
+
   <div class="menu-icons">
     <a href="https://github.com/lbeckman314" title="My Github"
       ><i class="fa-brands fa-github"></i></a
@@ -20,6 +26,8 @@
     <a href="https://instagram.com/lbeckman314" title="My Instagram"
       ><i class="fa-brands fa-instagram"></i></a
     >
-    <span id="theme" title="Toggle theme">☯</span>
+    <span id="theme" title="Toggle theme">
+      <i class="fa-solid fa-yin-yang"></i>
+    </span>
   </div>
 </div>
