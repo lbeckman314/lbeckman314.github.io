@@ -41,7 +41,18 @@ jobs:
             npx --no-install astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
-   
+            
+      - name: Debug
+        run: |
+            ls dist
+
+      - name: Add Pagefind
+        run: |
+            npx pagefind --site dist
+
+      - name: Debug
+        run: |
+            ls dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

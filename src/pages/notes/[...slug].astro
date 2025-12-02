@@ -29,12 +29,11 @@ const { title, date } = note.data;
           day: "numeric",
           weekday: "long",
         })}
+      ※
+      {note.data.tags}
       </p>
     )
   }
-
-  <hr />
-
-  <Content />
+  <pre class="poem"><Content /></pre>
   <p class="snow center">· ※ · ※ · ※ ·</p>
 </BaseLayout>
