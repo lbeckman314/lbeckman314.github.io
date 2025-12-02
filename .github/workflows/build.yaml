@@ -43,6 +43,9 @@ jobs:
             --base "${{ steps.pages.outputs.base_path }}" \
             npx pagefind --site dist
    
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
