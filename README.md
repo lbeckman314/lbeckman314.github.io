@@ -10,8 +10,8 @@ This personal site is a way for me to collect my favorite things and show off pe
 | Domain            | [Porkbun](https://porkbun.com/) → liambeckman.com                        |
 | Framework         | [Astro.js](https://astro.build/)                                          |
 | Services (Live)   | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets)   |
-| Services (Static) | Netlify                                                                   |
-| Search            | Pagefind                                                                  |
+| Services (Static) | [Netlify](https://www.netlify.com/)                                       |
+| Search            | [Pagefind](https://pagefind.app/)                                         |
 
 ## Quick Start ⚡
 
