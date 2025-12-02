@@ -2,20 +2,38 @@
 import { getCollection } from "astro:content";
 
 let notes = await getCollection("notes");
-notes = notes.sort((a, b) => a.id.localeCompare(b.id));
+notes = notes.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
-{notes.map(async (note) => {
+{
+  notes.map(async (note) => {
     const { Content } = await note.render();
     return (
-    <div class="notes">
-      <div class="bot">
-        <h2 class="notes-title"><a href={`/notes/${note.slug}`}>{note.data.title}</a></h2>
+      <div class="notes">
+        <div class="bot">
+          <h2 class="notes-title">
+            <a href={`/notes/${note.slug}`}>{note.data.title}</a>
+          </h2>
+          {note.data.date && (
+            <span class="notes-info">
+              {note.data.date.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                weekday: "long",
+              })}
+              ※
+            </span>
+            <span class="notes-info">
+              {note.data.tags}
+            </span>
+          )}
+          {/* <pre>{JSON.stringify(note, null, 2)}</pre> */}
+        </div>
+        <pre class="poem">
+          <Content />
+        </pre>
       </div>
-      <p class="bot">{ note.data.excerpt }</p>
-      <Content />
-    </div>
-    <h2 class="snow center">~//~</h2>
     );
   })
 }

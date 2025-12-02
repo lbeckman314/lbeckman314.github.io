@@ -1,11 +1,9 @@
 ---
 title: blackberries
 date: 2019-10-15
-excerpt: Someone should tend the blackberries out front...
 tags: poem
 ---
 
-```
 Someone should tend the blackberries out front
 (they don't need anything, it's just nice to think of them)
 and fill the hummingbird feeders while you're there,
@@ -21,4 +19,3 @@ I should have left it in the shed, where it belongs.
 Do you remember what he wrote?
 "I love this — I love making it — and finding things, all by myself."
 That's what I did today, with a few of these blackberries.
-```
