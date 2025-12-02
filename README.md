@@ -4,12 +4,14 @@
 
 This personal site is a way for me to collect my favorite things and show off personal projects and experiments!
 
-| Component | System |
-|---------------|------------------------------------------------------------------------------------------|
-| Build System | [Astro.js](https://astro.build/) + [GitHub Actions](https://github.com/features/actions) |
-| Host | [GitHub Pages](https://docs.github.com/en/pages) (https://lbeckman314.github.io) |
-| Custom Domain | [Porkbun](https://porkbun.com/) (https://liambeckman.com) |
-| Live Services | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets) |
+| Component         | System                                                                    |
+|-------------------|---------------------------------------------------------------------------|
+| Host              | [GitHub Pages](https://docs.github.com/en/pages) → lbeckman314.github.io |
+| Domain            | [Porkbun](https://porkbun.com/) → liambeckman.com                        |
+| Framework         | [Astro.js](https://astro.build/)                                          |
+| Services (Live)   | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets)   |
+| Services (Static) | Netlify                                                                   |
+| Search            | Pagefind                                                                  |
 
 ## Quick Start ⚡
 
@@ -40,7 +42,6 @@ The build + deployment is triggered for every push to the `main` branch, as part
 <img width="695" height="628" alt="foo" src="https://github.com/user-attachments/assets/80bb0841-be23-4513-9cbb-0de62b84e99d" />
 </a>
 </p>
-
 
 ## Inspirations ✨
 
