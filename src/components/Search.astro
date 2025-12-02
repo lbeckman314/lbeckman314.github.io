@@ -1,0 +1,331 @@
+---
+
+---
+
+<!-- Components -->
+<div class="search-btn-container">
+  <button class="search-btn" data-open-modal aria-label="Open search dialog">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-text">Search</span>
+  </button>
+</div>
+
+<dialog aria-label="Search">
+  <div class="dialog-frame">
+    <div class="search-container">
+      <div id="search"></div>
+    </div>
+
+    <div class="search-quick-links">
+      <div class="search-quick-links-title">Quick Links</div>
+      <ul class="quick-links-list">
+        <li>
+          <a href={"/home"}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-home"
+              ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                d="M5 12l-2 0l9 -9l9 9l-2 0"></path><path
+                d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path><path
+                d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path></svg
+            >
+            <span>Home</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="/about">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-user"
+              ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path
+                d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"></path></svg
+            >
+            <span>About</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="/code">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-code"
+              ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                d="M7 8l-4 4l4 4"></path><path d="M17 8l4 4l-4 4"></path><path
+                d="M14 4l-4 16"></path></svg
+            >
+            <span>Code</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="/notes">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-notes"
+              ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                d="M5 3m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"
+              ></path><path d="M9 7l6 0"></path><path d="M9 11l6 0"></path><path
+                d="M9 15l4 0"></path></svg
+            >
+            <span>Notes</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="/favorites">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icon icon-tabler icons-tabler-outline icon-tabler-sparkles"
+              ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+                d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z"
+              ></path></svg
+            >
+            <span>Favorites</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</dialog>
+
+<!-- Scripts -->
+<script src="/pagefind/pagefind-ui.js" is:inline></script>
+<script>
+  // This script runs on the client-side, similar to how it did in your old Hugo setup.
+  const dialog = document.querySelector("dialog");
+  const openBtn = document.querySelector("button[data-open-modal]");
+  const closeBtn = document.querySelector("button[data-close-modal]");
+
+  const openModal = (event) => {
+    dialog.showModal();
+    document.body.toggleAttribute("data-search-modal-open", true);
+    event?.stopPropagation();
+
+    // Add listeners for backdrop click
+    setTimeout(() => {
+      window.addEventListener("click", onClick);
+      const searchInput = dialog.querySelector("input");
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }, 100);
+  };
+
+  const closeModal = () => dialog.close();
+
+  const onClick = (event) => {
+    const dialogFrame = dialog.querySelector(".dialog-frame");
+    // Close if click is outside the frame
+    if (
+      dialogFrame &&
+      document.body.contains(event.target) &&
+      !dialogFrame.contains(event.target)
+    ) {
+      closeModal();
+    }
+  };
+
+  // --- Setup ---
+  if (openBtn && dialog) {
+    openBtn.addEventListener("click", openModal);
+    openBtn.disabled = false;
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeModal);
+    }
+
+    dialog.addEventListener("close", () => {
+      document.body.toggleAttribute("data-search-modal-open", false);
+      window.removeEventListener("click", onClick);
+    });
+
+    // Keyboard shortcuts: Ctrl+K or Cmd+K
+    window.addEventListener("keydown", (e) => {
+      if ((e.metaKey === true || e.ctrlKey === true) && e.key === "k") {
+        dialog.hasAttribute("open") ? closeModal() : openModal();
+        e.preventDefault();
+      }
+    });
+  }
+
+  // Pagefind Initialization
+  new PagefindUI({
+    element: "#search",
+    showSubResults: true,
+    autofocus: true,
+    resetStyles: false,
+    showImages: false,
+  });
+</script>
+
+<!-- Styles -->
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+<style is:global>
+  dialog {
+    margin: 4rem auto auto;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 40rem;
+    min-height: 10rem;
+    max-height: calc(100% - 8rem);
+    border: 2px solid black;
+    background: inherit;
+    font-family:
+      PT Sans,
+      DejaVu Sans,
+      DejaVu Serif,
+      Liberation Sans,
+      Helvetica,
+      Ariral,
+      Sans-Serif;
+  }
+
+  dialog::backdrop {
+    background-color: hsla(223, 13%, 10%, 0.66);
+    -webkit-backdrop-filter: blur(0.25rem);
+    backdrop-filter: blur(0.25rem);
+  }
+
+  dialog > p {
+    color: snow;
+  }
+
+  .search-btn-container {
+    flex-grow: 1;
+    margin-left: 1em;
+    margin-right: 1em;
+    width: 30%;
+    font-family:
+      PT Sans,
+      DejaVu Sans,
+      DejaVu Serif,
+      Liberation Sans,
+      Helvetica,
+      Ariral,
+      Sans-Serif;
+  }
+
+  .search-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 0.3em;
+    color: white;
+    height: 3em;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .search-btn:hover {
+    outline: 2px solid #ff357a;
+    cursor: pointer;
+  }
+
+  .search-text {
+    margin-left: 0.5em;
+  }
+
+  #search {
+    padding: 2em;
+  }
+
+  .search-quick-links {
+    margin-top: 2rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .search-quick-links-title {
+    font-weight: bold;
+    color: snow;
+    font-size: large;
+  }
+
+  .quick-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .quick-links-list li {
+    padding: 0.25rem 0;
+  }
+
+  .quick-links-list a {
+    display: block;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .quick-links-list a svg {
+    margin: 0.5rem;
+  }
+
+  .quick-links-list a:hover {
+    outline: 2px solid #ff357a;
+  }
+
+  .pagefind-ui__message,
+  .pagefind-ui__result-excerpt {
+    color: snow;
+  }
+
+  mark {
+    background-color: #4635f7;
+    color: snow;
+    font-weight: bold;
+  }
+
+  dialog a.pagefind-ui__result-link {
+    color: #ff357a !important;
+  }
+
+  i {
+    font-size: 1.5em;
+  }
+</style>
