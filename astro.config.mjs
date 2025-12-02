@@ -1,7 +1,6 @@
 // @ts-check
 import custom from './src/styles/codedark.js';
 import mdx from '@astrojs/mdx';
-import pagefind from "astro-pagefind";
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import { remarkAlert } from "remark-github-blockquote-alert";
@@ -13,7 +12,6 @@ export default defineConfig({
 
   integrations: [
     mdx(), 
-    pagefind(),
     sitemap(),
   ],
 
