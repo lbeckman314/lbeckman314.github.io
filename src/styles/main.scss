@@ -366,6 +366,10 @@ hr {
     padding-bottom: 0;
 }
 
+.now {
+    color: var(--theme-bg)
+}
+
 .popstripe {
     height: .25em;
     background-size: 100%;
@@ -541,7 +545,11 @@ li#home > a {
 
 a:focus {
     outline: 3px solid #ff357a;
-  }
+}
+
+span#theme:focus {
+    outline: 3px solid #ff357a;
+}
 
 .menu-icons {
     #drop-button,
@@ -1051,4 +1059,14 @@ pre.highlight {
 .notes-info {
     color: gray;
     font-style: oblique;
+}
+
+.now {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 12345;
 }
