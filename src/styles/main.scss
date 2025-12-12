@@ -416,7 +416,7 @@ img {
     vertical-align: middle;
 }
 
-img.center {
+img.showoff {
     display: block;
     margin: 0 auto;
     width: 60%;
@@ -425,6 +425,10 @@ img.center {
     border: 1px dashed $gray;
     border-radius: 50%;
     margin-top: 2.5em;
+}
+
+img.center {
+  width: 50%;
 }
 
 img.emily {
