@@ -38,7 +38,7 @@ jobs:
       
       - name: Build with Astro
         run: |
-            npx --no-install astro build \
+            COMMIT=$(git rev-parse --short HEAD) npx --no-install astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
             
