@@ -1,6 +1,8 @@
 ---
 const date = new Date().toUTCString();
-const gitCommit = import.meta.env.COMMIT || "unknown";
+const gitCommit = import.meta.env.COMMIT || "???";
+const repo = 'https://github.com/lbeckman314/lbeckman314.github.io'
+const commitLink = gitCommit !== "???" ? `${repo}/commit/${gitCommit}` : `${repo}/commits/`;
 ---
 
 <div id="footer">
@@ -16,11 +18,11 @@ const gitCommit = import.meta.env.COMMIT || "unknown";
 
       <span>
         ~
-        <a
-          href={`https://github.com/lbeckman314/lbeckman314.github.io/commit/${gitCommit}`}
-          target="_blank"
-          rel="noopener"> {gitCommit}</a
-        >
+        {commitLink ? (
+          <a href={commitLink} target="_blank" rel="noopener">{gitCommit}</a>
+        ) : (
+          <span>{gitCommit}</span>
+        )}
       </span>
 
     </div>
