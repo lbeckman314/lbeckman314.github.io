@@ -1,0 +1,55 @@
+---
+const { note } = Astro.props;
+const { Content } = await note.render();
+const { title, date, tags } = note.data;
+---
+
+<div class="notes">
+  <div class="bot">
+    <h1 class="notes-title">
+      <a href={`/notes/${note.slug}`}>{note.data.title}</a>
+    </h1>
+
+    <div class="center">
+    {
+      note.data.date && (
+        <div class="notes-info">
+          {note.data.date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long",
+          })}
+        </div>
+      )
+    }
+
+    {
+      note.data.tags && note.data.tags.length > 0 && (
+        <div class="note-tags">
+          {note.data.tags.map((tag, index) => (
+            <>
+              <a href={`/notes?tag=${tag}`} class="note-tag">{tag}</a>
+              {index < note.data.tags.length - 1 && (
+                <span class="tag-delimiter"> · </span>
+              )}
+            </>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</div>
+
+  {
+    note.data.tags && note.data.tags.includes("poem") ? (
+      <pre class="poem">
+        <Content />
+      </pre>
+    ) : (
+      <div class="note-content">
+        <Content />
+      </div>
+    )
+  }
+</div>

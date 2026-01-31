@@ -136,6 +136,93 @@ hr {
 	}
 }
 
+/* Tag filtering styles */
+.tag-filter {
+	margin: 2em 0;
+	padding: 1.5em;
+	background: rgb(var(--gray-light), 0.3);
+	border-radius: 8px;
+}
+
+.tag-filter h3 {
+	margin: 0 0 1em 0;
+	font-size: 1.25em;
+	color: rgb(var(--gray-dark));
+}
+
+.tag-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+}
+
+.tag-button {
+	padding: 0.5em 1em;
+	background: rgb(var(--gray-light));
+	color: rgb(var(--gray-dark));
+	text-decoration: none;
+	border-radius: 20px;
+	font-size: 0.9em;
+	border: 2px solid transparent;
+	transition: all 0.2s ease;
+}
+
+.tag-button:hover {
+	background: var(--accent);
+	color: white;
+}
+
+.tag-button.active {
+	background: var(--accent);
+	color: white;
+	border-color: var(--accent-dark);
+}
+
+.filter-info {
+	margin: 1.5em 0;
+	padding: 1em;
+	background: rgb(var(--accent), 0.1);
+	border-left: 4px solid var(--accent);
+	border-radius: 4px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.clear-filter {
+	color: var(--accent);
+	text-decoration: none;
+	font-size: 1.5em;
+	font-weight: bold;
+	padding: 0 0.5em;
+}
+
+.clear-filter:hover {
+	color: var(--accent-dark);
+}
+
+.note-tags {
+	margin-top: 0.5em;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3em;
+}
+
+.note-tag {
+	padding: 0.2em 0.6em;
+	background: rgb(var(--gray-light));
+	color: rgb(var(--gray-dark));
+	text-decoration: none;
+	border-radius: 12px;
+	font-size: 0.8em;
+	transition: all 0.2s ease;
+}
+
+.note-tag:hover {
+	background: var(--accent);
+	color: white;
+}
+
 .sr-only {
 	border: 0;
 	padding: 0;

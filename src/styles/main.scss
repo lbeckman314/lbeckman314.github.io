@@ -653,7 +653,6 @@ input {
     margin-right: auto;
     display: block;
     text-align: center;
-    padding-top: 2em
 }
 
 // Arrow links for next and previous posts.
@@ -1040,9 +1039,9 @@ pre.highlight {
 }
 
 .notes {
-    border-bottom: 1px dashed gray;
     margin: 1em;
     position: relative;
+    padding: 2em;
 
     a.abs {
         height: 100%;
@@ -1058,11 +1057,6 @@ pre.highlight {
 .notes-title {
     padding: 0;
     text-decoration: none;
-}
-
-.notes-info {
-    color: gray;
-    font-style: oblique;
 }
 
 .now {

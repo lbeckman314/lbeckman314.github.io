@@ -1,10 +1,13 @@
 ---
-title: Example!
-date: 2025-11-01T00:00:00.000Z
-tags: example
+title: Example
+date: 2025-11-01
+updated: 2025-12-01
+tags:
+- example
+- foobar
+- foo
+- bar
 ---
-
-Example
 
 > [!NOTE]  
 > Highlights information that users should take into account, even when skimming.

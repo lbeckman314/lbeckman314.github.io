@@ -1,7 +1,8 @@
 ---
 title: blackberries
 date: 2019-10-15
-tags: poem
+tags:
+- poem
 ---
 
 Someone should tend the blackberries out front

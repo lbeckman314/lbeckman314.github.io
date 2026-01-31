@@ -1,7 +1,8 @@
 ---
 title: far away in the night sky
 date: 2017-08-30
-tags: poem
+tags:
+- poem
 ---
 
 Far away in the night sky

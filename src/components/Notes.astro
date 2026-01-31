@@ -1,39 +1,18 @@
 ---
 import { getCollection } from "astro:content";
+import Note from "./Note.astro";
 
-let notes = await getCollection("notes");
-notes = notes.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const collection = await getCollection("notes");
+const sorted = collection.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+);
+
+const url = Astro.url;
+const tag = url.searchParams.get("tag");
+
+const notes = tag
+  ? sorted.filter((note) => note.data.tags?.includes(tag))
+  : sorted;
 ---
 
-{
-  notes.map(async (note) => {
-    const { Content } = await note.render();
-    return (
-      <div class="notes">
-        <div class="bot">
-          <h2 class="notes-title">
-            <a href={`/notes/${note.slug}`}>{note.data.title}</a>
-          </h2>
-          {note.data.date && (
-            <span class="notes-info">
-              {note.data.date.toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                weekday: "long",
-              })}
-              ※
-            </span>
-            <span class="notes-info">
-              {note.data.tags}
-            </span>
-          )}
-          {/* <pre>{JSON.stringify(note, null, 2)}</pre> */}
-        </div>
-        <pre class="poem">
-          <Content />
-        </pre>
-      </div>
-    );
-  })
-}
+{notes.map((note) => <Note note={note} />)}

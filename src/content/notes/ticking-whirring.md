@@ -1,7 +1,8 @@
 ---
 title: ticking, whirring
 date: 2019-10-01
-tags: poem
+tags:
+- poem
 ---
 
 A great ticking, whirring from the room below,
