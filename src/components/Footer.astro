@@ -28,7 +28,7 @@ const commitLink = gitCommit !== "???" ? `${repo}/commit/${gitCommit}` : `${repo
     </div>
 
     <div>
-      <a href="/now" id="date">© {date}</a>
+      <span>© </span><a href="/now" id="date">{date}</a>
 
       <span class="quote"
         ><a href="/assets/images/moomin.jpg"
@@ -67,4 +67,22 @@ const commitLink = gitCommit !== "???" ? `${repo}/commit/${gitCommit}` : `${repo
     updateDate();
     setInterval(updateDate, 1000);
   </script>
+  
+  <style>
+    .edit-link {
+      color: #666;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .edit-link:hover {
+      opacity: 1;
+    }
+    
+    .edit-link-separator {
+      margin: 0 0.5rem;
+    }
+  </style>
 </div>
