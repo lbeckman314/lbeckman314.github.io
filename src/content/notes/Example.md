@@ -1,7 +1,6 @@
 ---
 title: Example
-date: 2025-11-01
-updated: 2025-12-01
+date: 1970-01-01
 tags:
 - example
 - foobar
