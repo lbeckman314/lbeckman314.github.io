@@ -772,6 +772,7 @@ pre {
     padding: 8px 12px;
     overflow-x: auto;
     $light-space: pre-wrap;
+    border: 1px solid gray;
 }
 
 code {
@@ -889,6 +890,7 @@ span.gray {
 .black-fade {
     position: relative;
     border: 1px solid gray;
+    background: black;
 
     .slide-src {
         @extend %blocky;
