@@ -37,6 +37,12 @@ export default defineConfig({
     css: {
       devSourcemap: true,
     },
+
+    resolve: {
+      alias: {
+        "@": "/src",
+      },
+    },
   },
 
 });

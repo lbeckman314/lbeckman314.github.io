@@ -31,10 +31,4 @@ const favorites = defineCollection({
 	}),
 });
 
-const showoff = defineCollection({
-  type: 'content',
-  schema: z.object({
-    path: z.string(),
-    alt: z.string().optional(),
-  }),
-});
+export const collections = { code, notes, favorites };

@@ -43,7 +43,7 @@ You can play around with Markdown on our [live demo page](http://www.markdown-he
 
 ## Headers
 
-```no-highlight
+```plaintext
 # H1
 ## H2
 ### H3
@@ -77,7 +77,7 @@ Alt-H2
 
 ## Emphasis
 
-```no-highlight
+```plaintext
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
@@ -97,7 +97,7 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 ## Lists
 
-```no-highlight
+```plaintext
 1. First ordered list item
 2. Another item
     * Unordered sub-list. 
@@ -129,7 +129,7 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 There are two ways to create links.
 
-```no-highlight
+```plaintext
 [I'm an inline-style link](https://www.google.com)
 
 [I'm a reference-style link][Arbitrary case-insensitive reference text]
@@ -169,7 +169,7 @@ Some text to show that the reference links can follow later.
 
 ## Images
 
-```no-highlight
+```plaintext
 Here's our logo (hover to see the title text):
 
 Inline-style: 
@@ -195,7 +195,7 @@ Reference-style:
 
 Code blocks are part of the Markdown spec, but syntax highlighting isn't. However, many renderers -- like Github's and *Markdown Here* -- support syntax highlighting. *Markdown Here* supports highlighting for dozens of languages (and not-really-languages, like diffs and HTTP headers); to see the complete list, and how to write the language names, see the [highlight.js demo page](https://highlightjs.org/demo).
 
-```no-highlight
+```plaintext
 Inline `code` has `back-ticks around` it.
 ```
 
@@ -203,7 +203,7 @@ Inline `code` has `back-ticks around` it.
 
 Blocks of code are either fenced by lines with three back-ticks <code>```</code>, or are indented with four spaces. I recommend only using the fenced code blocks -- they're easier and only they support syntax highlighting.
 
-<pre lang="no-highlight"><code>```javascript
+<pre lang="plaintext"><code>```javascript
 var s = "JavaScript syntax highlighting";
 alert(s);
 ```
@@ -240,7 +240,7 @@ Again, to see what languages are available for highlighting, and how to write th
 
 Tables aren't part of the core Markdown spec, but they are part of GFM and *Markdown Here* supports them. They are an easy way of adding tables to your email -- a task that would otherwise require copy-pasting from another application.
 
-```no-highlight
+```plaintext
 Colons can be used to align columns.
 
 | Tables        | Are           | Cool  |
@@ -274,7 +274,7 @@ Markdown | Less | Pretty
 
 ## Blockquotes
 
-```no-highlight
+```plaintext
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
 
@@ -294,7 +294,7 @@ Quote break.
 
 You can also use raw HTML in your Markdown, and it'll mostly work pretty well. 
 
-```no-highlight
+```plaintext
 <dl>
   <dt>Definition list</dt>
   <dd>Is something people use sometimes.</dd>
@@ -372,7 +372,7 @@ This line is only separated by a single newline, so it's a separate line in the 
 
 They can't be added directly but you can add an image with a link to the video like this:
 
-```no-highlight
+```plaintext
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
 " target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
@@ -380,7 +380,7 @@ alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
 Or, in pure Markdown, but losing the image sizing and border:
 
-```no-highlight
+```plaintext
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
 ```
 

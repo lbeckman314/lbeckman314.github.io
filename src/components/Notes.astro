@@ -2,17 +2,21 @@
 import { getCollection } from "astro:content";
 import Note from "./Note.astro";
 
-const collection = await getCollection("notes");
-const sorted = collection.sort(
+const notes = await getCollection("notes");
+const sorted = notes.sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
 );
-
-const url = Astro.url;
-const tag = url.searchParams.get("tag");
-
-const notes = tag
-  ? sorted.filter((note) => note.data.tags?.includes(tag))
-  : sorted;
 ---
 
-{notes.map((note) => <Note note={note} />)}
+{sorted.map((note) => <Note note={note} />)}
+
+<script is:inline>
+  const params = new URLSearchParams(window.location.search);
+  const tag = params.get("tag");
+  if (tag) {
+    document.querySelectorAll(".notes").forEach((el) => {
+      const tags = el.getAttribute("data-tags")?.split(",") ?? [];
+      el.style.display = tags.includes(tag) ? "" : "none";
+    });
+  }
+</script>
