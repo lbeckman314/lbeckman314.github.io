@@ -3,13 +3,13 @@ const images = import.meta.glob('/public/assets/showoff/*', {eager: true, query:
 const imagePaths = Object.values(images).map(p => (p as string).replace('/public', ''));
 ---
 
-<script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-<script type="text/javascript" src="/assets/js/grid.js"></script>
-<script type="text/javascript" src="/assets/js/pics.js"></script>
+<script is:inline src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+<script is:inline src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script is:inline type="text/javascript" src="/assets/js/grid.js"></script>
+<script is:inline type="text/javascript" src="/assets/js/pics.js"></script>
 
 <div class="grid" id="grid">
   {imagePaths.map((path) => (
-    <img class="grid-item" src={path} alt="Gallery Image" loading="lazy" />
+    <img class="grid-item" src={path} alt="Gallery Image" />
   ))}
 </div>
