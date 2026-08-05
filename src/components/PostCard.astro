@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@components/FormattedDate.astro";
-import MetaStats from "@components/MetaStats.astro";
 
 type Props = { entry: CollectionEntry<"notes"> };
 
@@ -19,7 +18,6 @@ const tags = entry.data.tags ?? [];
       </span>
       <span class="spacer"></span>
       <span class="meta-bit"><FormattedDate date={entry.data.date} /></span>
-      <MetaStats slug={`blog/${entry.slug}`} />
     </div>
   </div>
   <span class="chev">›</span>

@@ -369,10 +369,6 @@ a.tag:hover {
   color: var(--dim);
   opacity: 0.5;
 }
-/* the heart in a card's like count */
-.like-heart {
-  color: var(--heart);
-}
 /* GitHub star count (projects with a repo) */
 .repo-stars {
   display: inline-flex;
@@ -525,9 +521,6 @@ a.tag:hover {
 .post-aside .toc {
   display: none;
 }
-.post-aside .post-stats {
-  margin-top: 18px;
-}
 @media (min-width: 1120px) {
   .post-grid {
     display: grid;
@@ -585,17 +578,6 @@ a.tag:hover {
   }
   .post-aside .toc ol ol {
     padding-left: 14px;
-  }
-  /* Move the "reading now" indicator from the meta line into the rail, just
-     below the like button. */
-  .article-meta .live-stat {
-    display: none;
-  }
-  .post-aside .live-rail {
-    display: inline-flex;
-    margin-top: 14px;
-    font-family: var(--mono);
-    font-size: calc(12px * var(--fsm));
   }
 }
 
@@ -1197,47 +1179,10 @@ p {
   margin: 0 0 16px;
 }
 
-/* ============ POST STATS (views + likes) ============ */
 .meta-stat {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-}
-/* live "reading now" presence indicator */
-.live-stat [data-live-count] {
-  display: inline-flex;
-  align-items: center;
-  color: var(--mut);
-}
-/* Two placements: the article meta line (mobile) and the ToC rail next to the
-   like button (desktop). Only one shows at a time — see the rail @media. */
-.live-rail {
-  display: none;
-}
-.live-stat [data-live-count]::before {
-  content: "";
-  width: 7px;
-  height: 7px;
-  margin-right: 6px;
-  border-radius: 50%;
-  background: #46d369;
-  flex: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .live-stat [data-live-count]::before {
-    animation: live-pulse 2s ease-out infinite;
-  }
-}
-@keyframes live-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(70, 211, 105, 0.5);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(70, 211, 105, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(70, 211, 105, 0);
-  }
 }
 /* ============ BACK TO TOP ============ */
 .back-to-top {

@@ -6,7 +6,6 @@ import { shouldRenderPage, shouldListPage, iconForSocial } from "@lib/utils";
 import PostNavigation from "@components/PostNavigation.astro";
 import TableOfContents from "@components/TableOfContents.astro";
 import Aside from "@components/Aside.astro";
-import PostStats from "@components/PostStats.astro";
 
 export async function getStaticPaths() {
   // Draft posts are excluded, but archived posts are included - they're just not
@@ -61,33 +60,12 @@ const socials = post.data.socials ?? [];
   <article class="post-grid">
     <aside class="post-aside">
       {headings.length > 0 && <TableOfContents headings={headings} />}
-      <PostStats slug={`blog/${post.slug}`} />
-      <span
-        class="meta-stat live-stat live-rail"
-        data-live
-        data-slug={`blog/${post.slug}`}
-        hidden
-      >
-        <span data-live-count></span>
-      </span>
     </aside>
 
     <div class="post-main">
       <div class="article-head">
         <div class="article-meta">
           <span><FormattedDate date={post.data.date} /></span>
-          <span class="meta-stat" data-views-wrap hidden>
-            <span class="sep">·</span>
-            <span data-post-views></span>
-          </span>
-          <span
-            class="meta-stat live-stat"
-            data-live
-            data-slug={`blog/${post.slug}`}
-            hidden
-          >
-            <span data-live-count></span>
-          </span>
         </div>
         <h1>{post.data.title}</h1>
         <div class="article-tags">

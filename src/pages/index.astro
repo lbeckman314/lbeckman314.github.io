@@ -1,7 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
-import MetaStats from "@components/MetaStats.astro";
 import RepoStars from "@components/RepoStars.astro";
 import { HOME, SITE } from "@consts";
 import { withProjectsData } from "@lib/projects";
@@ -101,7 +100,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
             <span class="meta-bit">
               <FormattedDate date={post.data.date} />
             </span>
-            <MetaStats slug={`blog/${post.slug}`} />
           </div>
         </a>
       ))
@@ -131,7 +129,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
             <span class="meta-bit">
               <FormattedDate date={project.data.date} />
             </span>
-            <MetaStats slug={`projects/${project.entry.slug}`} />
             <RepoStars repoURL={project.data.repoURL} />
           </div>
         </a>

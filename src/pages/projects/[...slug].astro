@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import { iconForSocial, shouldListPage, shouldRenderPage } from "@lib/utils";
 import TableOfContents from "@components/TableOfContents.astro";
-import PostStats from "@components/PostStats.astro";
 import { getProjectData, demoLabel, withProjectsData } from "@lib/projects";
 
 export async function getStaticPaths() {
@@ -63,15 +62,6 @@ const socials = projectEntry.data.socials ?? [];
   <article class="post-grid">
     <aside class="post-aside">
       {headings.length > 0 && <TableOfContents headings={headings} />}
-      <PostStats slug={`projects/${projectEntry.slug}`} />
-      <span
-        class="meta-stat live-stat live-rail"
-        data-live
-        data-slug={`projects/${projectEntry.slug}`}
-        hidden
-      >
-        <span data-live-count></span>
-      </span>
     </aside>
 
     <div class="post-main">
