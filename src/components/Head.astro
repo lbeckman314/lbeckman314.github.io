@@ -1,0 +1,507 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+
+import "@fontsource/hanken-grotesk/400.css";
+import "@fontsource/hanken-grotesk/500.css";
+import "@fontsource/hanken-grotesk/600.css";
+import "@fontsource/hanken-grotesk/700.css";
+import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/jetbrains-mono/500.css";
+import "@fontsource/jetbrains-mono/600.css";
+
+import { Schema } from "astro-seo-schema";
+import type {
+  BlogPosting,
+  InteractionCounter,
+  Person,
+  WebSite,
+  WithContext,
+} from "schema-dts";
+
+import { SITE, SOCIALS } from "@consts";
+import { getStats } from "@lib/stats";
+import type { ArticleMeta } from "@layouts/Layout.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  article?: ArticleMeta;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const { title, description: rawDescription, imageUrl, article } = Astro.props;
+const description = rawDescription ?? SITE.DESCRIPTION;
+
+const absoluteImageUrl = imageUrl
+  ? new URL(imageUrl, Astro.site).toString()
+  : undefined;
+
+const ogType = article ? "article" : "website";
+
+// JSON-LD structured data. The Person and WebSite nodes describe the site and
+// author on every page; a BlogPosting node is added for individual posts.
+const author: Person = {
+  "@type": "Person",
+  name: SITE.AUTHOR,
+  url: Astro.site?.toString(),
+  sameAs: SOCIALS.map((social) => social.HREF),
+};
+
+const websiteSchema: WithContext<WebSite> = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.TITLE,
+  description: SITE.DESCRIPTION,
+  url: Astro.site?.toString(),
+  author,
+};
+
+// Engagement counts (views, likes, comments) for the post's structured data.
+// These are read at build time, so they're a snapshot that refreshes on deploy;
+// only counts greater than zero are emitted.
+const counter = (
+  action: "ViewAction" | "LikeAction" | "CommentAction",
+  count: number,
+): InteractionCounter => ({
+  "@type": "InteractionCounter",
+  interactionType: { "@type": action },
+  userInteractionCount: count,
+});
+
+let interactionStatistic: InteractionCounter[] | undefined;
+let commentCount: number | undefined;
+if (article) {
+  const statsSlug = canonicalURL.pathname.replace(/^\/+|\/+$/g, "");
+  const stats = await getStats(statsSlug);
+
+  const counters: InteractionCounter[] = [];
+  if (stats?.views) counters.push(counter("ViewAction", stats.views));
+  if (stats?.likes) counters.push(counter("LikeAction", stats.likes));
+  if (counters.length > 0) interactionStatistic = counters;
+}
+
+const articleSchema: WithContext<BlogPosting> | undefined = article && {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: article.title,
+  description,
+  url: canonicalURL.toString(),
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": canonicalURL.toString(),
+  },
+  datePublished: article.publishedDate.toISOString(),
+  dateModified: (article.updatedDate ?? article.publishedDate).toISOString(),
+  author,
+  publisher: author,
+  ...(absoluteImageUrl ? { image: absoluteImageUrl } : {}),
+  ...(article.tags?.length ? { keywords: article.tags.join(", ") } : {}),
+  ...(interactionStatistic ? { interactionStatistic } : {}),
+  ...(commentCount !== undefined ? { commentCount } : {}),
+};
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<link
+  rel="icon"
+  href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='1.4' y='1.4' width='29.2' height='29.2' rx='8' fill='none' stroke='%23F5A623' stroke-width='2.2'/%3E%3Cg fill='none' stroke='%23F5A623' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 11l4 5-4 5'/%3E%3C/g%3E%3Crect x='17.5' y='19.4' width='7.5' height='2.6' rx='1.3' fill='%23F5A623'/%3E%3C/svg%3E"
+/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#f5a623" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#0D0D0F" />
+<meta name="msapplication-config" content="/browserconfig.xml" />
+
+<link
+  rel="sitemap"
+  type="application/xml"
+  title="Sitemap"
+  href="/sitemap-index.xml"
+/>
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:site_name" content={SITE.TITLE} />
+
+{
+  absoluteImageUrl && (
+    <>
+      <meta property="og:image" content={absoluteImageUrl} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
+    </>
+  )
+}
+
+{
+  article && (
+    <>
+      <meta
+        property="article:published_time"
+        content={article.publishedDate.toISOString()}
+      />
+      <meta
+        property="article:modified_time"
+        content={(article.updatedDate ?? article.publishedDate).toISOString()}
+      />
+      <meta property="article:author" content={SITE.AUTHOR} />
+      {article.tags?.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))}
+    </>
+  )
+}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{
+  absoluteImageUrl && (
+    <>
+      <meta name="twitter:image" content={absoluteImageUrl} />
+      <meta name="twitter:image:alt" content={title} />
+    </>
+  )
+}
+
+<!-- JSON-LD structured data -->
+<Schema item={websiteSchema} />
+{articleSchema && <Schema item={articleSchema} />}
+
+<!-- PageFind -->
+<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+<script is:inline src="/pagefind/pagefind-ui.js"></script>
+
+<!-- Get the latest one from: https://katex.org/docs/browser -->
+<link
+  rel="preload"
+  as="style"
+  onload="this.onload=null;this.rel='stylesheet'"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+  integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
+  crossorigin="anonymous"
+/>
+
+<ClientRouter />
+
+<script is:inline>
+  const BRAND_MARK = `<svg width="28" height="28" viewBox="0 0 32 32">
+  <rect x="1.4" y="1.4" width="29.2" height="29.2" rx="8" fill="none" stroke="var(--accent)" stroke-width="2.2"></rect>
+  <path d="M11 9 L21.5 23 M15.2 15.5 L9.5 23" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>`;
+
+  const SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>`;
+  const MOON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z"/></svg>`;
+
+  const THEMES = ["light", "dark"];
+
+  let scrollBound = false;
+
+  function resolveTheme(choice) {
+    return choice === "light" ? "light" : "dark";
+  }
+
+  function updateThemeToggleIcon(choice) {
+    const btn = document.getElementById("themeToggle");
+    if (!btn) {
+      return;
+    }
+    btn.innerHTML = choice === "light" ? SUN : MOON;
+    btn.title = `Theme: ${choice} (click to change)`;
+  }
+
+  function applyTheme(choice) {
+    const css = document.createElement("style");
+    css.appendChild(
+      document.createTextNode(
+        `* {
+           -webkit-transition: none !important;
+           transition: none !important;
+        }`,
+      ),
+    );
+    document.head.appendChild(css);
+
+    const resolved = resolveTheme(choice);
+    document.documentElement.setAttribute("data-theme", resolved);
+    document.documentElement.style.colorScheme = resolved;
+
+    window.getComputedStyle(css).opacity;
+    document.head.removeChild(css);
+
+    updateThemeToggleIcon(choice);
+    setGiscusTheme();
+  }
+
+  function preloadTheme() {
+    const legacy = localStorage.getItem("theme");
+    let choice = localStorage.getItem("ddb-theme");
+    if (!choice) {
+      choice = THEMES.includes(legacy) ? legacy : "dark";
+    }
+    localStorage.setItem("ddb-theme", choice);
+    applyTheme(choice);
+  }
+
+  function bindThemeToggle() {
+    const btn = document.getElementById("themeToggle");
+    if (!btn || btn.dataset.bound) {
+      return;
+    }
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      const current = localStorage.getItem("ddb-theme") || "dark";
+      const next = THEMES[(THEMES.indexOf(current) + 1) % THEMES.length];
+      localStorage.setItem("ddb-theme", next);
+      applyTheme(next);
+    });
+  }
+
+  function applyFontSize(size) {
+    document.documentElement.setAttribute("data-fs", size);
+    for (const btn of document.querySelectorAll(".ctl-btn[data-fs]")) {
+      btn.classList.toggle("on", btn.dataset.fs === size);
+    }
+    localStorage.setItem("ddb-fs", size);
+  }
+
+  function preloadFontSize() {
+    const legacyMap = { small: "s", medium: "m", large: "l" };
+    const legacy = localStorage.getItem("fontSize");
+    const size =
+      (legacy && legacyMap[legacy]) || localStorage.getItem("ddb-fs") || "m";
+    applyFontSize(size);
+  }
+
+  function bindFontSize() {
+    for (const btn of document.querySelectorAll(".ctl-btn[data-fs]")) {
+      if (btn.dataset.bound) {
+        continue;
+      }
+      btn.dataset.bound = "1";
+      btn.addEventListener("click", () => applyFontSize(btn.dataset.fs));
+    }
+  }
+
+  function injectBrand() {
+    for (const el of document.querySelectorAll("#brandMark, .brand .mark")) {
+      if (el.dataset.brandInjected) {
+        continue;
+      }
+      el.dataset.brandInjected = "1";
+      el.innerHTML = BRAND_MARK;
+    }
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    for (const brand of document.querySelectorAll(".brand")) {
+      if (brand.dataset.twBound) {
+        continue;
+      }
+      brand.dataset.twBound = "1";
+      const word = brand.querySelector(".word");
+      if (!word) {
+        continue;
+      }
+      // Capture the wordmark once, before any animation rewrites the DOM.
+      // textContent includes the markup's newline/indent whitespace, so trim
+      // it; the ".dev" TLD is the tail and the rest is the plain prefix.
+      const tld = (word.querySelector(".tld")?.textContent || "").trim();
+      const fullText = word.textContent.trim();
+      const plain = fullText.slice(0, fullText.length - tld.length);
+      const total = fullText.length;
+      let busy = false;
+      brand.addEventListener("mouseenter", () => {
+        if (busy || reduceMotion) {
+          return;
+        }
+        busy = true;
+        // Reserve the wordmark's width so the brand link stays fully
+        // clickable even while the text is "deleted" mid-animation.
+        word.style.display = "inline-block";
+        word.style.minWidth = word.offsetWidth + "px";
+        let i = 0;
+        (function step() {
+          // Rebuild progressively so the ".dev" TLD keeps its accent colour
+          // as it's typed, instead of only after the animation finishes.
+          const plainShown = plain.slice(0, Math.min(i, plain.length));
+          const tldShown =
+            i > plain.length ? tld.slice(0, i - plain.length) : "";
+          word.innerHTML =
+            plainShown +
+            (tldShown ? `<span class="tld">${tldShown}</span>` : "") +
+            `<span class="caret"></span>`;
+          if (i < total) {
+            i++;
+            setTimeout(step, 26);
+          } else {
+            word.style.minWidth = "";
+            word.style.display = "";
+            busy = false;
+          }
+        })();
+      });
+    }
+  }
+
+  function setupBackToTop() {
+    let btt = document.querySelector(".back-to-top");
+    if (!btt) {
+      btt = document.createElement("button");
+      btt.className = "back-to-top";
+      btt.setAttribute("aria-label", "Back to top");
+      btt.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 11l6-5 6 5"/></svg> Back to top`;
+      btt.addEventListener("click", () =>
+        window.scrollTo({ top: 0, behavior: "smooth" }),
+      );
+      document.body.appendChild(btt);
+    }
+
+    if (!scrollBound) {
+      scrollBound = true;
+      let ticking = false;
+      window.addEventListener("scroll", () => {
+        if (ticking) {
+          return;
+        }
+        ticking = true;
+        requestAnimationFrame(() => {
+          document
+            .querySelector(".back-to-top")
+            ?.classList.toggle("show", window.scrollY > 600);
+          ticking = false;
+        });
+      });
+    }
+  }
+
+  function animate() {
+    const animateElements = document.querySelectorAll(".animate");
+    animateElements.forEach((element, index) => {
+      setTimeout(() => {
+        element.classList.add("show");
+      }, index * 100);
+    });
+  }
+
+  let giscusLoaded = false;
+
+  function setGiscusTheme() {
+    const giscus = document.querySelector(".giscus-frame");
+    if (!giscus?.contentWindow || !giscusLoaded) {
+      return;
+    }
+
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+
+    giscus.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: isDark ? "dark" : "light" } } },
+      "https://giscus.app",
+    );
+  }
+
+  window.addEventListener("message", (e) => {
+    if (
+      e.origin !== "https://giscus.app" ||
+      e.data?.giscus === undefined ||
+      giscusLoaded
+    ) {
+      return;
+    }
+
+    giscusLoaded = true;
+    setGiscusTheme();
+  });
+
+  const baseXorDecodeKey = 103;
+
+  function hexToCharCode(hex) {
+    return parseInt(hex, 16);
+  }
+
+  function xorDecode(encodedText) {
+    let decoded = "";
+    for (let i = 0; i < encodedText.length; i += 2) {
+      const decodeKey = (baseXorDecodeKey + i / 2) % 255;
+      const charCodeInput = hexToCharCode(encodedText.substring(i, i + 2));
+      decoded += String.fromCharCode(charCodeInput ^ decodeKey);
+    }
+    return decoded;
+  }
+
+  function decodeEmails() {
+    const emailElements = document.querySelectorAll(".email");
+    for (const emailElement of emailElements) {
+      const isContent = emailElement.classList.contains("email-text");
+      const encodedEmail = isContent
+        ? emailElement.textContent.trim()
+        : emailElement.getAttribute("href");
+
+      if (encodedEmail === null || emailElement.dataset.decoded) {
+        continue;
+      }
+      emailElement.dataset.decoded = "1";
+
+      const decodedEmail = xorDecode(encodedEmail);
+      if (isContent) {
+        emailElement.textContent = decodedEmail;
+      } else {
+        emailElement.setAttribute("href", `mailto:${decodedEmail}`);
+      }
+    }
+  }
+
+  function updateActiveNav() {
+    const path = window.location.pathname;
+    for (const link of document.querySelectorAll(".nav-links a")) {
+      const href = link.getAttribute("href");
+      const active = href === "/" ? path === "/" : path.startsWith(href);
+      link.classList.toggle("active", active);
+    }
+  }
+
+  function init() {
+    preloadTheme();
+    preloadFontSize();
+    injectBrand();
+    bindThemeToggle();
+    bindFontSize();
+    setupBackToTop();
+    updateActiveNav();
+    animate();
+    decodeEmails();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => init());
+  document.addEventListener("astro:after-swap", () => init());
+  preloadTheme();
+  preloadFontSize();
+</script>

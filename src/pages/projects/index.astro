@@ -1,0 +1,84 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import { PROJECTS } from "@consts";
+import { withProjectsData } from "@lib/projects";
+import { shouldListPage } from "@lib/utils";
+
+const projects = (await getCollection("projects"))
+  .filter(shouldListPage)
+const projectCards = await withProjectsData(projects);
+
+const professionalProjects = projectCards.filter(
+  (p) => p.data.professional,
+);
+const personalProjects = projectCards.filter(
+  (p) => !p.data.professional,
+);
+
+const tags = projectCards
+  .flatMap((project) => project.data.tags)
+  .filter((tag, index, self) => self.indexOf(tag) === index);
+---
+
+<Layout
+  title={PROJECTS.TITLE}
+  description={PROJECTS.DESCRIPTION}
+  route="projects"
+>
+  <div class="page-head">
+    <h1 class="page-title">Projects</h1>
+    <p class="page-intro">
+      A collection of projects built for clients and for fun.
+    </p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill active" href="/projects">all projects</a>
+    {
+      tags.map((tag) => (
+        <a class="pill" href={`/projects/tags/${tag}`}>
+          #{tag}
+        </a>
+      ))
+    }
+  </div>
+
+  {
+    professionalProjects.length > 0 && (
+      <>
+        <h2 class="section-heading">Professional</h2>
+        <div class="card-list">
+          {professionalProjects.map((project) => (
+            <ProjectCard entry={project.entry} data={project.data} />
+          ))}
+        </div>
+      </>
+    )
+  }
+
+  {
+    personalProjects.length > 0 && (
+      <>
+        <h2 class="section-heading">Personal</h2>
+        <div class="card-list">
+          {personalProjects.map((project) => (
+            <ProjectCard entry={project.entry} data={project.data} />
+          ))}
+        </div>
+      </>
+    )
+  }
+</Layout>
+
+<style>
+  .section-heading {
+    margin: 48px 0 18px;
+    font-size: calc(13px * var(--fsm));
+    font-weight: 600;
+    color: var(--mut);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+</style>

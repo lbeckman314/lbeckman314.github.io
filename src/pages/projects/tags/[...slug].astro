@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import { PROJECTS } from "@consts";
+import { withProjectsData } from "@lib/projects";
+import { shouldListPage, shouldRenderPage, dateSortDesc } from "@lib/utils";
+
+type Props = {
+  tag: string;
+};
+
+const { tag } = Astro.props;
+
+const projects = (await getCollection("projects"))
+  .filter(shouldListPage)
+  .sort((a, b) => dateSortDesc(a.data.date, b.data.date));
+const projectCards = await withProjectsData(projects);
+
+const tags = projectCards
+  .flatMap((project) => project.data.tags)
+  .filter((value, index, self) => self.indexOf(value) === index);
+
+const taggedProjects = projectCards.filter((project) =>
+  project.data.tags.includes(tag),
+);
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("projects"))
+    .filter(shouldRenderPage)
+    .sort((a, b) => dateSortDesc(a.data.date, b.data.date));
+  const projectCards = await withProjectsData(projects);
+
+  const tags = projectCards
+    .flatMap((project) => project.data.tags)
+    .filter((tag, index, self) => self.indexOf(tag) === index);
+
+  return tags.map((tag) => ({
+    params: { slug: tag },
+    props: { tag },
+  }));
+}
+---
+
+<Layout
+  title={`${PROJECTS.TITLE} tagged with #${tag}`}
+  description={`Explore some of the projects I've worked on that are tagged with #${tag}`}
+  route={`projects/tags/${tag}`}
+>
+  <div class="page-head">
+    <h1 class="page-title">Projects</h1>
+    <p class="page-intro">
+      {taggedProjects.length} project{taggedProjects.length === 1 ? "" : "s"}
+      tagged <strong>#{tag}</strong>.
+    </p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/projects">all projects</a>
+    {
+      tags.map((value) => (
+        <a
+          class:list={["pill", value === tag && "active"]}
+          href={`/projects/tags/${value}`}
+        >
+          #{value}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="card-list">
+    {
+      taggedProjects.map((project) => (
+        <ProjectCard entry={project.entry} data={project.data} />
+      ))
+    }
+  </div>
+</Layout>

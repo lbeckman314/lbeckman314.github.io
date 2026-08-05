@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { PROJECT_TAGS } from "@consts";
+import { withProjectsData } from "@lib/projects";
+import { shouldListPage, dateSortDesc } from "@lib/utils";
+
+const projects = (await getCollection("projects"))
+  .filter(shouldListPage)
+  .sort((a, b) => dateSortDesc(a.data.date, b.data.date));
+const projectCards = await withProjectsData(projects);
+
+const tags = projectCards
+  .flatMap((project) => project.data.tags)
+  .filter((tag, index, self) => self.indexOf(tag) === index)
+  .sort();
+---
+
+<Layout
+  title={PROJECT_TAGS.TITLE}
+  description={PROJECT_TAGS.DESCRIPTION}
+  route="projects/tags"
+>
+  <div class="page-head">
+    <h1 class="page-title">Tags</h1>
+    <p class="page-intro">Browse projects by topic.</p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/projects">all projects</a>
+    {
+      tags.map((tag) => (
+        <a class="pill" href={`/projects/tags/${tag}`}>
+          #{tag}
+        </a>
+      ))
+    }
+  </div>
+</Layout>

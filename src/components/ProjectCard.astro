@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
+import MetaStats from "@components/MetaStats.astro";
+import RepoStars from "@components/RepoStars.astro";
+import { getProjectData, demoLabel, type ProjectData } from "@lib/projects";
+
+type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
+
+const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
+const tags = projectData.tags;
+const href = `/projects/${entry.slug}`;
+---
+
+<div class="card project-card">
+  <div class="card-top">
+    <a class="card-main" href={href}>
+      <div class="body">
+        <div
+          style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"
+        >
+          <span class="proj-dot"></span>
+          <h3
+            class="card-title"
+            style="margin:0; font-family:var(--mono); font-size:calc(16px * var(--fsm));"
+          >
+            {projectData.title}
+          </h3>
+        </div>
+        <p class="card-sub">{projectData.description}</p>
+        {
+          projectData.languages.length > 0 && (
+            <div class="card-langs">
+              {projectData.languages.slice(0, 3).map((lang) => (
+                <span class="lang">{lang.name}</span>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </a>
+    <a class="chev" href={href} aria-label={`View ${projectData.title}`}>›</a>
+  </div>
+  <div class="card-foot">
+    <span class="tags">
+      {
+        tags.map((tag) => (
+          <a class="tag" href={`/projects/tags/${tag}`}>
+            #{tag}
+          </a>
+        ))
+      }
+    </span>
+    <span class="spacer"></span>
+    {
+      projectData.demoURL && (
+        <a
+          class="card-demo"
+          href={projectData.demoURL}
+          target="_blank"
+          rel="noopener"
+        >
+          {demoLabel(projectData.demoURL)} ↗
+        </a>
+      )
+    }
+    {
+      projectData.updated && (
+        <span class="meta-bit">
+          Last Updated <FormattedDate date={projectData.updated} />
+        </span>
+      )
+    }
+    <MetaStats slug={`projects/${entry.slug}`} />
+    <RepoStars repoURL={entry.data.repoURL} />
+  </div>
+</div>

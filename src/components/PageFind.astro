@@ -1,0 +1,136 @@
+---
+import Search from "astro-pagefind/components/Search";
+---
+
+<div transition:persist id="backdrop" class="pf-backdrop">
+  <div id="pagefind-container" class="pf-container">
+    <Search
+      id="search"
+      className="pagefind-ui"
+      uiOptions={{
+        showImages: false,
+        excerptLength: 15,
+        resetStyles: false,
+      }}
+    />
+    <div class="pf-hint">
+      Press <kbd>Esc</kbd> or click anywhere to close
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  const magnifyingGlass = document.getElementById("magnifying-glass");
+  const backdrop = document.getElementById("backdrop");
+
+  function openPagefind() {
+    const search = document.getElementById("search")?.querySelector("input");
+    backdrop?.classList.add("open");
+    setTimeout(() => search?.focus(), 0);
+  }
+
+  function closePagefind() {
+    const search = document.getElementById("search")?.querySelector("input");
+    if (search) {
+      search.value = "";
+    }
+    backdrop?.classList.remove("open");
+  }
+
+  magnifyingGlass?.addEventListener("click", openPagefind);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/") {
+      e.preventDefault();
+      openPagefind();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      openPagefind();
+    } else if (e.key === "Escape") {
+      closePagefind();
+    }
+  });
+
+  backdrop?.addEventListener("click", (event) => {
+    if (!event.target.closest("#pagefind-container")) {
+      closePagefind();
+    }
+  });
+</script>
+
+<style is:global>
+  :root {
+    --pagefind-ui-scale: 0.75;
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: var(--sans);
+  }
+  html[data-theme="light"] {
+    --pagefind-ui-primary: #1c1a16;
+    --pagefind-ui-text: #2d2a24;
+    --pagefind-ui-background: #ffffff;
+    --pagefind-ui-border: rgba(20, 18, 12, 0.1);
+    --pagefind-ui-tag: rgba(20, 18, 12, 0.04);
+  }
+  html[data-theme="dark"] {
+    --pagefind-ui-primary: #ececee;
+    --pagefind-ui-text: #cfcfd4;
+    --pagefind-ui-background: #161619;
+    --pagefind-ui-border: rgba(255, 255, 255, 0.08);
+    --pagefind-ui-tag: rgba(255, 255, 255, 0.05);
+  }
+
+  .pf-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 8vh 24px 24px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+  .pf-backdrop.open {
+    display: flex;
+  }
+  .pf-container {
+    width: 100%;
+    max-width: 640px;
+    max-height: 80vh;
+    overflow: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  .pf-hint {
+    margin-top: 10px;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--dim);
+  }
+  .pf-hint kbd {
+    font-family: var(--mono);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 5px;
+    background: var(--chip-bg);
+  }
+
+  #search input {
+    font-weight: normal;
+  }
+  #search p {
+    font-weight: normal;
+  }
+  #search .pagefind-ui__result-title {
+    font-weight: 600;
+  }
+  #search .pagefind-ui__message {
+    padding: 0;
+    padding-bottom: 0.75rem;
+  }
+</style>

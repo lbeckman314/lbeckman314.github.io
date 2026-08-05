@@ -1,0 +1,159 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { iconForSocial, shouldListPage, shouldRenderPage } from "@lib/utils";
+import TableOfContents from "@components/TableOfContents.astro";
+import PostStats from "@components/PostStats.astro";
+import { getProjectData, demoLabel, withProjectsData } from "@lib/projects";
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("projects")).filter(shouldRenderPage);
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: project,
+  }));
+}
+
+const project = Astro.props;
+const projectList = await getCollection("projects");
+const projectEntry =
+  projectList.find((p) => p.slug === project.slug) ?? project;
+
+const { Content, headings } = await projectEntry.render();
+const projectData = await getProjectData(projectEntry);
+
+const projects = await withProjectsData(projectList.filter(shouldListPage));
+const projectIndex = projects.findIndex(
+  (p) => p.entry.slug === projectEntry.slug,
+);
+const nextProject = projects[projectIndex + 1];
+
+const links = [
+  projectData.demoURL && {
+    href: projectData.demoURL,
+    text: demoLabel(projectData.demoURL),
+  },
+  projectEntry.data.repoURL && {
+    href: projectEntry.data.repoURL,
+    text: "repo",
+  },
+  projectEntry.data.packageURL && {
+    href: projectEntry.data.packageURL,
+    text: "package",
+  },
+].filter(Boolean) as { href: string; text: string }[];
+
+const tags = projectData.tags;
+const socials = projectEntry.data.socials ?? [];
+---
+
+<Layout
+  title={projectData.title}
+  description={projectData.description}
+  route={`${projectEntry.collection}/${projectEntry.slug}`}
+  article={{
+    title: projectData.title,
+    publishedDate: projectData.date ?? new Date(),
+    updatedDate: projectData.updated,
+    tags,
+  }}
+>
+  <a class="backlink" href="/projects">‹ Back to projects</a>
+
+  <article class="post-grid">
+    <aside class="post-aside">
+      {headings.length > 0 && <TableOfContents headings={headings} />}
+      <PostStats slug={`projects/${projectEntry.slug}`} />
+      <span
+        class="meta-stat live-stat live-rail"
+        data-live
+        data-slug={`projects/${projectEntry.slug}`}
+        hidden
+      >
+        <span data-live-count></span>
+      </span>
+    </aside>
+
+    <div class="post-main">
+      <div class="article-head">
+        <div class="article-tags">
+          {tags.map((tag) => <a href={`/projects/tags/${tag}`}>#{tag}</a>)}
+          {
+            (links.length > 0 || socials.length > 0) && tags.length > 0 && (
+              <span class="repo" style="color:var(--dim)">
+                ·
+              </span>
+            )
+          }
+          {
+            links.map((link) => (
+              <a class="repo" href={link.href} target="_blank" rel="noopener">
+                {link.text}
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M7 17 17 7M9 7h8v8" />
+                </svg>
+              </a>
+            ))
+          }
+          {
+            socials.length > 0 && (
+              <>
+                <span class="repo">Discuss on</span>
+                {socials.toSorted().map((social) => (
+                  <a
+                    class="repo discuss-link"
+                    href={social}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Discuss"
+                  >
+                    <span set:html={iconForSocial(social)} />
+                  </a>
+                ))}
+              </>
+            )
+          }
+          {
+            projectData.languages.length > 0 && (
+              <span class="article-langs">
+                {projectData.languages.slice(0, 4).map((lang) => (
+                  <span class="lang-chip">{lang.name}</span>
+                ))}
+              </span>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="article">
+        <Content />
+      </div>
+
+      <div class="article-foot">
+        <div class="prevnext">
+          <a class="pn prev" href="/projects">
+            <span class="dir">‹ All projects</span>
+            <span class="t">Back to the full list</span>
+          </a>
+          {
+            nextProject && (
+              <a class="pn next" href={`/projects/${nextProject.entry.slug}`}>
+                <span class="dir">Next project ›</span>
+                <span class="t">{nextProject.data.title}</span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
