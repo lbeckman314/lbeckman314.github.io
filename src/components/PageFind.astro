@@ -107,6 +107,8 @@ const quickLinks = [
       closePagefind();
     }
   });
+
+  document.addEventListener("astro:before-swap", closePagefind);
 </script>
 
 <style is:global>
