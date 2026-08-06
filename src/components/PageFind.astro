@@ -228,8 +228,28 @@ const quickLinks = [
     height: 16px;
   }
   @media (max-width: 620px) {
+    .pf-container {
+      flex-direction: column;
+      max-height: 85vh;
+    }
     .pf-quick-links {
-      display: none;
+      width: auto;
+      max-height: none;
+      padding: 12px 18px 16px;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .pf-quick-links-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pf-quick-links-list li {
+      flex: none;
+    }
+    .pf-quick-links-list a {
+      background: var(--card);
+      border: 1px solid var(--line);
     }
   }
 
