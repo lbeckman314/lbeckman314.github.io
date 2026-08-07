@@ -218,6 +218,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
 
     const resolved = resolveTheme(choice);
     document.documentElement.setAttribute("data-theme", resolved);
+    document.documentElement.setAttribute("data-pf-theme", resolved);
     document.documentElement.style.colorScheme = resolved;
 
     window.getComputedStyle(css).opacity;

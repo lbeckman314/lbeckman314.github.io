@@ -1,5 +1,5 @@
 ---
-import Search from "astro-pagefind/components/Search";
+import PagefindConfig from "astro-pagefind/components/PagefindConfig.astro";
 
 const quickLinks = [
   {
@@ -25,137 +25,78 @@ const quickLinks = [
 ];
 ---
 
-<div transition:persist id="backdrop" class="sk-backdrop">
-  <div id="pagefind-container" class="sk-container">
-    <div class="sk-main">
-      <Search
-        id="search"
-        className="pagefind-ui"
-        uiOptions={{
-          showImages: false,
-          showSubResults: true,
-          excerptLength: 15,
-          resetStyles: false,
-        }}
-      />
-      <div class="sk-hint">
-        Press <kbd>Esc</kbd> or click anywhere to close
+<PagefindConfig excerpt-length="15" />
+
+<pagefind-modal reset-on-close>
+  <pagefind-modal-body>
+    <div class="sk-container">
+      <div class="sk-main">
+        <pagefind-input autofocus></pagefind-input>
+        <pagefind-results show-images="false" show-sub-results
+        ></pagefind-results>
+      </div>
+      <div class="sk-quick-links">
+        <div class="sk-quick-links-title">Quick Links</div>
+        <ul class="sk-quick-links-list">
+          {
+            quickLinks.map((link) => (
+              <li>
+                <a href={link.href}>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    set:html={link.icon}
+                  />
+                  <span>{link.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
-    <div class="sk-quick-links">
-      <div class="sk-quick-links-title">Quick Links</div>
-      <ul class="sk-quick-links-list">
-        {
-          quickLinks.map((link) => (
-            <li>
-              <a href={link.href}>
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  set:html={link.icon}
-                />
-                <span>{link.label}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </div>
-</div>
-
-<script is:inline>
-  const magnifyingGlass = document.getElementById("magnifying-glass");
-  const backdrop = document.getElementById("backdrop");
-
-  function openPagefind() {
-    const search = document.getElementById("search")?.querySelector("input");
-    backdrop?.classList.add("open");
-    setTimeout(() => search?.focus(), 0);
-  }
-
-  function closePagefind() {
-    const search = document.getElementById("search")?.querySelector("input");
-    if (search) {
-      search.value = "";
-    }
-    backdrop?.classList.remove("open");
-  }
-
-  magnifyingGlass?.addEventListener("click", openPagefind);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "/") {
-      e.preventDefault();
-      openPagefind();
-    } else if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-      e.preventDefault();
-      openPagefind();
-    } else if (e.key === "Escape") {
-      closePagefind();
-    }
-  });
-
-  backdrop?.addEventListener("click", (event) => {
-    if (!event.target.closest("#pagefind-container")) {
-      closePagefind();
-    }
-  });
-
-  document.addEventListener("astro:before-swap", closePagefind);
-</script>
+  </pagefind-modal-body>
+</pagefind-modal>
 
 <style is:global>
   :root {
-    --pagefind-ui-scale: 0.75;
-    --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 8px;
-    --pagefind-ui-font: var(--sans);
+    --pf-font: var(--sans);
+    --pf-border-radius: 8px;
+    --pf-modal-max-width: 760px;
+    --pf-modal-backdrop: rgba(0, 0, 0, 0.5);
   }
   html[data-theme="light"] {
-    --pagefind-ui-primary: #1c1a16;
-    --pagefind-ui-text: #2d2a24;
-    --pagefind-ui-background: #ffffff;
-    --pagefind-ui-border: rgba(20, 18, 12, 0.1);
-    --pagefind-ui-tag: rgba(20, 18, 12, 0.04);
+    --pf-text: #1c1a16;
+    --pf-text-secondary: #2d2a24;
+    --pf-background: #ffffff;
+    --pf-border: rgba(20, 18, 12, 0.1);
+    --pf-hover: rgba(20, 18, 12, 0.04);
   }
   html[data-theme="dark"] {
-    --pagefind-ui-primary: #ececee;
-    --pagefind-ui-text: #cfcfd4;
-    --pagefind-ui-background: #161619;
-    --pagefind-ui-border: rgba(255, 255, 255, 0.08);
-    --pagefind-ui-tag: rgba(255, 255, 255, 0.05);
+    --pf-text: #ececee;
+    --pf-text-secondary: #cfcfd4;
+    --pf-background: #161619;
+    --pf-border: rgba(255, 255, 255, 0.08);
+    --pf-hover: rgba(255, 255, 255, 0.05);
   }
 
-  .sk-backdrop {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 8vh 24px 24px;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-  }
-  .sk-backdrop.open {
-    display: flex;
-  }
-  .sk-container {
-    display: flex;
-    width: 100%;
-    max-width: 760px;
-    max-height: 80vh;
+  pagefind-modal::part(dialog) {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  .sk-container {
+    display: flex;
+    width: 100%;
+    max-height: 80vh;
     overflow: hidden;
   }
   .sk-main {
@@ -163,20 +104,6 @@ const quickLinks = [
     min-width: 0;
     overflow: auto;
     padding: 14px 18px;
-  }
-  .sk-hint {
-    margin-top: 10px;
-    text-align: right;
-    font-family: var(--mono);
-    font-size: calc(12px * var(--fsm));
-    color: var(--dim);
-  }
-  .sk-hint kbd {
-    font-family: var(--mono);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 1px 5px;
-    background: var(--chip-bg);
   }
 
   .sk-quick-links {
@@ -253,37 +180,5 @@ const quickLinks = [
       background: var(--card);
       border: 1px solid var(--line);
     }
-  }
-
-  #search input {
-    font-weight: normal;
-  }
-  #search p {
-    font-weight: normal;
-  }
-  #search .pagefind-ui__result-title {
-    font-weight: 600;
-  }
-  #search .pagefind-ui__result-title .pagefind-ui__result-link {
-    color: var(--accent-text);
-  }
-  #search .pagefind-ui__result-title .pagefind-ui__result-link:hover {
-    text-decoration: underline;
-  }
-  #search .pagefind-ui__result-nested .pagefind-ui__result-link {
-    color: var(--ink);
-  }
-  #search .pagefind-ui__result-nested .pagefind-ui__result-link:hover {
-    color: var(--accent-text);
-  }
-  #search mark {
-    background: color-mix(in srgb, var(--accent) 35%, transparent);
-    color: var(--ink);
-    font-weight: 600;
-    border-radius: 3px;
-  }
-  #search .pagefind-ui__message {
-    padding: 0;
-    padding-bottom: 0.75rem;
   }
 </style>

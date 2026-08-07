@@ -31,26 +31,8 @@ const isActive = (prefix: string) =>
     <div class="ctl-group" role="group" aria-label="Theme">
       <button class="ctl-btn" id="themeToggle" aria-label="Theme"></button>
     </div>
-    <button
-      class="search"
-      id="magnifying-glass"
-      title="Search"
-      aria-label="Search"
-    >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.2"
-        stroke-linecap="round"
-      >
-        <circle cx="11" cy="11" r="7"></circle>
-        <path d="m20 20-3.2-3.2"></path>
-      </svg>
-      <span class="search-text">Search</span> <span class="kbd">⌘K</span>
-    </button>
+    <pagefind-modal-trigger class="search" placeholder="Search" title="Search"
+    ></pagefind-modal-trigger>
   </div>
 </header>
 
@@ -231,10 +213,11 @@ const isActive = (prefix: string) =>
   .ctl-btn.fs-l {
     font-size: 16px;
   }
-  .search {
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn {
     display: flex;
     align-items: center;
     gap: 8px;
+    height: auto;
     font-family: var(--mono);
     font-size: calc(12.5px * var(--fsm));
     color: var(--dim);
@@ -242,15 +225,23 @@ const isActive = (prefix: string) =>
     border-radius: 9px;
     padding: 7px 11px;
     background: var(--chip-bg);
-    cursor: pointer;
     transition: border-color 0.15s;
   }
-  .search:hover {
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn:hover {
     border-color: var(--accent);
   }
-  .search .kbd {
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-text {
+    color: var(--dim);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-shortcut {
     color: var(--dim);
     opacity: 0.8;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-key {
+    font-family: var(--mono);
+    background: transparent;
+    border: none;
+    padding: 0;
   }
 
   @media (max-width: 720px) {
@@ -281,7 +272,7 @@ const isActive = (prefix: string) =>
     .nav-links a {
       font-size: calc(15px * var(--fsm));
     }
-    .search {
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn {
       gap: 0;
       padding: 0;
       width: 28px;
@@ -290,8 +281,8 @@ const isActive = (prefix: string) =>
       border: 0;
       background: transparent;
     }
-    .search .kbd,
-    .search-text {
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-text,
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-shortcut {
       display: none;
     }
   }
