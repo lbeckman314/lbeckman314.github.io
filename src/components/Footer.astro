@@ -1,57 +1,122 @@
 ---
-import { SITE } from "@consts";
+import { GITHUB_USERNAME } from "@consts";
 
-const year = new Date().getFullYear();
+const repo = `https://github.com/${GITHUB_USERNAME}/${GITHUB_USERNAME}.github.io`;
+const commit = import.meta.env.COMMIT;
+const commitLink = commit ? `${repo}/commit/${commit}` : `${repo}/commits/`;
+const commitLabel = commit || "dev";
 ---
 
 <footer class="footer">
-  <span class="copy">© {year} {SITE.TITLE}</span>
-  <span class="spacer"></span>
-  <div class="footer-links">
-    <a href="https://github.com/lbeckman314" target="_blank" rel="noopener">
-      GitHub
-    </a>
-    <a
-      href="https://www.linkedin.com/in/liam-beckman-ab3183a6"
-      target="_blank"
-      rel="noopener"
-    >
-      LinkedIn
-    </a>
-    <a href="/rss.xml">RSS</a>
+  <div class="footer-row">
+    <span class="made-with">
+      made with
+      <svg
+        class="heart"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 21s-6.7-4.35-9.3-8.28C1 10.4 1.4 7 4.1 5.4A5.5 5.5 0 0 1 12 7a5.5 5.5 0 0 1 7.9-1.6c2.7 1.6 3.1 5 1.4 7.32C18.7 16.65 12 21 12 21Z"
+        ></path>
+      </svg>
+    </span>
+    <a href={repo} target="_blank" rel="noopener">open-source and free</a>
+    <span class="sep">~</span>
+    <a href={commitLink} target="_blank" rel="noopener">{commitLabel}</a>
+    <span class="quote">
+      <span title="Theme by Drew Silcock">
+        Theme by <a
+          href="https://drew.silcock.dev"
+          target="_blank"
+          rel="noopener">Drew Silcock</a
+        >
+      </span>
+    </span>
+  </div>
+
+  <div class="footer-row">
+    <span>© <span id="footer-date"></span></span>
+    <span class="quote">
+      <span title="Tove Jansson">
+        "I only want to live in peace and plant potatoes and dream!"
+      </span>
+    </span>
   </div>
 </footer>
+
+<script>
+  function updateFooterDate() {
+    const el = document.getElementById("footer-date");
+    if (!el) {
+      return;
+    }
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    el.textContent = new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: timezone,
+      timeZoneName: "short",
+    }).format(new Date());
+  }
+
+  let footerDateTimer: ReturnType<typeof setInterval> | undefined;
+
+  function initFooterDate() {
+    updateFooterDate();
+    clearInterval(footerDateTimer);
+    footerDateTimer = setInterval(updateFooterDate, 1000);
+  }
+
+  document.addEventListener("astro:page-load", initFooterDate);
+</script>
 
 <style is:global>
   .footer {
     border-top: 1px solid var(--line);
     padding: 22px 44px;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 8px;
     margin-top: 64px;
   }
-  .footer .copy {
+  .footer-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
     font-family: var(--mono);
     font-size: calc(12.5px * var(--fsm));
     color: var(--dim);
   }
-  .footer .spacer {
-    flex: 1;
-  }
-  .footer-links {
-    display: flex;
-    gap: 18px;
-  }
-  .footer-links a {
-    font-family: var(--mono);
-    font-size: calc(12.5px * var(--fsm));
+  .footer-row a {
     color: var(--mut);
     text-decoration: none;
   }
-  .footer-links a:hover {
+  .footer-row a:hover {
     color: var(--accent-text);
+  }
+  .footer .made-with {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .footer .heart {
+    color: var(--accent);
+  }
+  .footer .sep {
+    opacity: 0.6;
+  }
+  .footer .quote {
+    font-style: italic;
+    margin-left: auto;
   }
   @media (max-width: 720px) {
     .footer {

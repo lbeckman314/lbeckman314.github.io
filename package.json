@@ -5,15 +5,15 @@
   "version": "0.0.1",
   "packageManager": "pnpm@11.5.1",
   "scripts": {
+    "dev": "COMMIT=$(git rev-parse --short HEAD) astro dev",
+    "build": "COMMIT=$(git rev-parse --short HEAD) astro build",
+    "preview": "astro preview",
     "preinstall": "npx only-allow pnpm",
-    "dev": "astro dev",
     "start": "astro dev",
     "format": "prettier --write .",
     "lint": "prettier --check .",
     "check": "astro check",
     "precommit": "pnpm format && pnpm check",
-    "build": "astro build",
-    "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
