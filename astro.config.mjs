@@ -1,3 +1,4 @@
+import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
@@ -28,7 +29,10 @@ const admonitionBuild = (alertOptions, originalChildren) => {
     type: "element",
     tagName: "div",
     properties: {
-      className: ["admonition", `admonition-${alertOptions.keyword.toLowerCase()}`],
+      className: [
+        "admonition",
+        `admonition-${alertOptions.keyword.toLowerCase()}`,
+      ],
     },
     children: [
       {
@@ -65,40 +69,34 @@ export default defineConfig({
     mdx(),
   ],
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [
-      rehypeKatex,
-      rehypeSlug, // ToC adds IDs, but that happens too late for the autolink plugin.
-      [
-        rehypeAutolinkHeadings,
-        {
-          behavior: "prepend",
-          headingProperties: {
-            className: ["section-anchor"],
+    // Sätteri (Astro's default processor as of v6) doesn't support
+    // remark/rehype plugins, so stick with the classic unified pipeline for
+    // KaTeX math, heading autolinks, and GitHub-style admonitions.
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        rehypeKatex,
+        rehypeSlug, // ToC adds IDs, but that happens too late for the autolink plugin.
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: "prepend",
+            headingProperties: {
+              className: ["section-anchor"],
+            },
+            properties: {
+              className: ["section-anchor-link"],
+            },
           },
-          properties: {
-            className: ["section-anchor-link"],
-          },
-        },
+        ],
+        [rehypeGithubAlerts, { build: admonitionBuild }],
       ],
-      [rehypeGithubAlerts, { build: admonitionBuild }],
-    ],
+    }),
     shikiConfig: {
       themes: {
         light: "catppuccin-latte",
         dark: "catppuccin-frappe",
       },
-    },
-  },
-  vite: {
-    // Force Vite to pre-bundle clsx into a normalized ESM module; otherwise
-    // its SSR module runner sometimes rejects the named `clsx` import with
-    // "Named export 'clsx' not found" against the package's CJS build.
-    ssr: {
-      optimizeDeps: {
-        include: ["clsx"],
-      },
-      noExternal: ["clsx"],
     },
   },
 });

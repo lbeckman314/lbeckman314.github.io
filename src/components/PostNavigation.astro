@@ -11,16 +11,16 @@ const { prevPost, nextPost } = Astro.props;
 
 <div class="prevnext">
   {
-    prevPost !== undefined && Boolean(prevPost.slug) && (
-      <a class="pn prev" href={`/${prevPost.collection}/${prevPost.slug}`}>
+    prevPost !== undefined && Boolean(prevPost.id) && (
+      <a class="pn prev" href={`/${prevPost.collection}/${prevPost.id}`}>
         <span class="dir">‹ Older</span>
         <span class="t">{prevPost.data.title}</span>
       </a>
     )
   }
   {
-    nextPost !== undefined && Boolean(nextPost.slug) && (
-      <a class="pn next" href={`/${nextPost.collection}/${nextPost.slug}`}>
+    nextPost !== undefined && Boolean(nextPost.id) && (
+      <a class="pn next" href={`/${nextPost.collection}/${nextPost.id}`}>
         <span class="dir">Newer ›</span>
         <span class="t">{nextPost.data.title}</span>
       </a>

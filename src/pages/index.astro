@@ -83,7 +83,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
   <section class="posts">
     {
       posts.map((post, i) => (
-        <a class="post" href={`/notes/${post.slug}`}>
+        <a class="post" href={`/notes/${post.id}`}>
           <div class="post-top">
             <span class="post-num">{String(i + 1).padStart(2, "0")}</span>
             <h3 class="post-title">{post.data.title}</h3>

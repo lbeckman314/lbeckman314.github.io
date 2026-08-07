@@ -32,7 +32,7 @@ export async function getProjectData(
 
   return {
     ...entry.data,
-    title: entry.data.title ?? repoMetadata?.name ?? entry.slug,
+    title: entry.data.title ?? repoMetadata?.name ?? entry.id,
     description:
       entry.data.description ?? repoMetadata?.description ?? undefined,
     demoURL: entry.data.demoURL ?? repoMetadata?.homepage ?? undefined,

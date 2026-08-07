@@ -8,7 +8,7 @@ type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
 
 const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
 const tags = projectData.tags;
-const href = `/projects/${entry.slug}`;
+const href = `/projects/${entry.id}`;
 ---
 
 <div class="card project-card">

@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import { iconForSocial, shouldListPage, shouldRenderPage } from "@lib/utils";
 import TableOfContents from "@components/TableOfContents.astro";
@@ -8,23 +8,20 @@ import { getProjectData, demoLabel, withProjectsData } from "@lib/projects";
 export async function getStaticPaths() {
   const projects = (await getCollection("projects")).filter(shouldRenderPage);
   return projects.map((project) => ({
-    params: { slug: project.slug },
+    params: { slug: project.id },
     props: project,
   }));
 }
 
 const project = Astro.props;
 const projectList = await getCollection("projects");
-const projectEntry =
-  projectList.find((p) => p.slug === project.slug) ?? project;
+const projectEntry = projectList.find((p) => p.id === project.id) ?? project;
 
-const { Content, headings } = await projectEntry.render();
+const { Content, headings } = await render(projectEntry);
 const projectData = await getProjectData(projectEntry);
 
 const projects = await withProjectsData(projectList.filter(shouldListPage));
-const projectIndex = projects.findIndex(
-  (p) => p.entry.slug === projectEntry.slug,
-);
+const projectIndex = projects.findIndex((p) => p.entry.id === projectEntry.id);
 const nextProject = projects[projectIndex + 1];
 
 const links = [
@@ -49,7 +46,7 @@ const socials = projectEntry.data.socials ?? [];
 <Layout
   title={projectData.title}
   description={projectData.description}
-  route={`${projectEntry.collection}/${projectEntry.slug}`}
+  route={`${projectEntry.collection}/${projectEntry.id}`}
   article={{
     title: projectData.title,
     publishedDate: projectData.date ?? new Date(),
@@ -136,7 +133,7 @@ const socials = projectEntry.data.socials ?? [];
           </a>
           {
             nextProject && (
-              <a class="pn next" href={`/projects/${nextProject.entry.slug}`}>
+              <a class="pn next" href={`/projects/${nextProject.entry.id}`}>
                 <span class="dir">Next project ›</span>
                 <span class="t">{nextProject.data.title}</span>
               </a>

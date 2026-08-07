@@ -8,7 +8,7 @@ const { entry } = Astro.props;
 const tags = entry.data.tags ?? [];
 ---
 
-<a class="card" href={`/notes/${entry.slug}`}>
+<a class="card" href={`/notes/${entry.id}`}>
   <div class="body">
     <h3 class="card-title">{entry.data.title}</h3>
     <p class="card-sub">{entry.data.description}</p>

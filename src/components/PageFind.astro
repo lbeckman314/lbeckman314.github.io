@@ -25,9 +25,9 @@ const quickLinks = [
 ];
 ---
 
-<div transition:persist id="backdrop" class="pf-backdrop">
-  <div id="pagefind-container" class="pf-container">
-    <div class="pf-main">
+<div transition:persist id="backdrop" class="sk-backdrop">
+  <div id="pagefind-container" class="sk-container">
+    <div class="sk-main">
       <Search
         id="search"
         className="pagefind-ui"
@@ -38,13 +38,13 @@ const quickLinks = [
           resetStyles: false,
         }}
       />
-      <div class="pf-hint">
+      <div class="sk-hint">
         Press <kbd>Esc</kbd> or click anywhere to close
       </div>
     </div>
-    <div class="pf-quick-links">
-      <div class="pf-quick-links-title">Quick Links</div>
-      <ul class="pf-quick-links-list">
+    <div class="sk-quick-links">
+      <div class="sk-quick-links-title">Quick Links</div>
+      <ul class="sk-quick-links-list">
         {
           quickLinks.map((link) => (
             <li>
@@ -133,7 +133,7 @@ const quickLinks = [
     --pagefind-ui-tag: rgba(255, 255, 255, 0.05);
   }
 
-  .pf-backdrop {
+  .sk-backdrop {
     display: none;
     position: fixed;
     inset: 0;
@@ -144,10 +144,10 @@ const quickLinks = [
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
   }
-  .pf-backdrop.open {
+  .sk-backdrop.open {
     display: flex;
   }
-  .pf-container {
+  .sk-container {
     display: flex;
     width: 100%;
     max-width: 760px;
@@ -158,20 +158,20 @@ const quickLinks = [
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     overflow: hidden;
   }
-  .pf-main {
+  .sk-main {
     flex: 1;
     min-width: 0;
     overflow: auto;
     padding: 14px 18px;
   }
-  .pf-hint {
+  .sk-hint {
     margin-top: 10px;
     text-align: right;
     font-family: var(--mono);
     font-size: calc(12px * var(--fsm));
     color: var(--dim);
   }
-  .pf-hint kbd {
+  .sk-hint kbd {
     font-family: var(--mono);
     border: 1px solid var(--line);
     border-radius: 5px;
@@ -179,7 +179,7 @@ const quickLinks = [
     background: var(--chip-bg);
   }
 
-  .pf-quick-links {
+  .sk-quick-links {
     flex: none;
     width: 190px;
     padding: 18px 14px;
@@ -187,7 +187,7 @@ const quickLinks = [
     background: var(--chip-bg);
     overflow-y: auto;
   }
-  .pf-quick-links-title {
+  .sk-quick-links-title {
     font-family: var(--mono);
     font-size: calc(11.5px * var(--fsm));
     font-weight: 600;
@@ -196,12 +196,12 @@ const quickLinks = [
     color: var(--mut);
     margin-bottom: 10px;
   }
-  .pf-quick-links-list {
+  .sk-quick-links-list {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .pf-quick-links-list a {
+  .sk-quick-links-list a {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -214,42 +214,42 @@ const quickLinks = [
       background 0.15s,
       color 0.15s;
   }
-  .pf-quick-links-list a:hover {
+  .sk-quick-links-list a:hover {
     background: var(--card-hover);
     color: var(--ink);
   }
-  .pf-quick-links-list a:focus-visible {
+  .sk-quick-links-list a:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
     background: var(--card-hover);
     color: var(--ink);
   }
-  .pf-quick-links-list svg {
+  .sk-quick-links-list svg {
     flex: none;
     width: 16px;
     height: 16px;
   }
   @media (max-width: 620px) {
-    .pf-container {
+    .sk-container {
       flex-direction: column;
       max-height: 85vh;
     }
-    .pf-quick-links {
+    .sk-quick-links {
       width: auto;
       max-height: none;
       padding: 12px 18px 16px;
       border-left: 0;
       border-top: 1px solid var(--line);
     }
-    .pf-quick-links-list {
+    .sk-quick-links-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
-    .pf-quick-links-list li {
+    .sk-quick-links-list li {
       flex: none;
     }
-    .pf-quick-links-list a {
+    .sk-quick-links-list a {
       background: var(--card);
       border: 1px solid var(--line);
     }

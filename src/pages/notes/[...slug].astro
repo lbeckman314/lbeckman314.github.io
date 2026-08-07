@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, getCollection, render } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import { shouldRenderPage, shouldListPage, iconForSocial } from "@lib/utils";
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
     .filter(shouldRenderPage)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: post,
   }));
 }
@@ -26,12 +26,12 @@ const posts = (await getCollection("notes"))
   .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
 
 function getNextPost() {
-  const postIndex = posts.findIndex((post) => post.slug === Astro.params.slug);
+  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
   return posts[postIndex + 1];
 }
 
 function getPrevPost() {
-  const postIndex = posts.findIndex((post) => post.slug === Astro.params.slug);
+  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
   return posts[postIndex - 1];
 }
 
@@ -39,7 +39,7 @@ const nextPost = getNextPost();
 const prevPost = getPrevPost();
 
 const post = Astro.props;
-const { Content, headings } = await post.render();
+const { Content, headings } = await render(post);
 const tags = post.data.tags ?? [];
 const socials = post.data.socials ?? [];
 ---
@@ -47,7 +47,7 @@ const socials = post.data.socials ?? [];
 <Layout
   title={post.data.title}
   description={post.data.description}
-  route={`${post.collection}/${post.slug}`}
+  route={`${post.collection}/${post.id}`}
   article={{
     title: post.data.title,
     publishedDate: post.data.date,
@@ -107,6 +107,5 @@ const socials = post.data.socials ?? [];
         <PostNavigation prevPost={prevPost} nextPost={nextPost} />
       </div>
     </div>
-
   </article>
 </Layout>

@@ -19,14 +19,14 @@ export async function GET(context) {
       description: post.data.description,
       pubDate: post.data.date ?? new Date(),
       updated: post.data.updated,
-      link: `/notes/${post.slug}/`,
+      link: `/notes/${post.id}/`,
     })),
     ...projects.map(({ entry, data }) => ({
       title: data.title,
       description: data.description,
       pubDate: data.date ?? new Date(),
       updated: data.updated,
-      link: `/projects/${entry.slug}/`,
+      link: `/projects/${entry.id}/`,
     })),
   ].sort((a, b) => dateSortDesc(a.pubDate, b.pubDate));
 
