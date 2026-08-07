@@ -32,6 +32,7 @@ const quickLinks = [
     <div class="sk-container">
       <div class="sk-main">
         <pagefind-input autofocus></pagefind-input>
+        <pagefind-summary></pagefind-summary>
         <pagefind-results show-images="false" show-sub-results
         ></pagefind-results>
       </div>
@@ -91,6 +92,62 @@ const quickLinks = [
     border: 1px solid var(--line);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-summary {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--dim);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-results {
+    gap: 14px;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-card {
+    padding: 0;
+    border: 0;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-card:hover {
+    box-shadow: none;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-title {
+    font-weight: 600;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-link {
+    color: var(--accent-text);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-link:hover {
+    text-decoration: underline;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-excerpt {
+    color: var(--mut);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-chips {
+    margin-top: 8px;
+    padding-left: 16px;
+    border-left: 2px solid var(--line);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-link {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-link:hover {
+    color: var(--accent-text);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-excerpt {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    color: var(--mut);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main mark {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    color: var(--ink);
+    font-weight: 600;
+    border-radius: 3px;
   }
 
   .sk-container {
