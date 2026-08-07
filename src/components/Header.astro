@@ -15,12 +15,12 @@ const isActive = (prefix: string) =>
   </a>
   <span class="spacer"></span>
   <nav class="nav-links">
-    <a href="/" class:list={[isActive("/") && "active"]}>home</a>
-    <a href="/notes" class:list={[isActive("/notes") && "active"]}>notes</a>
+    <a href="/" class:list={[isActive("/") && "active"]}>/home</a>
+    <a href="/notes" class:list={[isActive("/notes") && "active"]}>/notes</a>
     <a href="/projects" class:list={[isActive("/projects") && "active"]}>
-      projects
+      /projects
     </a>
-    <a href="/about" class:list={[isActive("/about") && "active"]}>about</a>
+    <a href="/about" class:list={[isActive("/about") && "active"]}>/about</a>
   </nav>
   <div class="controls">
     <div class="ctl-group" role="group" aria-label="Text size">
