@@ -4,6 +4,20 @@ import { withProjectsData } from "@lib/projects";
 import { dateSortDesc, shouldRenderPage } from "@lib/utils";
 import { getCollection } from "astro:content";
 
+function escapeXml(value) {
+  return value.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&apos;",
+      })[char],
+  );
+}
+
 export async function GET(context) {
   // Archived pages get listed in the RSS even if they're not listed on the site itself.
 
@@ -19,6 +33,7 @@ export async function GET(context) {
       description: post.data.description,
       pubDate: post.data.date ?? new Date(),
       updated: post.data.updated,
+      tags: post.data.tags ?? [],
       link: `/notes/${post.id}/`,
     })),
     ...projects.map(({ entry, data }) => ({
@@ -26,6 +41,7 @@ export async function GET(context) {
       description: data.description,
       pubDate: data.date ?? new Date(),
       updated: data.updated,
+      tags: data.tags ?? [],
       link: `/projects/${entry.id}/`,
     })),
   ].sort((a, b) => dateSortDesc(a.pubDate, b.pubDate));
@@ -42,7 +58,8 @@ export async function GET(context) {
       link: item.link,
       customData: `<updated>
         ${item.updated !== undefined ? item.updated.toISOString() : ""}
-      </updated>`,
+      </updated>
+      ${item.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n      ")}`,
     })),
   });
 }
