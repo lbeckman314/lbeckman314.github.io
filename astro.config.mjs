@@ -90,4 +90,15 @@ export default defineConfig({
       },
     },
   },
+  vite: {
+    // Force Vite to pre-bundle clsx into a normalized ESM module; otherwise
+    // its SSR module runner sometimes rejects the named `clsx` import with
+    // "Named export 'clsx' not found" against the package's CJS build.
+    ssr: {
+      optimizeDeps: {
+        include: ["clsx"],
+      },
+      noExternal: ["clsx"],
+    },
+  },
 });

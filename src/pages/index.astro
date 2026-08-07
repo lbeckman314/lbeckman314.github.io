@@ -1,7 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
-import RepoStars from "@components/RepoStars.astro";
+import ProjectCard from "@components/ProjectCard.astro";
 import { HOME, SITE } from "@consts";
 import { withProjectsData } from "@lib/projects";
 import { shouldListPage, dateSortDesc } from "@lib/utils";
@@ -111,30 +111,13 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     <span class="spacer"></span>
     <a href="/projects">See all →</a>
   </div>
-  <section class="proj-grid">
+  <div class="card-list">
     {
       projects.map((project) => (
-        <a class="proj" href={`/projects/${project.entry.slug}`}>
-          <div class="proj-top">
-            <span class="proj-dot" />
-            <h4 class="proj-name">{project.data.title}</h4>
-          </div>
-          <p class="proj-sub">{project.data.description}</p>
-          <div class="tags">
-            {project.data.tags.map((tag) => (
-              <span class="tag">#{tag}</span>
-            ))}
-          </div>
-          <div class="proj-meta">
-            <span class="meta-bit">
-              <FormattedDate date={project.data.date} />
-            </span>
-            <RepoStars repoURL={project.data.repoURL} />
-          </div>
-        </a>
+        <ProjectCard entry={project.entry} data={project.data} />
       ))
     }
-  </section>
+  </div>
 
   <div class="contact">
     <div>
@@ -281,63 +264,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     flex: 1;
   }
 
-  /* ============ PROJECTS GRID ============ */
-  .proj-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 14px;
-  }
-  .proj {
-    display: block;
-    text-decoration: none;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 20px;
-    box-shadow: var(--shadow);
-    transition:
-      border-color 0.15s,
-      background 0.15s;
-  }
-  .proj:hover {
-    border-color: var(--accent);
-    background: var(--card-hover);
-  }
-  .proj-top {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    margin-bottom: 8px;
-  }
-  .proj-name {
-    margin: 0;
-    font-family: var(--mono);
-    font-size: calc(15px * var(--fsm));
-    font-weight: 600;
-    color: var(--ink);
-  }
-  .proj-top .spacer {
-    flex: 1;
-  }
-  .proj-stars {
-    font-family: var(--mono);
-    font-size: calc(12px * var(--fsm));
-    color: var(--dim);
-  }
-  .proj-sub {
-    margin: 0 0 14px;
-    font-size: calc(13.5px * var(--fsm));
-    line-height: 1.5;
-    color: var(--mut);
-  }
-  .proj-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-  }
-
   /* ============ CONTACT ============ */
   .contact {
     margin: 56px 0;
@@ -382,9 +308,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     }
     .hero h1 {
       font-size: calc(30px * var(--fsm));
-    }
-    .proj-grid {
-      grid-template-columns: 1fr;
     }
     .contact {
       flex-direction: column;
