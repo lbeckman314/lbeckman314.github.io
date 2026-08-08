@@ -6,6 +6,8 @@ import { SITE } from "@consts";
 <Layout title="About me" description="All about me, Drew" route="about">
   <div class="page-head">
     <h1 class="page-title">About me</h1>
+    <object id="smile" type="image/svg+xml" data="/assets/icon-smile.svg"
+    ></object>
   </div>
 
   <div class="prose">
@@ -83,6 +85,11 @@ import { SITE } from "@consts";
 </Layout>
 
 <style is:global>
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+  }
   .prose h2 {
     margin: 40px 0 14px;
     font-size: calc(22px * var(--fsm));

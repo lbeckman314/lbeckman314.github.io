@@ -55,13 +55,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
 
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION} route="index">
   <section class="hero">
-    <span class="hi">
-      Hello, I’m liam.
-      <span class="smile-wrap">
-        <object id="smile" type="image/svg+xml" data="/assets/icon-smile.svg"
-        ></object>
-      </span>
-    </span>
+    <span class="hi"> Hello, I’m liam. </span>
     <h1>A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</h1>
     <p class="lede">
       I’m a sleepy human with a dark history of secrets and intrigue.
@@ -150,44 +144,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     font-size: calc(24px * var(--fsm));
     color: var(--accent-text);
   }
-  .hero .hi #smile {
-    width: 1.4em;
-    height: 1.4em;
-    flex: none;
-    position: relative;
-    z-index: 1;
-  }
-  .smile-wrap {
-    position: relative;
-    display: inline-flex;
-  }
-  .smile-wrap::after {
-    content: "";
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.45s ease;
-    animation: brand-roll 4.5s linear infinite;
-    animation-play-state: paused;
-    background: conic-gradient(
-      from var(--brand-angle) at 100% 0%,
-      #f5a623,
-      #ff5e5b,
-      #d65bff,
-      #4ab0ff,
-      #4be08a,
-      #f5a623
-    );
-    filter: blur(6px);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .smile-wrap:hover::after {
-      opacity: 0.85;
-      animation-play-state: running;
-    }
-  }
   .hero h1 {
     margin: 14px 0 18px;
     font-size: calc(38px * var(--fsm));
@@ -251,6 +207,8 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     border-bottom: 1px solid var(--line);
     transition: background 0.15s;
     position: relative;
+    user-select: text;
+    -webkit-user-drag: none;
   }
   .post:last-child {
     border-bottom: 0;

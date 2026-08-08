@@ -19,6 +19,12 @@ function escapeXml(value) {
 }
 
 export async function GET(context) {
+  // Point links at the local dev server during development so they're
+  // clickable on localhost; use the canonical site URL in production.
+  const site = import.meta.env.DEV
+    ? new URL(context.url.origin)
+    : context.site;
+
   // Archived pages get listed in the RSS even if they're not listed on the site itself.
 
   const blog = (await getCollection("notes")).filter(shouldRenderPage);
@@ -49,7 +55,7 @@ export async function GET(context) {
   return rss({
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
-    site: context.site,
+    site,
     stylesheet: "/rss-styles.xsl",
     items: items.map((item) => ({
       title: item.title,

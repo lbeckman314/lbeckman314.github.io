@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@components/FormattedDate.astro";
 import RepoStars from "@components/RepoStars.astro";
-import { getProjectData, demoLabel, type ProjectData } from "@lib/projects";
+import { getProjectData, type ProjectData } from "@lib/projects";
 
 type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
 
@@ -12,45 +12,32 @@ const href = `/projects/${entry.id}`;
 ---
 
 <div class="card project-card">
+  <a
+    class="card-stretch"
+    href={href}
+    aria-label={`View ${projectData.title}`}
+  ></a>
   <div class="card-top">
-    <a class="card-main" href={href}>
-      <div class="body">
-        <div
-          style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"
+    <div class="body">
+      <div
+        style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"
+      >
+        <span class="proj-dot"></span>
+        <h3
+          class="card-title"
+          style="margin:0; font-family:var(--mono); font-size:calc(16px * var(--fsm));"
         >
-          <span class="proj-dot"></span>
-          <h3
-            class="card-title"
-            style="margin:0; font-family:var(--mono); font-size:calc(16px * var(--fsm));"
-          >
-            {projectData.title}
-          </h3>
-        </div>
-        <p class="card-sub">{projectData.description}</p>
-        {
-          projectData.languages.length > 0 && (
-            <div class="card-langs">
-              {projectData.languages.slice(0, 3).map((lang) => (
-                <span class="lang">{lang.name}</span>
-              ))}
-            </div>
-          )
-        }
+          {projectData.title}
+        </h3>
       </div>
-    </a>
-    <a class="chev" href={href} aria-label={`View ${projectData.title}`}>›</a>
+      <p class="card-sub">{projectData.description}</p>
+    </div>
+    <span class="chev" aria-hidden="true">›</span>
   </div>
   <div class="card-foot">
     <span class="tags">
-      {
-        tags.map((tag) => (
-          <a class="tag" href={`/projects/tags/${tag}`}>
-            #{tag}
-          </a>
-        ))
-      }
+      {tags.map((tag) => <span class="tag">#{tag}</span>)}
     </span>
-    <span class="spacer"></span>
     {
       projectData.demoURL && (
         <a
@@ -59,14 +46,15 @@ const href = `/projects/${entry.id}`;
           target="_blank"
           rel="noopener"
         >
-          {demoLabel(projectData.demoURL)} ↗
+          Demo ↗
         </a>
       )
     }
+    <span class="spacer"></span>
     {
       projectData.updated && (
         <span class="meta-bit">
-          Last Updated <FormattedDate date={projectData.updated} />
+          <FormattedDate date={projectData.updated} />
         </span>
       )
     }

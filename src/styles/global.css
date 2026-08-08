@@ -114,6 +114,9 @@ body {
   padding: 0;
 }
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
@@ -167,6 +170,7 @@ ul {
 
 /* ============ LAYOUT ============ */
 .wrap {
+  flex: 1 0 auto;
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 44px;
@@ -263,6 +267,7 @@ ul {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  margin: 0 0 11px;
 }
 .tag {
   font-family: var(--mono);
@@ -400,6 +405,11 @@ a.tag:hover {
   transition:
     border-color 0.15s,
     background 0.15s;
+  /* Cards are one big <a>, but their text should still be normally
+     click-and-drag selectable rather than triggering the link's native
+     drag-to-navigate/drag-ghost gesture. */
+  user-select: text;
+  -webkit-user-drag: none;
 }
 .card:hover {
   border-color: var(--accent);
@@ -428,7 +438,6 @@ a.tag:hover {
   display: flex;
   gap: 7px;
   flex-wrap: wrap;
-  margin: 0 0 11px;
 }
 .card-langs .lang {
   font-family: var(--mono);
@@ -457,6 +466,7 @@ a.tag:hover {
   color: var(--accent-text);
 }
 .card.project-card {
+  position: relative;
   flex-direction: column;
   align-items: stretch;
   gap: 14px;
@@ -466,12 +476,19 @@ a.tag:hover {
   align-items: center;
   gap: 18px;
 }
-.card.project-card .card-top .card-main {
-  flex: 1;
-  min-width: 0;
+/* Transparent anchor stretched across the whole card so it is clickable
+   end-to-end. The "Demo ↗" link sits above it (see .card-demo) and stays
+   separately clickable. */
+.card.project-card .card-stretch {
+  position: absolute;
+  inset: 0;
   display: block;
+  border-radius: inherit;
+  z-index: 1;
 }
 .card-demo {
+  position: relative;
+  z-index: 2;
   font-family: var(--mono);
   font-size: calc(12px * var(--fsm));
   color: var(--accent-text);

@@ -133,18 +133,30 @@
             background: var(--card);
             border: 1px solid var(--line);
             border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition:
+              border-color 0.15s,
+              background 0.15s;
+            /* The whole card is one big &lt;a&gt;, but its text should still be
+               click-and-drag selectable rather than triggering the link's
+               native drag-to-navigate/drag-ghost gesture. */
+            user-select: text;
+            -webkit-user-drag: none;
+          }
+          .item:hover {
+            border-color: var(--accent);
+            background: var(--card-hover);
           }
           .item-title {
             margin: 0 0 6px;
             font-family: var(--mono);
             font-size: 17px;
             font-weight: 600;
-          }
-          .item-title a {
             color: var(--ink);
-            text-decoration: none;
+            transition: color 0.15s;
           }
-          .item-title a:hover {
+          .item:hover .item-title {
             color: var(--accent-text);
           }
           .item-date {
@@ -197,9 +209,9 @@
             <a href="{/rss/channel/link}">Visit website &#8594;</a>
           </div>
           <xsl:for-each select="/rss/channel/item">
-            <div class="item">
+            <a class="item" href="{link}">
               <p class="item-title">
-                <a href="{link}"><xsl:value-of select="title" /></a>
+                <xsl:value-of select="title" />
               </p>
               <p class="item-date">
                 <xsl:value-of select="pubDate" />
@@ -216,7 +228,7 @@
                   </xsl:for-each>
                 </div>
               </xsl:if>
-            </div>
+            </a>
           </xsl:for-each>
         </div>
       </body>
