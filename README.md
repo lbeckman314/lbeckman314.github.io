@@ -1,57 +1,72 @@
-# Drew's Dev Blog
+[![Build + Deploy](https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml/badge.svg)](https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml)
 
-This is the code for my dev blog.
+# Overview 🌀
 
-It was originally based on [Astro Micro](https://astro.build/themes/details/astro-micro/) but I've made some fairly significant changes since then.
+This personal site is a way for me to collect my favorite things and show off personal projects and experiments!
 
-## Getting started
+| Component         | System                                                                    |
+|-------------------|---------------------------------------------------------------------------|
+| Host              | [GitHub Pages](https://docs.github.com/en/pages) → lbeckman314.github.io |
+| Domain            | [Porkbun](https://porkbun.com/) → liambeckman.com                        |
+| Framework         | [Astro.js](https://astro.build/)                                          |
+| Services (Live)   | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets)   |
+| Services (Static) | [Netlify](https://www.netlify.com/)                                       |
+| Search            | [Pagefind](https://pagefind.app/)                                         |
+| Link Checking     | [Lychee](https://github.com/lycheeverse/lychee/)                          |
+| Status Page       | [Upptime](https://upptime.js.org/)                                        |
 
-Install the latest Node LTS (e.g. via nvm). Then:
+## Quick Start ⚡
 
-```shell
-# To run dev environment
-pnpm dev
+```sh
+➜ git clone https://github.com/lbeckman314/lbeckman314.github.io
 
-# To build site to static 'dist' folder.
-pnpm build
+➜ cd lbeckman314.github.io
 
-# To format code
-pnpm format
+➜ npm install
 
-# To check / lint code
-pnpm run check
-pnpm run lint
-
-# Run this before committing
-pnpm precommit
+➜ npm run dev
 ```
 
-## Deployment
+Then browse to http://localhost:4321 to see the site!
 
-Everything deploys from Cloudflare off the Git repo — there are no Cloudflare
-credentials stored in GitHub:
+<p align="center">
+<a href="https://liambeckman.com">
+<img width="825" height="1115" alt="Website!" src="https://github.com/user-attachments/assets/1b9146b4-432c-4a01-874f-d87d7120cbc4" />
+</a>
+</p>
 
-- **The site** (Astro → static `dist/`) is deployed by the [Cloudflare Pages Git
-  integration](https://developers.cloudflare.com/pages/get-started/git-integration/).
-  Connect the repo once in the Cloudflare dashboard with build command
-  `pnpm build` and output directory `dist`; every push to `main` then builds and
-  deploys automatically (and each PR gets a preview).
+## GitHub Actions 📦
 
-GitHub Actions (`.github/workflows/ci.yml`) only runs the checks — `pnpm lint`,
-`pnpm check`, `pnpm build` — on every push and pull request. It does not deploy.
+The build + deployment is triggered for every push to the `main` branch, as part of [`build.yaml`](https://github.com/lbeckman314/lbeckman314.github.io/blob/main/.github/workflows/build.yaml)
 
-### Build-time data
+<p align="center">
+<a href="https://github.com/lbeckman314/lbeckman314.github.io/actions/workflows/build.yaml">
+<img width="695" height="628" alt="foo" src="https://github.com/user-attachments/assets/80bb0841-be23-4513-9cbb-0de62b84e99d" />
+</a>
+</p>
 
-The build fetches a few things to bake into the static output: GitHub **star
-counts** for projects, and **comment counts** for each post's JSON-LD (a
-snapshot that refreshes on each deploy). These are best-effort — failures are
-ignored and the value is simply omitted.
+## Inspirations ✨
 
-Set an optional `GITHUB_TOKEN` in the **Pages build environment** (a fine-grained
-token, public read-only is enough) to lift the GitHub rate limit for star counts
-and to enable comment counts (the GitHub GraphQL API used for Giscus discussion
-counts requires auth).
+### Interactive + Beautiful Gardens!
+- [charm.land](https://charm.land)
+- [nan.fyi](https://www.nan.fyi)
+- [maggieappleton.com](https://maggieappleton.com)
+- [joshwcomeau.com: An Interactive Guide to SVG Paths](https://www.joshwcomeau.com/svg/interactive-guide-to-paths)
+- [blog.maximeheckel.com: On Crafting Painterly Shaders](https://blog.maximeheckel.com/posts/on-crafting-painterly-shaders)
 
-## Copyright
+### Moving Things!
 
-The content of this project itself is licensed under the [Creative Commons Attribution 4.0 International license](https://creativecommons.org/licenses/by/4.0/), and the underlying source code used to format and display that content is licensed under the [MIT license](LICENCE).
+- [animejs.com](https://animejs.com)
+- [threejs.org](https://threejs.org)
+- [blog.shashanktomar.com: Strange Attractors](https://blog.shashanktomar.com/posts/strange-attractors)
+
+### Writing! 
+- [Binsider](https://binsider.dev/getting-started)
+- [drew.silcock.dev: How Postgres stores data on disk – this one's a page turner ](https://drew.silcock.dev/blog/how-postgres-stores-data-on-disk)
+- [nghiant3223.github.io: Memory Allocation in Go](https://nghiant3223.github.io/2025/06/03/memory_allocation_in_go.html)
+- [reverbmachine.com: How Brian Eno Created *Ambient 1: Music for Airports*](https://reverbmachine.com/blog/deconstructing-brian-eno-music-for-airports)
+- [aethermug.com: Linear Algebra Explains Why Some Words Are Effectively Untranslatable](https://aethermug.com/posts/linear-algebra-explains-why-some-words-are-effectively-untranslatable)
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/lbeckman314/lbeckman314.github.io/refs/heads/main/public/assets/svg/icon-smile.svg" alt="" style="max-width: 100%;">
+</p>
