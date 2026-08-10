@@ -1,0 +1,245 @@
+---
+// Chirpy-style vertical timeline (adapted from the Chirping Astro theme,
+// https://github.com/kannansuresh/chirping-astro). Groups entries by year
+// and renders a line + dot markers built entirely from absolutely
+// positioned pseudo-elements against fixed-height rows - no JS.
+//
+// Usage:
+//   <Timeline entries={[{ date: new Date(...), title: "...", href: "/..." }]} />
+//   <Timeline entries={[{ date: "2024-03-01", title: "...", href: "/..." }]} />
+
+export type TimelineEntry = {
+  date: Date | string;
+  title: string;
+  href?: string;
+};
+
+type NormalizedEntry = {
+  date: Date;
+  title: string;
+  href?: string;
+};
+
+type Props = {
+  entries: TimelineEntry[];
+};
+
+const { entries } = Astro.props;
+
+const normalized: NormalizedEntry[] = entries.map((entry) => {
+  const date = entry.date instanceof Date ? entry.date : new Date(entry.date);
+  if (Number.isNaN(date.valueOf())) {
+    throw new Error(
+      `Timeline: invalid date "${entry.date}" for entry "${entry.title}"`,
+    );
+  }
+  return { ...entry, date };
+});
+
+type YearGroup = { year: string; items: NormalizedEntry[] };
+
+const sorted = [...normalized].sort(
+  (a, b) => b.date.valueOf() - a.date.valueOf(),
+);
+const years: YearGroup[] = [];
+for (const entry of sorted) {
+  const year = entry.date.getFullYear().toString();
+  const lastGroup = years.at(-1);
+  if (lastGroup?.year === year) {
+    lastGroup.items.push(entry);
+  } else {
+    years.push({ year, items: [entry] });
+  }
+}
+---
+
+{
+  years.length > 0 && (
+    <div class="timeline">
+      {years.map((group, i) => (
+        <section class:list={["tl-year-block", { first: i === 0 }]}>
+          <time class="tl-year">{group.year}</time>
+          <ul>
+            {group.items.map((item) => (
+              <li>
+                <span class="tl-day">
+                  {item.date.toLocaleDateString("en-US", { day: "2-digit" })}
+                </span>
+                <span class="tl-month">
+                  {item.date.toLocaleDateString("en-US", { month: "short" })}
+                </span>
+                {item.href ? (
+                  <a href={item.href}>{item.title}</a>
+                ) : (
+                  <span class="tl-title">{item.title}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  /* Coordinate system (px from .timeline's left edge):
+       line:       left 77, width 4   -> center 79
+       year dot:   left 73, size 12   -> center 79
+       item dot:   left 75, size  8   -> center 79 */
+
+  .timeline {
+    --tl-color: var(--line);
+    --tl-node: var(--dim);
+    --tl-year-dot-bg: var(--bg);
+    --tl-zebra: var(--line-soft);
+    --tl-row-h: 2.5rem;
+  }
+
+  .timeline .tl-year-block {
+    position: relative;
+  }
+
+  /* ---------- Year heading ---------- */
+  .timeline .tl-year {
+    display: block;
+    position: relative;
+    height: 3rem;
+    line-height: 3rem;
+    font-family: var(--mono);
+    font-size: calc(20px * var(--fsm));
+    font-weight: 600;
+    padding-left: 6.5rem;
+    color: var(--ink);
+  }
+  /* Line segment for the year row only. The previous year's last item
+     extends its own segment to its row's bottom edge, which is exactly
+     this segment's top edge - they butt together with no overlap. */
+  .timeline .tl-year::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    background-color: var(--tl-color);
+    left: 77px;
+    top: 0;
+    bottom: 0;
+  }
+  .timeline .tl-year-block.first .tl-year::before {
+    top: 1.5rem;
+  }
+  .timeline .tl-year::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    left: 73px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 3px solid var(--tl-node);
+    background-color: var(--tl-year-dot-bg);
+    box-sizing: border-box;
+    z-index: 1;
+  }
+
+  /* ---------- Item list ---------- */
+  .timeline ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .timeline ul li {
+    position: relative;
+    padding-left: 6.5rem;
+    height: var(--tl-row-h);
+    line-height: var(--tl-row-h);
+    font-size: calc(15px * var(--fsm));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .timeline ul li:nth-child(odd) {
+    background-image: linear-gradient(
+      to right,
+      transparent 0%,
+      var(--tl-zebra) 8%,
+      var(--tl-zebra) 92%,
+      transparent 100%
+    );
+  }
+
+  .timeline ul li::before {
+    content: "";
+    position: absolute;
+    width: 4px;
+    background-color: var(--tl-color);
+    top: 0;
+    left: 77px;
+    height: calc(var(--tl-row-h) + 1px);
+  }
+  /* Last item of every year: end the line at the row's bottom edge so it
+     doesn't overlap the next year's own line segment (which would double
+     the semi-transparent fill and look darker). */
+  .timeline ul li:last-child::before {
+    height: var(--tl-row-h);
+  }
+  /* Last item of the last year: trim further so the line ends at the dot. */
+  .timeline section:last-child ul li:last-child::before {
+    height: calc(var(--tl-row-h) / 2);
+  }
+
+  /* Day + month labels: absolutely placed in the reserved left padding. */
+  .timeline .tl-day,
+  .timeline .tl-month {
+    position: absolute;
+    top: 0;
+    line-height: var(--tl-row-h);
+    font-family: var(--mono);
+  }
+  .timeline .tl-day {
+    left: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .timeline .tl-month {
+    left: 2.5rem;
+    font-size: 85%;
+    color: var(--mut);
+    text-transform: uppercase;
+  }
+
+  /* Title/link flows at the padding edge (6.5rem = 104px), giving ~21px
+     between the item dot (ends at x=83) and the text. */
+  .timeline a,
+  .timeline .tl-title {
+    color: var(--accent-text);
+    text-decoration: none;
+  }
+  .timeline a:hover {
+    text-decoration: underline;
+  }
+  .timeline .tl-title {
+    color: var(--ink);
+  }
+  /* Filled circle on the timeline at the item row. */
+  .timeline ul li::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 75px;
+    background-color: var(--tl-node);
+    z-index: 1;
+  }
+
+  @media (max-width: 575.98px) {
+    .timeline {
+      letter-spacing: 0;
+    }
+  }
+</style>
