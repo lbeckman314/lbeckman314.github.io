@@ -1,5 +1,5 @@
 {
-  "name": "silcock-dev",
+  "name": "liambeckman.com",
   "type": "module",
   "private": true,
   "version": "0.0.1",
@@ -48,8 +48,6 @@
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-organize-imports": "^3.2.4",
     "schema-dts": "^1.1.5"
-  },
-  "engines": {
-    "node": ">=20.0.0"
   }
 }
+
