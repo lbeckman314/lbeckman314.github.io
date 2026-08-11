@@ -2,12 +2,14 @@
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "@components/FormattedDate.astro";
 import RepoStars from "@components/RepoStars.astro";
-import { getProjectData, type ProjectData } from "@lib/projects";
+import ProjectLinks from "@components/ProjectLinks.astro";
+import { getProjectData, getProjectLinks, type ProjectData } from "@lib/projects";
 
 type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
 
 const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
 const tags = projectData.tags;
+const links = getProjectLinks(entry, projectData);
 const href = `/projects/${entry.id}`;
 ---
 
@@ -35,21 +37,18 @@ const href = `/projects/${entry.id}`;
     <span class="chev" aria-hidden="true">›</span>
   </div>
   <div class="card-foot">
-    <span class="tags">
-      {tags.map((tag) => <span class="tag">#{tag}</span>)}
-    </span>
     {
-      projectData.demoURL && (
-        <a
-          class="card-demo"
-          href={projectData.demoURL}
-          target="_blank"
-          rel="noopener"
-        >
-          Demo ↗
-        </a>
+      tags.length > 0 && (
+        <span class="tags">
+          {tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </span>
       )
     }
+    <span class="card-demo">
+      <ProjectLinks links={links} />
+    </span>
     <span class="spacer"></span>
     {
       projectData.updated && (

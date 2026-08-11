@@ -491,9 +491,10 @@ a.tag:hover {
   border-radius: inherit;
   z-index: 1;
 }
-.card-demo {
-  position: relative;
-  z-index: 2;
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-family: var(--mono);
   font-size: calc(12px * var(--fsm));
   color: var(--accent-text);
@@ -506,9 +507,16 @@ a.tag:hover {
     border-color 0.15s,
     color 0.15s;
 }
-.card-demo:hover {
+.link-pill:hover {
   border-color: var(--accent);
   color: var(--ink);
+}
+.card-demo {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ============ PROJECT CARD DOT (shared: home + ProjectCard) ============ */
@@ -606,6 +614,7 @@ a.tag:hover {
 /* ============ ARTICLE ============ */
 .article-head {
   padding-top: 28px;
+  padding-bottom: 14px;
 }
 .article-meta {
   font-family: var(--mono);
@@ -644,7 +653,7 @@ a.tag:hover {
   color: var(--accent-text);
   text-decoration: none;
 }
-.article-tags a:hover {
+.article-tags a:not(.link-pill):hover {
   text-decoration: underline;
 }
 .article-tags .repo {

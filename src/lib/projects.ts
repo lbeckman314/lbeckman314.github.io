@@ -16,13 +16,20 @@ export type ProjectWithData = {
   data: ProjectData;
 };
 
-export function demoLabel(demoURL?: string): string {
-  if (!demoURL) return "";
-  try {
-    return new URL(demoURL).hostname.replace(/^www\./, "");
-  } catch {
-    return demoURL;
-  }
+export type ProjectLink = { href: string; text: string };
+
+export function getProjectLinks(
+  entry: CollectionEntry<"projects">,
+  data: ProjectData,
+): ProjectLink[] {
+  return [
+    entry.data.repoURL && { href: entry.data.repoURL, text: "Repo" },
+    data.demoURL && { href: data.demoURL, text: "Demo" },
+    entry.data.packageURL && {
+      href: entry.data.packageURL,
+      text: "package",
+    },
+  ].filter(Boolean) as ProjectLink[];
 }
 
 export async function getProjectData(

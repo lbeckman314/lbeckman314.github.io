@@ -1,0 +1,27 @@
+---
+import type { ProjectLink } from "@lib/projects";
+
+type Props = { links: ProjectLink[] };
+
+const { links } = Astro.props;
+---
+
+{
+  links.map((link) => (
+    <a class="link-pill" href={link.href} target="_blank" rel="noopener">
+      {link.text}
+      <svg
+        width="11"
+        height="11"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M7 17 17 7M9 7h8v8" />
+      </svg>
+    </a>
+  ))
+}
