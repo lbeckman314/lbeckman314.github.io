@@ -3,6 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import ProjectCard from "@components/ProjectCard.astro";
 import { HOME, SITE } from "@consts";
+import { Icon } from "astro-icon/components";
 import { withProjectsData } from "@lib/projects";
 import { shouldListPage, dateSortDesc } from "@lib/utils";
 import { getCollection } from "astro:content";
@@ -62,7 +63,14 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     </p>
     <div class="cta-row">
       <a class="btn btn-primary" href="/notes">Read the latest →</a>
-      <a class="btn btn-ghost" href="/rss.xml">Subscribe via RSS</a>
+      <a
+        class="btn btn-ghost btn-icon"
+        href="/rss.xml"
+        aria-label="Subscribe via RSS"
+        title="Subscribe via RSS"
+      >
+        <Icon name="tabler:rss" width={16} height={16} />
+      </a>
     </div>
     <div class="topics">
       {
@@ -121,8 +129,8 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
 
   <div class="contact">
     <div>
-      <h3>Say hi 😎</h3>
-      <p>Got a question or just want to chat? My inbox is open.</p>
+      <h3>Say hi 👋</h3>
+      <p>Got a question or just want to chat? My inbox is open!</p>
     </div>
     <span class="spacer"></span>
     <a class="email" href={SITE.EMAIL} aria-label="Email Liam">

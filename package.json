@@ -2,7 +2,7 @@
   "name": "liambeckman.com",
   "type": "module",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "packageManager": "pnpm@11.5.1",
   "scripts": {
     "dev": "COMMIT=$(git rev-parse --short HEAD) astro dev",
@@ -26,8 +26,10 @@
     "@expressive-code/plugin-line-numbers": "^0.44.1",
     "@fontsource/hanken-grotesk": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
+    "@iconify-json/tabler": "^1.2.38",
     "astro": "^7.2.0",
     "astro-expressive-code": "^0.44.1",
+    "astro-icon": "^1.1.5",
     "astro-pagefind": "^2.0.1",
     "astro-seo-schema": "^7.0.0",
     "hast-util-from-html": "^2.0.3",
@@ -50,4 +52,3 @@
     "schema-dts": "^1.1.5"
   }
 }
-

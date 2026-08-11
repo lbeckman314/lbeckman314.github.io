@@ -12,11 +12,10 @@ const tags = entry.data.tags ?? [];
   <div class="body">
     <h3 class="card-title">{entry.data.title}</h3>
     <p class="card-sub">{entry.data.description}</p>
-    <div class="card-foot">
+    <div class="card-foot post-card-foot">
       <span class="tags">
         {tags.map((tag) => <span class="tag">#{tag}</span>)}
       </span>
-      <span class="spacer"></span>
       <span class="meta-bit"><FormattedDate date={entry.data.date} /></span>
     </div>
   </div>

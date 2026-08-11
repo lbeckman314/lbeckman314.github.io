@@ -1,7 +1,7 @@
 {
-  "name": "drew's dev blog",
-  "short_name": "drew.dev",
-  "description": "Deep dives into the parts of the stack most people skim past.",
+  "name": "liams's dev blog",
+  "short_name": "liambeckman.com",
+  "description": "This + that!",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

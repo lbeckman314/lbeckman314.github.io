@@ -260,6 +260,9 @@ ul {
 .btn-ghost:hover {
   border-color: var(--accent);
 }
+.btn-icon {
+  padding: 11px;
+}
 
 /* ============ TAGS / PILLS ============ */
 .tags {
@@ -451,6 +454,9 @@ a.tag:hover {
 }
 .card-foot .spacer {
   flex: 1;
+}
+.post-card-foot .tags {
+  flex-basis: 100%;
 }
 .card .chev {
   color: var(--dim);

@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
 import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
 import expressiveCode from "astro-expressive-code";
+import icon from "astro-icon";
 import pagefind from "astro-pagefind";
 import { defineConfig } from "astro/config";
 import { fromHtml } from "hast-util-from-html";
@@ -53,6 +54,7 @@ export default defineConfig({
   integrations: [
     sitemap(),
     pagefind(),
+    icon(),
     expressiveCode({
       themes: ["catppuccin-latte", "catppuccin-frappe"],
       themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,

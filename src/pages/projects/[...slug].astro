@@ -13,9 +13,8 @@ export async function getStaticPaths() {
   }));
 }
 
-const project = Astro.props;
+const projectEntry = Astro.props;
 const projectList = await getCollection("projects");
-const projectEntry = projectList.find((p) => p.id === project.id) ?? project;
 
 const { Content, headings } = await render(projectEntry);
 const projectData = await getProjectData(projectEntry);
@@ -63,6 +62,7 @@ const socials = projectEntry.data.socials ?? [];
 
     <div class="post-main">
       <div class="article-head">
+        <h1>{projectData.title}</h1>
         <div class="article-tags">
           {tags.map((tag) => <a href={`/projects/tags/${tag}`}>#{tag}</a>)}
           {
