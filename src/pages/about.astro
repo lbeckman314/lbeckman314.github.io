@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import { SITE } from "@consts";
+import { Icon } from "astro-icon/components";
 ---
 
 <Layout title="About me" description="All about me, Drew" route="about">
@@ -11,6 +12,7 @@ import { SITE } from "@consts";
 
   <div class="prose">
     <div class="social-list">
+      <!-- GitHub -->
       <a
         class="social-row"
         href="https://github.com/lbeckman314"
@@ -18,11 +20,7 @@ import { SITE } from "@consts";
         rel="noopener"
       >
         <span class="ic"
-          ><svg viewBox="0 0 24 24" fill="currentColor"
-            ><path
-              d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
-            ></path></svg
-          ></span
+          ><Icon name="tabler:brand-github" width={16} height={16} /></span
         >
         <span
           ><span class="lbl">GitHub</span><br /><span class="handle"
@@ -30,6 +28,8 @@ import { SITE } from "@consts";
           ></span
         >
       </a>
+      
+      <!-- LinkedIn -->
       <a
         class="social-row"
         href="https://www.linkedin.com/in/liam-beckman-ab3183a6"
@@ -37,11 +37,7 @@ import { SITE } from "@consts";
         rel="noopener"
       >
         <span class="ic"
-          ><svg viewBox="0 0 24 24" fill="currentColor"
-            ><path
-              d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.8 0 0 .77 0 1.73v20.54C0 23.23.8 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"
-            ></path></svg
-          ></span
+          ><Icon name="tabler:brand-linkedin" width={16} height={16} /></span
         >
         <span
           ><span class="lbl">LinkedIn</span><br /><span class="handle"
@@ -49,13 +45,28 @@ import { SITE } from "@consts";
           ></span
         >
       </a>
+      
+      <!-- Resume -->
+      <a
+        class="social-row"
+        href="https://github.com/lbeckman314/resume/releases/latest/download/resume.pdf"
+        target="_blank"
+        rel="noopener"
+      >
+        <span class="ic"
+          ><Icon name="tabler:file-cv" width={16} height={16} /></span
+        >
+        <span
+          ><span class="lbl">Resume</span><br /><span class="handle"
+            >resume.pdf</span
+          ></span
+        >
+      </a>
+
+      <!-- RSS -->
       <a class="social-row" href="/rss.xml">
         <span class="ic"
-          ><svg viewBox="0 0 24 24" fill="currentColor"
-            ><path
-              d="M4 11a9 9 0 0 1 9 9h2.5A11.5 11.5 0 0 0 4 8.5V11Zm0 4a5 5 0 0 1 5 5h2.5A7.5 7.5 0 0 0 4 12.5V15Zm1.5 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
-            ></path></svg
-          ></span
+          ><Icon name="tabler:rss" width={16} height={16} /></span
         >
         <span
           ><span class="lbl">RSS</span><br /><span class="handle">/rss.xml</span
@@ -64,14 +75,7 @@ import { SITE } from "@consts";
       </a>
       <a class="social-row email" href={SITE.EMAIL} aria-label="Email Drew">
         <span class="ic"
-          ><svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            ><rect x="3" y="5" width="18" height="14" rx="2"></rect><path
-              d="m3 7 9 6 9-6"></path></svg
-          ></span
+          ><Icon name="tabler:mail" width={16} height={16} /></span
         >
         <span
           ><span class="lbl">Email</span><br /><span
