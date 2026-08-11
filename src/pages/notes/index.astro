@@ -18,7 +18,7 @@ type Acc = {
 };
 
 const postsMap = posts.reduce((acc: Acc, post) => {
-  const year = post.data.date.getFullYear().toString();
+  const year = post.data.date.getUTCFullYear().toString();
   if (!acc[year]) {
     acc[year] = [];
   }

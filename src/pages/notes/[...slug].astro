@@ -100,12 +100,6 @@ const socials = post.data.socials ?? [];
         <Content components={{ Aside }} />
       </div>
 
-      <div class="article-foot">
-        <div class="article-tags">
-          {tags.map((tag) => <a href={`/notes/tags/${tag}`}>#{tag}</a>)}
-        </div>
-        <PostNavigation prevPost={prevPost} nextPost={nextPost} />
-      </div>
     </div>
   </article>
 </Layout>

@@ -43,7 +43,7 @@ const sorted = [...normalized].sort(
 );
 const years: YearGroup[] = [];
 for (const entry of sorted) {
-  const year = entry.date.getFullYear().toString();
+  const year = entry.date.getUTCFullYear().toString();
   const lastGroup = years.at(-1);
   if (lastGroup?.year === year) {
     lastGroup.items.push(entry);
@@ -63,10 +63,16 @@ for (const entry of sorted) {
             {group.items.map((item) => (
               <li>
                 <span class="tl-day">
-                  {item.date.toLocaleDateString("en-US", { day: "2-digit" })}
+                  {item.date.toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    timeZone: "UTC",
+                  })}
                 </span>
                 <span class="tl-month">
-                  {item.date.toLocaleDateString("en-US", { month: "short" })}
+                  {item.date.toLocaleDateString("en-US", {
+                    month: "short",
+                    timeZone: "UTC",
+                  })}
                 </span>
                 {item.href ? (
                   <a href={item.href}>{item.title}</a>

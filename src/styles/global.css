@@ -170,6 +170,7 @@ ul {
 /* ============ LAYOUT ============ */
 .wrap {
   flex: 1 0 auto;
+  width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 44px;
@@ -1269,10 +1270,13 @@ p {
 
 /* ============ HEADING ANCHORS ============ */
 .section-anchor {
+  position: relative;
   scroll-margin-top: 80px;
 }
-.section-anchor-link {
+.article a.section-anchor-link {
   position: absolute;
+  top: 0;
+  bottom: 0;
   margin-left: -1.5rem;
   display: inline-flex;
   align-items: center;
@@ -1331,6 +1335,18 @@ html[data-theme="light"] img.image-dark {
   .back-to-top {
     right: 16px;
     bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  /* The gutter .section-anchor-link normally sits in (via negative margin)
+     doesn't exist at this width, so it gets clipped by the viewport edge.
+     Drop it back into normal flow, just before the heading text instead. */
+  .article a.section-anchor-link {
+    position: static;
+    top: auto;
+    bottom: auto;
+    display: inline;
+    vertical-align: middle;
+    margin-left: 0;
+    margin-right: 0.4em;
   }
 }
 @media (max-width: 560px) {

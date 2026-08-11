@@ -77,7 +77,7 @@ Alt-H2
 
 ## Emphasis
 
-```plaintext
+```md
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
@@ -97,7 +97,7 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 ## Lists
 
-```plaintext
+```md
 1. First ordered list item
 2. Another item
     * Unordered sub-list. 
@@ -129,7 +129,7 @@ Strikethrough uses two tildes. ~~Scratch this.~~
 
 There are two ways to create links.
 
-```plaintext
+```md
 [I'm an inline-style link](https://www.google.com)
 
 [I'm a reference-style link][Arbitrary case-insensitive reference text]
@@ -169,7 +169,7 @@ Some text to show that the reference links can follow later.
 
 ## Images
 
-```plaintext
+```md
 Here's our logo (hover to see the title text):
 
 Inline-style: 
@@ -195,7 +195,7 @@ Reference-style:
 
 Code blocks are part of the Markdown spec, but syntax highlighting isn't. However, many renderers -- like Github's and *Markdown Here* -- support syntax highlighting. *Markdown Here* supports highlighting for dozens of languages (and not-really-languages, like diffs and HTTP headers); to see the complete list, and how to write the language names, see the [highlight.js demo page](https://highlightjs.org/demo).
 
-```plaintext
+```md
 Inline `code` has `back-ticks around` it.
 ```
 
@@ -240,7 +240,7 @@ Again, to see what languages are available for highlighting, and how to write th
 
 Tables aren't part of the core Markdown spec, but they are part of GFM and *Markdown Here* supports them. They are an easy way of adding tables to your email -- a task that would otherwise require copy-pasting from another application.
 
-```plaintext
+```md 
 Colons can be used to align columns.
 
 | Tables        | Are           | Cool  |
@@ -274,7 +274,7 @@ Markdown | Less | Pretty
 
 ## Blockquotes
 
-```plaintext
+```md
 > Blockquotes are very handy in email to emulate reply text.
 > This line is part of the same quote.
 
@@ -294,7 +294,7 @@ Quote break.
 
 You can also use raw HTML in your Markdown, and it'll mostly work pretty well. 
 
-```plaintext
+```html
 <dl>
   <dt>Definition list</dt>
   <dd>Is something people use sometimes.</dd>
@@ -372,17 +372,23 @@ This line is only separated by a single newline, so it's a separate line in the 
 
 They can't be added directly but you can add an image with a link to the video like this:
 
-```plaintext
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
-" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+```html
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=RsYA8Gr5NTY
+" target="_blank"><img src="http://img.youtube.com/vi/RsYA8Gr5NTY/0.jpg" 
+alt="The Batusi 🕺" width="240" height="180" border="10" /></a>
 ```
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=RsYA8Gr5NTY
+" target="_blank"><img src="http://img.youtube.com/vi/RsYA8Gr5NTY/0.jpg" 
+alt="The Batusi 🕺" width="240" height="180" border="10" /></a>
 
 Or, in pure Markdown, but losing the image sizing and border:
 
-```plaintext
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+```md
+[![The Batusi 🕺](http://img.youtube.com/vi/RsYA8Gr5NTY/0.jpg)](http://www.youtube.com/watch?v=RsYA8Gr5NTY)
 ```
+
+[![The Batusi 🕺](http://img.youtube.com/vi/RsYA8Gr5NTY/0.jpg)](http://www.youtube.com/watch?v=RsYA8Gr5NTY)
 
 ## TeX Mathematical Formulae
 
@@ -390,10 +396,14 @@ A full description of TeX math symbols is beyond the scope of this cheatsheet. H
 
 Here are some examples to try out:
 
-```
+```latex
 $-b \pm \sqrt{b^2 - 4ac} \over 2a$
 $x = a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \frac{1}{a_3 + a_4}}}$
 $\forall x \in X, \quad \exists y \leq \epsilon$
 ```
+
+$-b \pm \sqrt{b^2 - 4ac} \over 2a$
+$x = a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \frac{1}{a_3 + a_4}}}$
+$\forall x \in X, \quad \exists y \leq \epsilon$
 
 The beginning and ending dollar signs (`$`) are the delimiters for the TeX markup.

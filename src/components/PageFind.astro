@@ -6,10 +6,12 @@ import { navLinks as quickLinks } from "@lib/navLinks";
 <PagefindConfig excerpt-length="15" />
 
 <pagefind-modal reset-on-close>
+  <pagefind-modal-header>
+    <pagefind-input autofocus></pagefind-input>
+  </pagefind-modal-header>
   <pagefind-modal-body>
     <div class="sk-container">
       <div class="sk-main">
-        <pagefind-input autofocus></pagefind-input>
         <pagefind-summary></pagefind-summary>
         <pagefind-results show-images="false" show-sub-results
         ></pagefind-results>
@@ -65,11 +67,33 @@ import { navLinks as quickLinks } from "@lib/navLinks";
     --pf-hover: rgba(255, 255, 255, 0.05);
   }
 
-  pagefind-modal::part(dialog) {
+  dialog.pf-modal {
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Pagefind's default UI goes edge-to-edge full-screen below 640px, via a
+     rule wrapped in :is(*, #\#) three times over — a specificity hack that
+     outranks a plain "dialog.pf-modal[open]" override no matter the source
+     order. Match that specificity here so our smaller centered dialog wins. */
+  @media (max-width: 640px) {
+    :is(*, #\#):is(*, #\#):is(*, #\#) dialog.pf-modal[open] {
+      top: 0;
+      left: 0;
+      width: calc(100vw - 32px);
+      height: fit-content;
+      max-height: min(80vh, 640px);
+      margin: max(24px, env(safe-area-inset-top)) auto auto;
+      border-radius: 14px;
+    }
+    /* Pagefind's body flexes to fill the dialog's height; with little or no
+       content that leaves a big empty gap below Quick Links. Only take the
+       space the content needs, up to the dialog's max-height. */
+    :is(*, #\#):is(*, #\#):is(*, #\#) .pf-modal-body {
+      flex: 0 1 auto;
+    }
   }
 
   :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-summary {
