@@ -1,0 +1,107 @@
+media:
+  input: public/assets
+  output: /assets/
+
+content:
+  - name: notes
+    label: Notes/Blog Posts
+    type: collection
+    path: src/content/notes
+    view:
+      fields:
+        - title
+        - date
+        - tags
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Date
+        type: date
+        required: true
+      - name: description
+        label: Description
+        type: text
+      - name: updated
+        label: Updated
+        type: date
+      - name: draft
+        label: Draft
+        type: boolean
+      - name: archive
+        label: Archive
+        type: boolean
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: socials
+        label: Socials
+        type: string
+        list: true
+      - name: body
+        label: Note Content
+        type: code
+        options:
+          language: markdown
+
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    view:
+      fields:
+        - title
+        - date
+        - tags
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: description
+        label: Description
+        type: text
+      - name: date
+        label: Date
+        type: date
+      - name: updated
+        label: Updated
+        type: date
+      - name: draft
+        label: Draft
+        type: boolean
+      - name: archive
+        label: Archive
+        type: boolean
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+      - name: socials
+        label: Socials
+        type: string
+        list: true
+      - name: demoURL
+        label: Demo URL
+        type: string
+      - name: repoURL
+        label: Repository URL
+        type: string
+      - name: packageURL
+        label: Package URL
+        type: string
+      - name: professional
+        label: Professional
+        type: boolean
+      - name: languages
+        label: Languages
+        type: string
+        list: true
+      - name: body
+        label: Project Content
+        type: code
+        options:
+          language: markdown

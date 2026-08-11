@@ -203,7 +203,7 @@ Inline `code` has `back-ticks around` it.
 
 Blocks of code are either fenced by lines with three back-ticks <code>```</code>, or are indented with four spaces. I recommend only using the fenced code blocks -- they're easier and only they support syntax highlighting.
 
-<pre lang="plaintext"><code>```javascript
+<pre lang="plaintext">```javascript
 var s = "JavaScript syntax highlighting";
 alert(s);
 ```
@@ -217,7 +217,7 @@ print s
 No language indicated, so no syntax highlighting. 
 But let's throw in a &lt;b&gt;tag&lt;/b&gt;.
 ```
-</code></pre>
+</pre>
 
 ```javascript
 var s = "JavaScript syntax highlighting";
@@ -235,6 +235,23 @@ But let's throw in a <b>tag</b>.
 ```
 
 Again, to see what languages are available for highlighting, and how to write those language names, see the [highlight.js demo page](http://softwaremaniacs.org/media/soft/highlight/test.html).
+
+## Footnotes
+
+Footnotes aren't part of the core Markdown spec, but they [supported by GFM](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#footnotes).
+
+Here is a simple footnote[^1].
+
+A footnote can also have multiple lines[^2].  
+
+You can also use words, to fit your writing style more closely[^note].
+
+[^1]: My reference.
+[^2]: Every new line should be prefixed with 2 spaces.  
+  This allows you to have a footnote with multiple lines.
+[^note]:
+    Named footnotes will still render with numbers instead of the text but allow easier identification and linking.  
+    This footnote also has been made with a different syntax using 4 spaces for new lines.
 
 ## Tables
 
