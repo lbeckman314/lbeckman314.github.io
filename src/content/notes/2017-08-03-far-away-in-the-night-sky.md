@@ -1,12 +1,14 @@
 ---
 title: far away in the night sky
 date: 2017-08-03
-updated: 2026-08-10
+updated: 2017-08-03
 draft: false
 archive: false
 tags:
   - poem
 ---
+
+```
 Far away in the night sky
 past our moon and past our sun
 out among the oldest & coldest corners of the Universe
@@ -41,3 +43,4 @@ the stars twinkle in the sky of that strange, far-away planet.
 So every time you see a star flicker when you look into the night sky,
 you can feel a little warmer knowing you’re sharing the light of a little creature
 dreaming it’s warm dreams out among the stars.
+```
