@@ -1,4 +1,6 @@
 ---
+import { navLinks } from "@lib/navLinks";
+
 const path = Astro.url.pathname;
 
 const isActive = (prefix: string) =>
@@ -15,12 +17,24 @@ const isActive = (prefix: string) =>
   </a>
   <span class="spacer"></span>
   <nav class="nav-links">
-    <a href="/" class:list={[isActive("/") && "active"]}>/home</a>
-    <a href="/notes" class:list={[isActive("/notes") && "active"]}>/notes</a>
-    <a href="/projects" class:list={[isActive("/projects") && "active"]}>
-      /projects
-    </a>
-    <a href="/about" class:list={[isActive("/about") && "active"]}>/about</a>
+    {
+      navLinks.map((link) => (
+        <a href={link.href} class:list={[isActive(link.href) && "active"]}>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            set:html={link.icon}
+          />
+          <span>{link.label.toLowerCase()}</span>
+        </a>
+      ))
+    }
   </nav>
   <div class="controls">
     <div class="ctl-group" role="group" aria-label="Text size">
@@ -147,10 +161,18 @@ const isActive = (prefix: string) =>
     align-items: center;
   }
   .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: calc(14.5px * var(--fsm));
     text-decoration: none;
     color: var(--mut);
     transition: color 0.15s;
+  }
+  .nav-links a svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
   }
   .nav-links a:hover {
     color: var(--ink);
