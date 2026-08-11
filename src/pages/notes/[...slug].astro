@@ -1,24 +1,111 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import Note from "../../components/Note.astro";
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import FormattedDate from "@components/FormattedDate.astro";
+import { shouldRenderPage, shouldListPage, iconForSocial } from "@lib/utils";
+import PostNavigation from "@components/PostNavigation.astro";
+import TableOfContents from "@components/TableOfContents.astro";
+import Aside from "@components/Aside.astro";
 
 export async function getStaticPaths() {
-  const notes = await getCollection("notes");
-  return notes.map((note) => ({
-    params: { slug: note.slug },
-    props: { note },
+  // Draft posts are excluded, but archived posts are included - they're just not
+  // listed.
+  const posts = (await getCollection("notes"))
+    .filter(shouldRenderPage)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
   }));
 }
 
-const { note } = Astro.props;
+type Props = CollectionEntry<"notes">;
 
-const { Content } = await note.render();
+const posts = (await getCollection("notes"))
+  .filter(shouldListPage)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
 
-const { title, date } = note.data;
+function getNextPost() {
+  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
+  return posts[postIndex + 1];
+}
+
+function getPrevPost() {
+  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
+  return posts[postIndex - 1];
+}
+
+const nextPost = getNextPost();
+const prevPost = getPrevPost();
+
+const post = Astro.props;
+const { Content, headings } = await render(post);
+const tags = post.data.tags ?? [];
+const socials = post.data.socials ?? [];
 ---
 
-<BaseLayout>
-  <Note note={note} />
-  <p class="snow center">· ※ · ※ · ※ ·</p>
-</BaseLayout>
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  route={`${post.collection}/${post.id}`}
+  article={{
+    title: post.data.title,
+    publishedDate: post.data.date,
+    updatedDate: post.data.updated,
+    tags: post.data.tags,
+  }}
+>
+  <a class="backlink" href="/notes">‹ Back to blog</a>
+
+  <article class="post-grid">
+    <aside class="post-aside">
+      {headings.length > 0 && <TableOfContents headings={headings} />}
+    </aside>
+
+    <div class="post-main">
+      <div class="article-head">
+        <div class="article-meta">
+          <span><FormattedDate date={post.data.date} /></span>
+        </div>
+        <h1>{post.data.title}</h1>
+        <div class="article-tags">
+          {tags.map((tag) => <a href={`/notes/tags/${tag}`}>#{tag}</a>)}
+          {
+            socials.length > 0 && (
+              <>
+                {tags.length > 0 && (
+                  <span class="repo" style="color:var(--dim)">
+                    ·
+                  </span>
+                )}
+                <span class="repo">Discuss on</span>
+                {socials.toSorted().map((social) => (
+                  <a
+                    class="repo discuss-link"
+                    href={social}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Discuss"
+                  >
+                    <span set:html={iconForSocial(social)} />
+                  </a>
+                ))}
+              </>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="article">
+        <Content components={{ Aside }} />
+      </div>
+
+      <div class="article-foot">
+        <div class="article-tags">
+          {tags.map((tag) => <a href={`/notes/tags/${tag}`}>#{tag}</a>)}
+        </div>
+        <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+      </div>
+    </div>
+  </article>
+</Layout>

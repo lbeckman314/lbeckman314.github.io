@@ -1,27 +1,329 @@
 ---
-import HeaderLink from './HeaderLink.astro';
-import { SITE_TITLE } from '../consts';
-import '../styles/main.scss';
+import { navLinks } from "@lib/navLinks";
+
+const path = Astro.url.pathname;
+
+const isActive = (prefix: string) =>
+  prefix === "/" ? path === "/" : path.startsWith(prefix);
 ---
 
-<header>
-	<nav>
-		<div class="internal-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/about">About</HeaderLink>
-			<HeaderLink href="/notes">Notes</HeaderLink>
-			<HeaderLink href="/favoriets">Favorites</HeaderLink>
-		</div>
-		<div class="social-links">
-			<a href="https://github.com/withastro/astro">
-				<span>GitHub</span>
-			</a>
-			<a href="https://m.webtoo.ls/@astro">
-				<span>Instagram</span>
-			</a>
-			<a href="https://twitter.com/astrodotbuild">
-				<span>Theme</span>
-			</a>
-		</div>
-	</nav>
+<header class="nav" transition:persist>
+  <a class="brand" href="/" aria-label="drew's dev blog home">
+    <span class="mark" id="brandMark"></span>
+    <span class="word">
+      liambeckman<span class="tld">.com</span>
+      <span class="caret"></span>
+    </span>
+  </a>
+  <span class="spacer"></span>
+  <nav class="nav-links">
+    {
+      navLinks.map((link) => (
+        <a href={link.href} class:list={[isActive(link.href) && "active"]}>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            set:html={link.icon}
+          />
+          <span>{link.label.toLowerCase()}</span>
+        </a>
+      ))
+    }
+  </nav>
+  <div class="controls">
+    <div class="ctl-group" role="group" aria-label="Text size">
+      <button class="ctl-btn fs-s" data-fs="s" title="Small text">A</button>
+      <button class="ctl-btn fs-m" data-fs="m" title="Medium text">A</button>
+      <button class="ctl-btn fs-l" data-fs="l" title="Large text">A</button>
+    </div>
+    <div class="ctl-group" role="group" aria-label="Theme">
+      <button class="ctl-btn" id="themeToggle" aria-label="Theme"></button>
+    </div>
+    <pagefind-modal-trigger class="search" placeholder="Search" title="Search"
+    ></pagefind-modal-trigger>
+  </div>
 </header>
+<div class="popstripe"></div>
+
+<style is:global>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 44px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-nav);
+    backdrop-filter: blur(10px);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+  }
+  .brand .mark {
+    display: flex;
+    position: relative;
+  }
+  .brand .word {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: calc(15px * var(--fsm));
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .brand .word .tld {
+    color: var(--accent-text);
+  }
+  /* fun: colour radiates out from the top-right corner on hover */
+  @property --brand-angle {
+    syntax: "<angle>";
+    inherits: false;
+    initial-value: 0deg;
+  }
+  .brand .mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s ease;
+    animation: brand-roll 4.5s linear infinite;
+    animation-play-state: paused;
+    background: conic-gradient(
+      from var(--brand-angle) at 100% 0%,
+      #f5a623,
+      #ff5e5b,
+      #d65bff,
+      #4ab0ff,
+      #4be08a,
+      #f5a623
+    );
+    -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20x='1.4'%20y='1.4'%20width='29.2'%20height='29.2'%20rx='8'%20fill='none'%20stroke='black'%20stroke-width='2.2'/%3E%3Cpath%20d='M11%209%20L21.5%2023%20M15.2%2015.5%20L9.5%2023'%20fill='none'%20stroke='black'%20stroke-width='2.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20x='1.4'%20y='1.4'%20width='29.2'%20height='29.2'%20rx='8'%20fill='none'%20stroke='black'%20stroke-width='2.2'/%3E%3Cpath%20d='M11%209%20L21.5%2023%20M15.2%2015.5%20L9.5%2023'%20fill='none'%20stroke='black'%20stroke-width='2.4'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .brand:hover .mark::after {
+      opacity: 1;
+      animation-play-state: running;
+    }
+  }
+  @keyframes brand-roll {
+    to {
+      --brand-angle: 360deg;
+    }
+  }
+  .brand .word .caret {
+    display: none;
+    width: 0.55em;
+    height: 1em;
+    margin-left: 2px;
+    vertical-align: -0.12em;
+    border-radius: 1px;
+    background: var(--accent);
+  }
+  .brand:hover .word .caret {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .brand:hover .word .caret {
+      animation: ddb-caret 0.7s steps(1) infinite;
+    }
+  }
+  @keyframes ddb-caret {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
+  }
+  .nav .spacer {
+    flex: 1;
+  }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: calc(14.5px * var(--fsm));
+    text-decoration: none;
+    color: var(--mut);
+    transition: color 0.15s;
+  }
+  .nav-links a svg {
+    flex: none;
+    width: 15px;
+    height: 15px;
+  }
+  .nav-links a:hover {
+    color: var(--ink);
+  }
+  .nav-links a.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .popstripe {
+    width: 100%;
+    height: 0.25em;
+    background-size: 100%;
+    background-image: linear-gradient(
+      to right,
+      #db37c4 0% 20%,
+      #ed68d9 20% 40%,
+      #49ccd4 40% 60%,
+      #678cfa 60% 80%,
+      #4635f7 80% 100%
+    );
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ctl-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 3px;
+    background: var(--chip-bg);
+  }
+  .ctl-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 26px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--mut);
+    cursor: pointer;
+    font-family: var(--mono);
+    font-weight: 600;
+    line-height: 1;
+    transition:
+      background 0.15s,
+      color 0.15s;
+    padding: 0;
+  }
+  .ctl-btn:hover {
+    color: var(--ink);
+  }
+  .ctl-btn.on {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .ctl-btn svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+  .ctl-btn.fs-s {
+    font-size: 11px;
+  }
+  .ctl-btn.fs-m {
+    font-size: 13px;
+  }
+  .ctl-btn.fs-l {
+    font-size: 16px;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: auto;
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    color: var(--dim);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 7px 11px;
+    background: var(--chip-bg);
+    transition: border-color 0.15s;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn:hover {
+    border-color: var(--accent);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-text {
+    color: var(--dim);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-shortcut {
+    color: var(--dim);
+    opacity: 0.8;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-key {
+    font-family: var(--mono);
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  @media (max-width: 720px) {
+    .nav {
+      padding: 12px 18px;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+    }
+    .nav .spacer {
+      display: none;
+    }
+    .brand {
+      order: 1;
+    }
+    .controls {
+      order: 2;
+      margin-left: auto;
+      gap: 6px;
+    }
+    .nav-links {
+      order: 3;
+      width: 100%;
+      justify-content: center;
+      gap: 22px;
+      padding-top: 11px;
+      border-top: 1px solid var(--line);
+    }
+    .nav-links a {
+      font-size: calc(15px * var(--fsm));
+    }
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn {
+      gap: 0;
+      padding: 0;
+      width: 28px;
+      height: 26px;
+      justify-content: center;
+      border: 0;
+      background: transparent;
+    }
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-text,
+    :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-shortcut {
+      display: none;
+    }
+  }
+  @media (max-width: 420px) {
+    .nav-links {
+      gap: 16px;
+    }
+  }
+</style>

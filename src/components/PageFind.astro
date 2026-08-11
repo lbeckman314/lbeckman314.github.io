@@ -1,0 +1,219 @@
+---
+import PagefindConfig from "astro-pagefind/components/PagefindConfig.astro";
+import { navLinks as quickLinks } from "@lib/navLinks";
+---
+
+<PagefindConfig excerpt-length="15" />
+
+<pagefind-modal reset-on-close>
+  <pagefind-modal-body>
+    <div class="sk-container">
+      <div class="sk-main">
+        <pagefind-input autofocus></pagefind-input>
+        <pagefind-summary></pagefind-summary>
+        <pagefind-results show-images="false" show-sub-results
+        ></pagefind-results>
+      </div>
+      <div class="sk-quick-links">
+        <div class="sk-quick-links-title">Quick Links</div>
+        <ul class="sk-quick-links-list">
+          {
+            quickLinks.map((link) => (
+              <li>
+                <a href={link.href}>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    set:html={link.icon}
+                  />
+                  <span>{link.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </pagefind-modal-body>
+</pagefind-modal>
+
+<style is:global>
+  :root {
+    --pf-font: var(--sans);
+    --pf-border-radius: 8px;
+    --pf-modal-max-width: 760px;
+    --pf-modal-backdrop: rgba(0, 0, 0, 0.5);
+  }
+  html[data-theme="light"] {
+    --pf-text: #1c1a16;
+    --pf-text-secondary: #2d2a24;
+    --pf-background: #ffffff;
+    --pf-border: rgba(20, 18, 12, 0.1);
+    --pf-hover: rgba(20, 18, 12, 0.04);
+  }
+  html[data-theme="dark"] {
+    --pf-text: #ececee;
+    --pf-text-secondary: #cfcfd4;
+    --pf-background: #161619;
+    --pf-border: rgba(255, 255, 255, 0.08);
+    --pf-hover: rgba(255, 255, 255, 0.05);
+  }
+
+  pagefind-modal::part(dialog) {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-summary {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--dim);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-results {
+    gap: 14px;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-card {
+    padding: 0;
+    border: 0;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-card:hover {
+    box-shadow: none;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-title {
+    font-weight: 600;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-link {
+    color: var(--accent-text);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-link:hover {
+    text-decoration: underline;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-result-excerpt {
+    color: var(--mut);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-chips {
+    margin-top: 8px;
+    padding-left: 16px;
+    border-left: 2px solid var(--line);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-link {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-link:hover {
+    color: var(--accent-text);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main .pf-heading-excerpt {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    color: var(--mut);
+  }
+  :is(*, #\#):is(*, #\#):is(*, #\#) .sk-main mark {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    color: var(--ink);
+    font-weight: 600;
+    border-radius: 3px;
+  }
+
+  .sk-container {
+    display: flex;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+  }
+  .sk-main {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    padding: 14px 18px;
+  }
+
+  .sk-quick-links {
+    flex: none;
+    width: 190px;
+    padding: 18px 14px;
+    border-left: 1px solid var(--line);
+    background: var(--chip-bg);
+    overflow-y: auto;
+  }
+  .sk-quick-links-title {
+    font-family: var(--mono);
+    font-size: calc(11.5px * var(--fsm));
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--mut);
+    margin-bottom: 10px;
+  }
+  .sk-quick-links-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sk-quick-links-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px;
+    border-radius: 8px;
+    color: var(--mut);
+    text-decoration: none;
+    font-size: calc(13.5px * var(--fsm));
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .sk-quick-links-list a:hover {
+    background: var(--card-hover);
+    color: var(--ink);
+  }
+  .sk-quick-links-list a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+    background: var(--card-hover);
+    color: var(--ink);
+  }
+  .sk-quick-links-list svg {
+    flex: none;
+    width: 16px;
+    height: 16px;
+  }
+  @media (max-width: 620px) {
+    .sk-container {
+      flex-direction: column;
+      max-height: 85vh;
+    }
+    .sk-quick-links {
+      width: auto;
+      max-height: none;
+      padding: 12px 18px 16px;
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+    .sk-quick-links-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sk-quick-links-list li {
+      flex: none;
+    }
+    .sk-quick-links-list a {
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+  }
+</style>

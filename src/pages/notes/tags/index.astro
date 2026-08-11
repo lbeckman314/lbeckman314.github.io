@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { BLOG_TAGS } from "@consts";
+import { shouldListPage } from "@lib/utils";
+
+const posts = (await getCollection("notes"))
+  .filter(shouldListPage)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const tags = posts
+  .flatMap((p) => p.data.tags ?? [])
+  .filter((tag, index, self) => self.indexOf(tag) === index)
+  .sort();
+---
+
+<Layout
+  title={BLOG_TAGS.TITLE}
+  description={BLOG_TAGS.DESCRIPTION}
+  route="blog/tags"
+>
+  <div class="page-head">
+    <h1 class="page-title">Tags</h1>
+    <p class="page-intro">Browse posts by topic.</p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/notes">all posts</a>
+    {
+      tags.map((tag) => (
+        <a class="pill" href={`/notes/tags/${tag}`}>
+          #{tag}
+        </a>
+      ))
+    }
+  </div>
+</Layout>

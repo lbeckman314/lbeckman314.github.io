@@ -1,0 +1,11 @@
+[build]
+  # Netlify's dependency cache can carry over a stale node_modules/.vite (and
+  # .astro) dep-optimization cache from a previous Astro major version, which
+  # has caused prerender-time "Named export ... not found" failures for
+  # transitive deps (clsx, cookie) after the Astro 5 -> 7 upgrade. Clearing
+  # both before installing/building avoids reusing that stale cache.
+  command = "rm -rf node_modules/.vite node_modules/.astro dist && npm run build"
+
+[build.environment]
+  NODE_VERSION = "26"
+

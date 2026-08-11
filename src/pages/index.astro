@@ -1,34 +1,353 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import Layout from "@layouts/Layout.astro";
+import FormattedDate from "@components/FormattedDate.astro";
+import ProjectCard from "@components/ProjectCard.astro";
+import { HOME, SITE } from "@consts";
+import { Icon } from "astro-icon/components";
+import { withProjectsData } from "@lib/projects";
+import { shouldListPage, dateSortDesc } from "@lib/utils";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
-const pageTitle = "home";
-const description = "Hello!";
+const allPosts = (await getCollection("notes"))
+  .filter(shouldListPage)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const totalPosts = allPosts.length;
+const posts = allPosts.slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+
+const allProjects: CollectionEntry<"projects">[] = (
+  await getCollection("projects")
+)
+  .filter(shouldListPage)
+  .sort((a, b) => dateSortDesc(a.data.date, b.data.date));
+const allProjectCards = await withProjectsData(allProjects);
+
+const projects = allProjectCards.slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
+
+// Topics: the most recently used tags across blog posts and projects, newest
+// first. Each links to that tag's page in the collection it last appeared in.
+const NUM_TOPICS = 8;
+const recentlyTagged = [
+  ...allPosts.map((entry) => ({
+    collection: entry.collection,
+    date: entry.data.date,
+    tags: entry.data.tags ?? [],
+  })),
+  ...allProjectCards.map((project) => ({
+    collection: project.entry.collection,
+    date: project.data.date,
+    tags: project.data.tags,
+  })),
+].sort((a, b) => dateSortDesc(a.date, b.date));
+const seenTags = new Set<string>();
+const topics: { tag: string; href: string }[] = [];
+for (const entry of recentlyTagged) {
+  for (const tag of entry.tags) {
+    if (seenTags.has(tag)) {
+      continue;
+    }
+    seenTags.add(tag);
+    topics.push({ tag, href: `/${entry.collection}/tags/${tag}` });
+  }
+}
+const recentTopics = topics.slice(0, NUM_TOPICS);
 ---
 
-<BaseLayout title={pageTitle} description={description}>
-  <div class="home">
-    <div class="about">
-      <a href="/about"></a>
-      <h1>about</h1>
-      <p>introductions</p>
+<Layout title={HOME.TITLE} description={HOME.DESCRIPTION} route="index">
+  <section class="hero">
+    <span class="hi"> Hello, I’m liam! </span>
+    <h1>A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</h1>
+    <p class="lede">
+      I’m a sleepy human with a dark history of secrets and intrigue.
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/notes">Read the latest →</a>
+      <a
+        class="btn btn-ghost btn-icon"
+        href="/rss.xml"
+        aria-label="Subscribe via RSS"
+        title="Subscribe via RSS"
+      >
+        <Icon name="tabler:rss" width={16} height={16} />
+      </a>
     </div>
+    <div class="topics">
+      {
+        recentTopics.map((topic) => (
+          <a class="topic" href={topic.href}>
+            #{topic.tag}
+          </a>
+        ))
+      }
+    </div>
+  </section>
 
-    <div class="code">
-      <a href="/code"></a>
-      <h1>code</h1>
-      <p>bits and symbols</p>
-    </div>
-
-    <div class="notes">
-      <a href="/notes"></a>
-      <h1>notes</h1>
-      <p>this and that</p>
-    </div>
-
-    <div class="favorites">
-      <a href="/favorites"></a>
-      <h1>favorites</h1>
-      <p>the bee's knees</p>
-    </div>
+  <div class="sec-head">
+    <h2>Latest posts</h2>
+    <span class="spacer"></span>
+    <a href="/notes">See all {totalPosts} →</a>
   </div>
-</BaseLayout>
+  <section class="posts">
+    {
+      posts.map((post, i) => (
+        <a class="post" href={`/notes/${post.id}`}>
+          <div class="post-top">
+            <span class="post-num">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="post-title">{post.data.title}</h3>
+            <span class="post-arrow">→</span>
+          </div>
+          <p class="post-sub">{post.data.description}</p>
+          <div class="post-meta">
+            <span class="tags">
+              {(post.data.tags ?? []).map((tag) => (
+                <span class="tag">#{tag}</span>
+              ))}
+            </span>
+            <span class="spacer" />
+            <span class="meta-bit">
+              <FormattedDate date={post.data.date} />
+            </span>
+          </div>
+        </a>
+      ))
+    }
+  </section>
+
+  <div class="sec-head">
+    <h2>Recent projects</h2>
+    <span class="spacer"></span>
+    <a href="/projects">See all →</a>
+  </div>
+  <div class="card-list">
+    {
+      projects.map((project) => (
+        <ProjectCard entry={project.entry} data={project.data} />
+      ))
+    }
+  </div>
+
+  <div class="contact">
+    <div>
+      <h3>Say hi 👋</h3>
+      <p>Got a question or just want to chat? My inbox is open!</p>
+    </div>
+    <span class="spacer"></span>
+    <a class="email" href={SITE.EMAIL} aria-label="Email Liam">
+      <span class="email email-text">{SITE.EMAIL}</span>
+    </a>
+  </div>
+</Layout>
+
+<style is:global>
+  /* ============ HERO ============ */
+  .hero {
+    padding-top: 64px;
+  }
+  .hero .hi {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: calc(24px * var(--fsm));
+    color: var(--accent-text);
+  }
+  .hero h1 {
+    margin: 14px 0 18px;
+    font-size: calc(38px * var(--fsm));
+    line-height: 1.14;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    max-width: 640px;
+    text-wrap: balance;
+  }
+  .hero p.lede {
+    margin: 0 0 26px;
+    font-size: calc(16.5px * var(--fsm));
+    line-height: 1.6;
+    color: var(--mut);
+    max-width: 600px;
+    text-wrap: pretty;
+  }
+  .cta-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .topics {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--line);
+  }
+  .topic {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--mut);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 5px 12px;
+    text-decoration: none;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
+  }
+  .topic:hover {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  /* ============ POST LIST (combined container) ============ */
+  .posts {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .post {
+    display: block;
+    text-decoration: none;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+    position: relative;
+    user-select: text;
+    -webkit-user-drag: none;
+  }
+  .post:last-child {
+    border-bottom: 0;
+  }
+  .post:hover {
+    background: var(--card-hover);
+  }
+  .post-top {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 7px;
+  }
+  .post-num {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--dim);
+    width: 24px;
+    flex: none;
+  }
+  .post-title {
+    margin: 0;
+    font-size: calc(18px * var(--fsm));
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    flex: 1;
+    line-height: 1.3;
+  }
+  .post-arrow {
+    color: var(--accent-text);
+    font-size: calc(16px * var(--fsm));
+    opacity: 0.7;
+    transition:
+      transform 0.15s,
+      opacity 0.15s;
+  }
+  .post:hover .post-arrow {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+  .post-sub {
+    margin: 0 0 11px 36px;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.55;
+    color: var(--mut);
+    max-width: 560px;
+    text-wrap: pretty;
+  }
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 36px;
+    flex-wrap: wrap;
+  }
+  .post-meta .spacer {
+    flex: 1;
+  }
+
+  /* ============ CONTACT ============ */
+  .contact {
+    margin: 56px 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .contact h3 {
+    margin: 0 0 6px;
+    font-size: calc(19px * var(--fsm));
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .contact p {
+    margin: 0;
+    font-size: calc(14.5px * var(--fsm));
+    color: var(--mut);
+  }
+  .contact .spacer {
+    flex: 1;
+  }
+  .contact a.email {
+    font-family: var(--mono);
+    font-size: calc(13.5px * var(--fsm));
+    color: var(--accent-text);
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 16px;
+    transition: border-color 0.15s;
+  }
+  .contact a.email:hover {
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      padding-top: 40px;
+    }
+    .hero h1 {
+      font-size: calc(30px * var(--fsm));
+    }
+    .contact {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+  }
+  @media (max-width: 560px) {
+    /* Stack the post footer: tags on their own line, then the
+       timestamp · reading time · likes line below them. */
+    .post-meta {
+      gap: 8px 12px;
+    }
+    .post-meta .spacer {
+      display: none;
+    }
+    .post-meta .tags {
+      flex-basis: 100%;
+    }
+  }
+  @media (max-width: 420px) {
+    .post-sub,
+    .post-meta {
+      margin-left: 0;
+    }
+    .post-top {
+      gap: 9px;
+    }
+  }
+</style>

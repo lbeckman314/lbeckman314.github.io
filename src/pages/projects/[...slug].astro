@@ -1,0 +1,102 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { iconForSocial, shouldListPage, shouldRenderPage } from "@lib/utils";
+import TableOfContents from "@components/TableOfContents.astro";
+import ProjectLinks from "@components/ProjectLinks.astro";
+import {
+  getProjectData,
+  getProjectLinks,
+  withProjectsData,
+} from "@lib/projects";
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("projects")).filter(shouldRenderPage);
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: project,
+  }));
+}
+
+const projectEntry = Astro.props;
+const projectList = await getCollection("projects");
+
+const { Content, headings } = await render(projectEntry);
+const projectData = await getProjectData(projectEntry);
+
+const projects = await withProjectsData(projectList.filter(shouldListPage));
+const projectIndex = projects.findIndex((p) => p.entry.id === projectEntry.id);
+const nextProject = projects[projectIndex + 1];
+
+const links = getProjectLinks(projectEntry, projectData);
+
+const tags = projectData.tags;
+const socials = projectEntry.data.socials ?? [];
+---
+
+<Layout
+  title={projectData.title}
+  description={projectData.description}
+  route={`${projectEntry.collection}/${projectEntry.id}`}
+  article={{
+    title: projectData.title,
+    publishedDate: projectData.date ?? new Date(),
+    updatedDate: projectData.updated,
+    tags,
+  }}
+>
+  <a class="backlink" href="/projects">‹ Back to projects</a>
+
+  <article class="post-grid">
+    <aside class="post-aside">
+      {headings.length > 0 && <TableOfContents headings={headings} />}
+    </aside>
+
+    <div class="post-main">
+      <div class="article-head">
+        <div class="article-tags">
+          <ProjectLinks links={links} />
+          {
+            socials.length > 0 && (
+              <>
+                <span class="repo">Discuss on</span>
+                {socials.toSorted().map((social) => (
+                  <a
+                    class="repo discuss-link"
+                    href={social}
+                    target="_blank"
+                    rel="noopener"
+                    aria-label="Discuss"
+                  >
+                    <span set:html={iconForSocial(social)} />
+                  </a>
+                ))}
+              </>
+            )
+          }
+        </div>
+      </div>
+
+      <div class="article">
+        <Content />
+      </div>
+
+      <div class="article-foot">
+        <div class="prevnext">
+          <a class="pn prev" href="/projects">
+            <span class="dir">‹ All projects</span>
+            <span class="t">Back to the full list</span>
+          </a>
+          {
+            nextProject && (
+              <a class="pn next" href={`/projects/${nextProject.entry.id}`}>
+                <span class="dir">Next project ›</span>
+                <span class="t">{nextProject.data.title}</span>
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>

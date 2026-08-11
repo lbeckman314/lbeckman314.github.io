@@ -1,0 +1,70 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import PostCard from "@components/PostCard.astro";
+import { BLOG } from "@consts";
+import { shouldListPage, shouldRenderPage } from "@lib/utils";
+
+type Props = {
+  tag: string;
+};
+
+const { tag } = Astro.props;
+
+const posts = (await getCollection("notes"))
+  .filter(shouldListPage)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const tags = posts
+  .flatMap((post) => post.data.tags ?? [])
+  .filter((value, index, self) => self.indexOf(value) === index);
+
+const taggedPosts = posts.filter((post) => post.data.tags?.includes(tag));
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("notes"))
+    .filter(shouldRenderPage)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  const tags = posts
+    .flatMap((p) => p.data.tags ?? [])
+    .filter((tag, index, self) => self.indexOf(tag) === index);
+
+  return tags.map((tag) => ({
+    params: { slug: tag },
+    props: { tag },
+  }));
+}
+---
+
+<Layout
+  title={`${BLOG.TITLE} tagged with #${tag}`}
+  description={`Explore blog posts that are tagged with #${tag}`}
+  route={`blog/tags/${tag}`}
+>
+  <div class="page-head">
+    <h1 class="page-title">Posts</h1>
+    <p class="page-intro">
+      {taggedPosts.length} post{taggedPosts.length === 1 ? "" : "s"} tagged
+      <strong>#{tag}</strong>.
+    </p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/notes">all posts</a>
+    {
+      tags.map((value) => (
+        <a
+          class:list={["pill", value === tag && "active"]}
+          href={`/notes/tags/${value}`}
+        >
+          #{value}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="card-list">
+    {taggedPosts.map((post) => <PostCard entry={post} />)}
+  </div>
+</Layout>

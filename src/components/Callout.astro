@@ -1,0 +1,29 @@
+---
+type Props = {
+  type?: "default" | "info" | "warning" | "error";
+  className?: string;
+};
+
+const { type = "default", className } = Astro.props;
+
+const modifier: Record<NonNullable<Props["type"]>, string> = {
+  default: "",
+  info: "callout-tip",
+  warning: "",
+  error: "callout-danger",
+};
+
+const label: Record<NonNullable<Props["type"]>, string> = {
+  default: "Note",
+  info: "Info",
+  warning: "Warning",
+  error: "Error",
+};
+---
+
+<div class:list={["callout", modifier[type], className]}>
+  <div class="clabel">{label[type]}</div>
+  <div class="callout-content">
+    <slot />
+  </div>
+</div>

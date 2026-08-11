@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
+import RepoStars from "@components/RepoStars.astro";
+import ProjectLinks from "@components/ProjectLinks.astro";
+import { getProjectData, getProjectLinks, type ProjectData } from "@lib/projects";
+
+type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
+
+const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
+const tags = projectData.tags;
+const links = getProjectLinks(entry, projectData);
+const href = `/projects/${entry.id}`;
+---
+
+<div class="card project-card">
+  <a
+    class="card-stretch"
+    href={href}
+    aria-label={`View ${projectData.title}`}
+  ></a>
+  <div class="card-top">
+    <div class="body">
+      <div
+        style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"
+      >
+        <span class="proj-dot"></span>
+        <h3
+          class="card-title"
+          style="margin:0; font-family:var(--mono); font-size:calc(16px * var(--fsm));"
+        >
+          {projectData.title}
+        </h3>
+      </div>
+      <p class="card-sub">{projectData.description}</p>
+    </div>
+    <span class="chev" aria-hidden="true">›</span>
+  </div>
+  <div class="card-foot">
+    {
+      tags.length > 0 && (
+        <span class="tags">
+          {tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </span>
+      )
+    }
+    <span class="card-demo">
+      <ProjectLinks links={links} />
+    </span>
+    <span class="spacer"></span>
+    {
+      projectData.updated && (
+        <span class="meta-bit">
+          <FormattedDate date={projectData.updated} />
+        </span>
+      )
+    }
+    <RepoStars repoURL={entry.data.repoURL} />
+  </div>
+</div>

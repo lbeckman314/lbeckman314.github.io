@@ -1,48 +1,104 @@
-// @ts-check
-import custom from './src/styles/codedark.js';
-import mdx from '@astrojs/mdx';
+import { unified } from "@astrojs/markdown-remark";
+import mdx from "@astrojs/mdx";
+import sitemap from "@astrojs/sitemap";
+import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
+import { pluginLineNumbers } from "@expressive-code/plugin-line-numbers";
+import expressiveCode from "astro-expressive-code";
+import icon from "astro-icon";
 import pagefind from "astro-pagefind";
-import sitemap from '@astrojs/sitemap';
-import { defineConfig } from 'astro/config';
-import { remarkAlert } from "remark-github-blockquote-alert";
+import { defineConfig } from "astro/config";
+import { fromHtml } from "hast-util-from-html";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { rehypeGithubAlerts } from "rehype-github-alerts";
+import rehypeKatex from "rehype-katex";
+import rehypeSlug from "rehype-slug";
+import remarkMath from "remark-math";
 
-// Config
+// Keep the admonition markup/classes the site's existing CSS already targets
+// (.admonition / .admonition-{type} / .admonition-title) instead of the
+// plugin's default GitHub-style markdown-alert-* output.
+const admonitionBuild = (alertOptions, originalChildren) => {
+  const icon =
+    typeof alertOptions.icon === "string"
+      ? fromHtml(alertOptions.icon, { fragment: true }).children[0]
+      : alertOptions.icon;
+  if (icon?.properties) {
+    // Drop the plugin's own layout class; sizing/color come from our CSS instead.
+    delete icon.properties.className;
+  }
+  return {
+    type: "element",
+    tagName: "div",
+    properties: {
+      className: [
+        "admonition",
+        `admonition-${alertOptions.keyword.toLowerCase()}`,
+      ],
+    },
+    children: [
+      {
+        type: "element",
+        tagName: "p",
+        properties: { className: ["admonition-title"] },
+        children: [icon, { type: "text", value: alertOptions.title }],
+      },
+      ...originalChildren,
+    ],
+  };
+};
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://liambeckman.com',
-
+  site: "https://liambeckman.com",
+  // The order of integrations is important here.
   integrations: [
-    mdx(), 
     sitemap(),
     pagefind(),
+    icon(),
+    expressiveCode({
+      themes: ["catppuccin-latte", "catppuccin-frappe"],
+      themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
+      useDarkModeMediaQuery: false,
+      plugins: [pluginLineNumbers(), pluginCollapsibleSections()],
+      styleOverrides: {
+        codeFontFamily:
+          '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+        borderRadius: "12px",
+        codePaddingInline: "20px",
+        codePaddingBlock: "18px",
+      },
+    }),
+    mdx(),
   ],
-
-  // https://eikowagenknecht.de/posts/use-github-alerts-admonitions-callouts-in-astro/
   markdown: {
-    remarkPlugins: [remarkAlert],
+    // Sätteri (Astro's default processor as of v6) doesn't support
+    // remark/rehype plugins, so stick with the classic unified pipeline for
+    // KaTeX math, heading autolinks, and GitHub-style admonitions.
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        rehypeKatex,
+        rehypeSlug, // ToC adds IDs, but that happens too late for the autolink plugin.
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: "prepend",
+            headingProperties: {
+              className: ["section-anchor"],
+            },
+            properties: {
+              className: ["section-anchor-link"],
+            },
+          },
+        ],
+        [rehypeGithubAlerts, { build: admonitionBuild }],
+      ],
+    }),
     shikiConfig: {
-      theme: {...custom, type: 'dark'},
-    },
-  },
-
-  devToolbar: {
-      enabled: false
-  },
-
-  vite: {
-    build: {
-      sourcemap: true,
-    },
-
-    css: {
-      devSourcemap: true,
-    },
-
-    resolve: {
-      alias: {
-        "@": "/src",
+      themes: {
+        light: "catppuccin-latte",
+        dark: "catppuccin-frappe",
       },
     },
   },
-
 });

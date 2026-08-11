@@ -1,0 +1,43 @@
+---
+import Head from "@components/Head.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import PageFind from "@components/PageFind.astro";
+import { SITE } from "@consts";
+
+export type ArticleMeta = {
+  title: string;
+  publishedDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+};
+
+type Props = {
+  title: string;
+  description?: string;
+  route: string;
+  article?: ArticleMeta;
+};
+
+const { title, description, route, article } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark" data-fs="m">
+  <head>
+    <Head
+      title={`${title} | ${SITE.TITLE}`}
+      description={description}
+      imageUrl={`/open-graph/${route}.png`}
+      article={article}
+    />
+  </head>
+  <body>
+    <Header />
+    <main class:list={["wrap", article && "wrap--wide"]}>
+      <slot />
+    </main>
+    <Footer />
+    <PageFind />
+  </body>
+</html>
