@@ -22,37 +22,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: package-lock.json
-      
+          node-version: "26"
+          cache: pnpm
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Build with Astro
         run: |
-            COMMIT=$(git rev-parse --short HEAD) npx --no-install astro build \
+            COMMIT=$(git rev-parse --short HEAD) pnpm exec astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
-            
-      - name: Debug
-        run: |
-            ls dist
 
       - name: Add Pagefind
         run: |
-            npx pagefind --site dist
+            pnpm exec pagefind --site dist
 
-      - name: Debug
-        run: |
-            ls dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
