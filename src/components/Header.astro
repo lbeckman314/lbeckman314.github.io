@@ -143,7 +143,10 @@ const isActive = (prefix: string) =>
   }
   @media (prefers-reduced-motion: no-preference) {
     .brand .word .caret {
-      animation: ddb-caret 2.6s ease-in-out infinite;
+      /* Settles back to a solid, always-visible caret after 5 blinks
+         (no fill-mode: the animated opacity is dropped once the finite
+         iteration count ends, so it reverts to the base rule's opacity: 1). */
+      animation: ddb-caret 2s ease-in-out 5;
     }
   }
   @keyframes ddb-caret {
