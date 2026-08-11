@@ -1,5 +1,6 @@
 ---
 import TableOfContentsHeading from "./TableOfContentsHeading.astro";
+import { Icon } from "astro-icon/components";
 
 // https://kld.dev/building-table-of-contents/
 const { headings } = Astro.props;
@@ -34,6 +35,45 @@ function buildToc(headings: Heading[]) {
     {toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
   </ol>
 </details>
+
+<details class="toc-fab">
+  <summary aria-label="Table of Contents">
+    <Icon name="tabler:list" width={30} height={30} />
+  </summary>
+  <div class="toc-panel">
+    <ol>
+      {toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
+    </ol>
+  </div>
+</details>
+
+<script>
+  // Closing the floating ToC panel when a link inside it is tapped, or when
+  // the reader taps outside it — a <details> alone stays open until the
+  // summary itself is tapped again, which reads as broken on mobile.
+  function initTocFab() {
+    for (const fab of document.querySelectorAll<HTMLDetailsElement>(
+      ".toc-fab",
+    )) {
+      fab.addEventListener("click", (e) => {
+        if ((e.target as HTMLElement).closest("a")) {
+          fab.open = false;
+        }
+      });
+    }
+
+    document.addEventListener("click", (e) => {
+      for (const fab of document.querySelectorAll<HTMLDetailsElement>(
+        ".toc-fab[open]",
+      )) {
+        if (!fab.contains(e.target as Node)) fab.open = false;
+      }
+    });
+  }
+
+  document.addEventListener("astro:page-load", initTocFab);
+  initTocFab();
+</script>
 
 <style is:global>
   .toc {
@@ -93,6 +133,99 @@ function buildToc(headings: Heading[]) {
     color: var(--accent-text);
     font-weight: 600;
   }
+
+  /* ============ TOC FLOATING BUTTON (mobile/tablet) ============ */
+  /* Same fixed bottom-right stack as .back-to-top, positioned directly below
+     it. Hidden once the sidebar rail takes over at 1120px. */
+  @media (min-width: 1120px) {
+    .toc-fab {
+      display: none;
+    }
+  }
+  @media (max-width: 1119px) {
+    .toc {
+      display: none;
+    }
+  }
+  .toc-fab {
+    position: fixed;
+    right: 26px;
+    bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+    z-index: 30;
+  }
+  .toc-fab > summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    color: var(--mut);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    transition:
+      border-color 0.15s,
+      color 0.15s;
+  }
+  .toc-fab > summary::-webkit-details-marker {
+    display: none;
+  }
+  .toc-fab > summary:hover,
+  .toc-fab[open] > summary {
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+  .toc-panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 10px);
+    width: min(280px, calc(100vw - 52px));
+    max-height: min(60vh, 420px);
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+    padding: 10px 14px;
+  }
+  .toc-panel ol {
+    margin: 0;
+    padding: 0 0 0 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-panel ol ol {
+    margin: 8px 0 0;
+    padding: 0 0 0 18px;
+  }
+  .toc-panel li {
+    font-size: calc(14px * var(--fsm));
+  }
+  .toc-panel a {
+    color: var(--mut);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .toc-panel a:hover {
+    color: var(--accent-text);
+  }
+  .toc-panel a.active {
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+  /* Matches .back-to-top's own mobile position shift (see global.css) so the
+     two stay stacked with a consistent gap. */
+  @media (max-width: 720px) {
+    .toc-fab {
+      right: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+  }
 </style>
 
 <script>
@@ -105,21 +238,31 @@ function buildToc(headings: Heading[]) {
     teardown?.();
     teardown = null;
 
-    const toc = document.querySelector<HTMLElement>(".toc");
-    if (!toc) return;
-    // Hidden on narrow screens — nothing to highlight.
-    if (toc.offsetParent === null) return;
+    // Both the sidebar (.toc) and the floating panel (.toc-fab) exist in the
+    // DOM at once — only one is visible per breakpoint — so keep both in
+    // sync rather than picking whichever happens to be visible right now.
+    const containers = document.querySelectorAll<HTMLElement>(
+      ".toc, .toc-fab",
+    );
+    if (containers.length === 0) return;
 
-    const links = [...toc.querySelectorAll<HTMLAnchorElement>("a[href^='#']")];
+    const links = [...containers].flatMap((toc) => [
+      ...toc.querySelectorAll<HTMLAnchorElement>("a[href^='#']"),
+    ]);
     if (links.length === 0) return;
 
-    const linkById = new Map<string, HTMLAnchorElement>();
+    // Both containers link to the same slugs, so each id maps to more than
+    // one <a> — every matching link across both should get "active" applied.
+    const linksById = new Map<string, HTMLAnchorElement[]>();
     for (const link of links) {
       const id = decodeURIComponent(link.hash.slice(1));
-      if (id) linkById.set(id, link);
+      if (!id) continue;
+      const existing = linksById.get(id);
+      if (existing) existing.push(link);
+      else linksById.set(id, [link]);
     }
 
-    const headings = [...linkById.keys()]
+    const headings = [...linksById.keys()]
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
     if (headings.length === 0) return;
@@ -129,7 +272,7 @@ function buildToc(headings: Heading[]) {
       if (id === activeId) return;
       activeId = id;
       for (const link of links) link.classList.remove("active");
-      if (id) linkById.get(id)?.classList.add("active");
+      if (id) linksById.get(id)?.forEach((link) => link.classList.add("active"));
     };
 
     const update = () => {

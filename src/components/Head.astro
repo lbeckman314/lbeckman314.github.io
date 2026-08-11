@@ -341,37 +341,6 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     }
   }
 
-  function setupBackToTop() {
-    let btt = document.querySelector(".back-to-top");
-    if (!btt) {
-      btt = document.createElement("button");
-      btt.className = "back-to-top";
-      btt.setAttribute("aria-label", "Back to top");
-      btt.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 11l6-5 6 5"/></svg> Back to top`;
-      btt.addEventListener("click", () =>
-        window.scrollTo({ top: 0, behavior: "smooth" }),
-      );
-      document.body.appendChild(btt);
-    }
-
-    if (!scrollBound) {
-      scrollBound = true;
-      let ticking = false;
-      window.addEventListener("scroll", () => {
-        if (ticking) {
-          return;
-        }
-        ticking = true;
-        requestAnimationFrame(() => {
-          document
-            .querySelector(".back-to-top")
-            ?.classList.toggle("show", window.scrollY > 600);
-          ticking = false;
-        });
-      });
-    }
-  }
-
   function animate() {
     const animateElements = document.querySelectorAll(".animate");
     animateElements.forEach((element, index) => {
@@ -464,7 +433,6 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     injectBrand();
     bindThemeToggle();
     bindFontSize();
-    setupBackToTop();
     updateActiveNav();
     animate();
     decodeEmails();

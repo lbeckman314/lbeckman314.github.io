@@ -530,10 +530,10 @@ a.tag:hover {
 }
 
 /* ============ ARTICLE LAYOUT (ToC rail) ============ */
-/* The rail holds the Table of Contents and the like button. On wide screens it
-   sits in a sticky right column beside the reading column. On narrow screens a
-   ToC just costs vertical space, so it's hidden and only the like button
-   remains — dropped to the end of the article via flex order. */
+/* On wide screens the ToC sits in a sticky right column beside the reading
+   column. Below that breakpoint it becomes a floating button + popover (see
+   TableOfContents.astro), stacked above the "Back to top" button instead of
+   taking up space in the article flow. */
 .post-grid {
   display: flex;
   flex-direction: column;
@@ -548,9 +548,6 @@ a.tag:hover {
 }
 .post-grid > .comments {
   order: 3;
-}
-.post-aside .toc {
-  display: none;
 }
 @media (min-width: 1120px) {
   .post-grid {
@@ -1222,8 +1219,9 @@ p {
   right: 26px;
   /* iOS: a transform on a position:fixed element breaks viewport tracking
      during scroll, so this reveals with opacity/visibility only — no transform.
-     env() keeps it clear of the home-indicator safe area. */
-  bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+     env() keeps it clear of the home-indicator safe area. Stacked above the
+     ToC "Contents" button (see .toc-fab in TableOfContents.astro). */
+  bottom: calc(78px + env(safe-area-inset-bottom, 0px));
   z-index: 30;
   display: inline-flex;
   align-items: center;
@@ -1334,7 +1332,7 @@ html[data-theme="light"] img.image-dark {
   }
   .back-to-top {
     right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px));
   }
   /* The gutter .section-anchor-link normally sits in (via negative margin)
      doesn't exist at this width, so it gets clipped by the viewport edge.
