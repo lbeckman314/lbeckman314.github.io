@@ -143,17 +143,16 @@ const isActive = (prefix: string) =>
   }
   @media (prefers-reduced-motion: no-preference) {
     .brand .word .caret {
-      animation: ddb-caret 1.2s steps(1) infinite;
+      animation: ddb-caret 2.6s ease-in-out infinite;
     }
   }
   @keyframes ddb-caret {
     0%,
-    50% {
+    100% {
       opacity: 1;
     }
-    50.01%,
-    100% {
-      opacity: 0;
+    50% {
+      opacity: 0.15;
     }
   }
   .nav .spacer {
