@@ -115,10 +115,16 @@ const isActive = (prefix: string) =>
       center / contain no-repeat;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .brand:hover .mark::after,
+    .brand:hover .mark::after {
+      opacity: 1;
+      animation-play-state: running;
+    }
     .brand.intro-play .mark::after {
       opacity: 1;
       animation-play-state: running;
+      /* A couple of loops on load, then it stops and fades out (see
+         playBrandIntro() in Head.astro, which removes this class). */
+      animation-iteration-count: 2;
     }
   }
   @keyframes brand-roll {
@@ -127,7 +133,7 @@ const isActive = (prefix: string) =>
     }
   }
   .brand .word .caret {
-    display: none;
+    display: inline-block;
     width: 0.55em;
     height: 1em;
     margin-left: 2px;
@@ -135,14 +141,9 @@ const isActive = (prefix: string) =>
     border-radius: 1px;
     background: var(--accent);
   }
-  .brand:hover .word .caret,
-  .brand.intro-play .word .caret {
-    display: inline-block;
-  }
   @media (prefers-reduced-motion: no-preference) {
-    .brand:hover .word .caret,
-    .brand.intro-play .word .caret {
-      animation: ddb-caret 0.7s steps(1) infinite;
+    .brand .word .caret {
+      animation: ddb-caret 1.2s steps(1) infinite;
     }
   }
   @keyframes ddb-caret {

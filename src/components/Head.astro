@@ -338,10 +338,9 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
           }
         })();
       };
+      // Click covers touch devices, which never fire mouseenter.
       brand.addEventListener("mouseenter", playTypewriter);
-      // Exposed so playBrandIntro() can replay the same effect on load,
-      // without a real pointer hover, for sighted no-preference users.
-      brand._playIntro = playTypewriter;
+      brand.addEventListener("click", playTypewriter);
     }
   }
 
@@ -354,8 +353,9 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     }
     for (const brand of document.querySelectorAll(".brand")) {
       brand.classList.add("intro-play");
-      brand._playIntro?.();
-      setTimeout(() => brand.classList.remove("intro-play"), 1800);
+      // Matches the CSS's animation-iteration-count: 2 on brand-roll
+      // (4.5s per loop), so the class comes off right as it finishes.
+      setTimeout(() => brand.classList.remove("intro-play"), 2 * 4500);
     }
   }
 
