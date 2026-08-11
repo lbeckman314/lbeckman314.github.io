@@ -308,7 +308,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
       const plain = fullText.slice(0, fullText.length - tld.length);
       const total = fullText.length;
       let busy = false;
-      brand.addEventListener("mouseenter", () => {
+      const playTypewriter = () => {
         if (busy || reduceMotion) {
           return;
         }
@@ -337,7 +337,25 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
             busy = false;
           }
         })();
-      });
+      };
+      brand.addEventListener("mouseenter", playTypewriter);
+      // Exposed so playBrandIntro() can replay the same effect on load,
+      // without a real pointer hover, for sighted no-preference users.
+      brand._playIntro = playTypewriter;
+    }
+  }
+
+  function playBrandIntro() {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) {
+      return;
+    }
+    for (const brand of document.querySelectorAll(".brand")) {
+      brand.classList.add("intro-play");
+      brand._playIntro?.();
+      setTimeout(() => brand.classList.remove("intro-play"), 1800);
     }
   }
 
@@ -431,6 +449,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     preloadTheme();
     preloadFontSize();
     injectBrand();
+    playBrandIntro();
     bindThemeToggle();
     bindFontSize();
     updateActiveNav();
