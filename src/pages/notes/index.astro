@@ -30,11 +30,11 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
 ---
 
 <Layout title={BLOG.TITLE} description={BLOG.DESCRIPTION} route="notes">
-  <div class="page-head">
+  <div class="page-head animate">
     <h1 class="page-title">Notes</h1>
   </div>
 
-  <div class="filter-row">
+  <div class="filter-row animate">
     <a class="pill active" href="/notes">all posts</a>
     {
       tags.map((tag) => (
@@ -48,8 +48,8 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
   {
     years.map((year) => (
       <>
-        <div class="year">{year}</div>
-        <div class="card-list">
+        <div class="year animate">{year}</div>
+        <div class="card-list animate">
           {postsMap[year].map((post) => (
             <PostCard entry={post} />
           ))}

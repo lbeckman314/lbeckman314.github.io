@@ -55,7 +55,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
 ---
 
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION} route="index">
-  <section class="hero">
+  <section class="hero animate">
     <span class="hi"> Hello, I’m liam! </span>
     <h1>A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</h1>
     <p class="lede">
@@ -83,12 +83,12 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     </div>
   </section>
 
-  <div class="sec-head">
+  <div class="sec-head animate">
     <h2>Latest posts</h2>
     <span class="spacer"></span>
     <a href="/notes">See all {totalPosts} →</a>
   </div>
-  <section class="posts">
+  <section class="posts animate">
     {
       posts.map((post, i) => (
         <a class="post" href={`/notes/${post.id}`}>
@@ -114,12 +114,12 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     }
   </section>
 
-  <div class="sec-head">
+  <div class="sec-head animate">
     <h2>Recent projects</h2>
     <span class="spacer"></span>
     <a href="/projects">See all →</a>
   </div>
-  <div class="card-list">
+  <div class="card-list animate">
     {
       projects.map((project) => (
         <ProjectCard entry={project.entry} data={project.data} />
@@ -127,7 +127,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     }
   </div>
 
-  <div class="contact">
+  <div class="contact animate">
     <div>
       <h3>Say hi 👋</h3>
       <p>Got a question or just want to chat? My inbox is open!</p>
