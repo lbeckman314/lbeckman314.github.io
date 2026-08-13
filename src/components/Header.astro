@@ -119,6 +119,13 @@ const isActive = (prefix: string) =>
       opacity: 1;
       animation-play-state: running;
     }
+    .brand.intro-play .mark::after {
+      opacity: 1;
+      animation-play-state: running;
+      /* A couple of loops on load, then it stops and fades out (see
+         playBrandIntro() in Head.astro, which removes this class). */
+      animation-iteration-count: 2;
+    }
   }
   @keyframes brand-roll {
     to {
@@ -126,7 +133,7 @@ const isActive = (prefix: string) =>
     }
   }
   .brand .word .caret {
-    display: none;
+    display: inline-block;
     width: 0.55em;
     height: 1em;
     margin-left: 2px;
@@ -134,20 +141,20 @@ const isActive = (prefix: string) =>
     border-radius: 1px;
     background: var(--accent);
   }
-  .brand:hover .word .caret {
-    display: inline-block;
-  }
   @media (prefers-reduced-motion: no-preference) {
-    .brand:hover .word .caret {
-      animation: ddb-caret 0.7s steps(1) infinite;
+    .brand .word .caret {
+      /* Settles back to a solid, always-visible caret after 5 blinks
+         (no fill-mode: the animated opacity is dropped once the finite
+         iteration count ends, so it reverts to the base rule's opacity: 1). */
+      animation: ddb-caret 2s ease-in-out 5;
     }
   }
   @keyframes ddb-caret {
     0%,
-    50% {
+    45% {
       opacity: 1;
     }
-    50.01%,
+    90%,
     100% {
       opacity: 0;
     }
