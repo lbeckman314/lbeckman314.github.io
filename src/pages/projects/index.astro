@@ -27,11 +27,11 @@ const tags = projectCards
   description={PROJECTS.DESCRIPTION}
   route="projects"
 >
-  <div class="page-head">
+  <div class="page-head animate">
     <h1 class="page-title">Projects</h1>
   </div>
 
-  <div class="filter-row">
+  <div class="filter-row animate">
     <a class="pill active" href="/projects">all projects</a>
     {
       tags.map((tag) => (
@@ -45,8 +45,8 @@ const tags = projectCards
   {
     professionalProjects.length > 0 && (
       <>
-        <h2 class="section-heading">Professional</h2>
-        <div class="card-list">
+        <h2 class="section-heading animate">Professional</h2>
+        <div class="card-list animate">
           {professionalProjects.map((project) => (
             <ProjectCard entry={project.entry} data={project.data} />
           ))}
@@ -58,8 +58,8 @@ const tags = projectCards
   {
     personalProjects.length > 0 && (
       <>
-        <h2 class="section-heading">Personal</h2>
-        <div class="card-list">
+        <h2 class="section-heading animate">Personal</h2>
+        <div class="card-list animate">
           {personalProjects.map((project) => (
             <ProjectCard entry={project.entry} data={project.data} />
           ))}

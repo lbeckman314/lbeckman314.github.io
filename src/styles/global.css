@@ -1254,16 +1254,18 @@ p {
 }
 
 /* ============ SCROLL-IN ANIMATE ============ */
-.animate {
-  opacity: 0;
-  transform: translateY(-0.75rem);
-  transition:
-    transform 0.3s ease-out,
-    opacity 0.3s ease-out;
-}
-.animate.show {
-  opacity: 1;
-  transform: translateY(0);
+@media (prefers-reduced-motion: no-preference) {
+  .animate {
+    opacity: 0;
+    transform: translateY(-0.75rem);
+    transition:
+      transform 0.3s ease-out,
+      opacity 0.3s ease-out;
+  }
+  .animate.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ============ HEADING ANCHORS ============ */
