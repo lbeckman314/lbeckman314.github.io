@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import Card from "@components/Card.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import RepoStars from "@components/RepoStars.astro";
 import ProjectLinks from "@components/ProjectLinks.astro";
@@ -13,30 +14,32 @@ const links = getProjectLinks(entry, projectData);
 const href = `/projects/${entry.id}`;
 ---
 
-<div class="card project-card">
+<Card as="div" class="project-card">
   <a
+    slot="stretch-link"
     class="card-stretch"
     href={href}
     aria-label={`View ${projectData.title}`}
-  ></a>
-  <div class="card-top">
-    <div class="body">
-      <div
-        style="display:flex; align-items:center; gap:9px; margin-bottom:6px;"
-      >
-        <span class="proj-dot"></span>
-        <h3
-          class="card-title"
-          style="margin:0; font-family:var(--mono); font-size:calc(16px * var(--fsm));"
-        >
-          {projectData.title}
-        </h3>
-      </div>
-      <p class="card-sub">{projectData.description}</p>
+  />
+  <Fragment slot="title">
+    <div class="project-card-title-row">
+      <span class="proj-dot"></span>
+      <h3 class="card-title project-card-title">{projectData.title}</h3>
+      <span class="chev" aria-hidden="true">›</span>
     </div>
-    <span class="chev" aria-hidden="true">›</span>
-  </div>
-  <div class="card-foot">
+    {projectData.subtitle && (
+      <p class="card-sub">{projectData.subtitle}</p>
+    )}
+  </Fragment>
+  {
+    projectData.description && (
+      <p slot="description" class="card-sub">
+        {projectData.description}
+      </p>
+    )
+  }
+  <Fragment slot="chevron" />
+  <Fragment slot="foot">
     {
       tags.length > 0 && (
         <span class="tags">
@@ -50,13 +53,54 @@ const href = `/projects/${entry.id}`;
       <ProjectLinks links={links} />
     </span>
     <span class="spacer"></span>
-    {
-      projectData.updated && (
-        <span class="meta-bit">
-          <FormattedDate date={projectData.updated} />
-        </span>
-      )
-    }
     <RepoStars repoURL={entry.data.repoURL} />
-  </div>
-</div>
+  </Fragment>
+</Card>
+
+<style is:global>
+  .card.project-card {
+    align-items: flex-start;
+  }
+  .project-card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+  }
+  .project-card-title-row:last-child {
+    margin-bottom: 0;
+  }
+  .project-card-title {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    font-family: var(--mono);
+    font-size: calc(16px * var(--fsm));
+  }
+  .project-card-title-row .chev {
+    color: var(--dim);
+    font-size: calc(20px * var(--fsm));
+    flex: none;
+    transition:
+      transform 0.15s,
+      color 0.15s;
+  }
+  .card.project-card:hover .chev {
+    transform: translateX(3px);
+    color: var(--accent-text);
+  }
+  .proj-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--accent);
+    flex: none;
+  }
+  .card-demo {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>

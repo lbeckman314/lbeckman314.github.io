@@ -2,8 +2,10 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/PostCard.astro";
+import DraftsToggle from "@components/DraftsToggle.astro";
 import { BLOG } from "@consts";
 import { shouldListPage } from "@lib/utils";
+import { Icon } from "astro-icon/components";
 
 const posts = (await getCollection("notes"))
   .filter(shouldListPage)
@@ -31,7 +33,7 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
 
 <Layout title={BLOG.TITLE} description={BLOG.DESCRIPTION} route="notes">
   <div class="page-head">
-    <h1 class="page-title">Notes</h1>
+    <h1 class="page-title">Notes<Icon name="tabler:notes" /></h1>
   </div>
 
   <div class="filter-row">
@@ -43,6 +45,7 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
         </a>
       ))
     }
+    <DraftsToggle />
   </div>
 
   {

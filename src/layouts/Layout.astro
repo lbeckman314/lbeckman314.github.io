@@ -17,9 +17,10 @@ type Props = {
   description?: string;
   route: string;
   article?: ArticleMeta;
+  wide?: boolean;
 };
 
-const { title, description, route, article } = Astro.props;
+const { title, description, route, article, wide = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -34,7 +35,7 @@ const { title, description, route, article } = Astro.props;
   </head>
   <body>
     <Header />
-    <main class:list={["wrap", article && "wrap--wide"]}>
+    <main class:list={["wrap", (article || wide) && "wrap--wide"]}>
       <slot />
     </main>
     <Footer />

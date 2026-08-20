@@ -1,5 +1,6 @@
 ---
 import { navLinks } from "@lib/navLinks";
+import { Icon } from "astro-icon/components";
 
 const path = Astro.url.pathname;
 
@@ -15,33 +16,17 @@ const isActive = (prefix: string) =>
       <span class="caret"></span>
     </span>
   </a>
-  <span class="spacer"></span>
   <nav class="nav-links">
     {
       navLinks.map((link) => (
         <a href={link.href} class:list={[isActive(link.href) && "active"]}>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            set:html={link.icon}
-          />
+          <Icon name={`tabler:${link.icon}`} />
           <span>{link.label.toLowerCase()}</span>
         </a>
       ))
     }
   </nav>
   <div class="controls">
-    <div class="ctl-group" role="group" aria-label="Text size">
-      <button class="ctl-btn fs-s" data-fs="s" title="Small text">A</button>
-      <button class="ctl-btn fs-m" data-fs="m" title="Medium text">A</button>
-      <button class="ctl-btn fs-l" data-fs="l" title="Large text">A</button>
-    </div>
     <div class="ctl-group" role="group" aria-label="Theme">
       <button class="ctl-btn" id="themeToggle" aria-label="Theme"></button>
     </div>
@@ -56,7 +41,8 @@ const isActive = (prefix: string) =>
     position: sticky;
     top: 0;
     z-index: 20;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 20px;
     padding: 16px 44px;
@@ -152,13 +138,11 @@ const isActive = (prefix: string) =>
       opacity: 0;
     }
   }
-  .nav .spacer {
-    flex: 1;
-  }
   .nav-links {
     display: flex;
     gap: 24px;
     align-items: center;
+    justify-self: center;
   }
   .nav-links a {
     display: flex;
@@ -197,6 +181,7 @@ const isActive = (prefix: string) =>
   .controls {
     display: flex;
     align-items: center;
+    justify-self: end;
     gap: 8px;
   }
   .ctl-group {
@@ -281,24 +266,24 @@ const isActive = (prefix: string) =>
 
   @media (max-width: 720px) {
     .nav {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        "brand controls"
+        "links links";
       padding: 12px 18px;
-      flex-wrap: wrap;
       gap: 10px 14px;
     }
-    .nav .spacer {
-      display: none;
-    }
     .brand {
-      order: 1;
+      grid-area: brand;
     }
     .controls {
-      order: 2;
-      margin-left: auto;
+      grid-area: controls;
+      justify-self: end;
       gap: 6px;
     }
     .nav-links {
-      order: 3;
-      width: 100%;
+      grid-area: links;
+      justify-self: stretch;
       justify-content: center;
       gap: 22px;
       padding-top: 11px;

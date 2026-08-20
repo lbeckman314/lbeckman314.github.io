@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import { BLOG_SERIES } from "@consts";
+import { shouldListPage, slugify } from "@lib/utils";
+
+const posts = (await getCollection("notes")).filter(shouldListPage);
+
+const series = posts
+  .map((post) => post.data.series)
+  .filter((value, index, self) => value && self.indexOf(value) === index)
+  .sort() as string[];
+---
+
+<Layout
+  title={BLOG_SERIES.TITLE}
+  description={BLOG_SERIES.DESCRIPTION}
+  route="notes/series"
+>
+  <div class="page-head">
+    <h1 class="page-title">Series</h1>
+    <p class="page-intro">Browse posts by series.</p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/notes">all posts</a>
+    {
+      series.map((name) => (
+        <a class="pill" href={`/notes/series/${slugify(name)}`}>
+          {name}
+        </a>
+      ))
+    }
+  </div>
+</Layout>

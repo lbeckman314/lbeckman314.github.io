@@ -12,8 +12,17 @@ export function dateSortDesc(a: Date | undefined, b: Date | undefined) {
   return (b?.valueOf() ?? 0) - (a?.valueOf() ?? 0);
 }
 
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 // Archived posts get rendered but not listed.
-// Draft posts get rendered and listed in development only.
+// Draft posts get rendered and listed too, but stay hidden client-side
+// behind the "Show drafts" toggle (see Head.astro) unless opted into.
 
 export function shouldListPage(page: CollectionEntry<"notes" | "projects">) {
   if (page.data.archive) {
@@ -23,11 +32,14 @@ export function shouldListPage(page: CollectionEntry<"notes" | "projects">) {
   return shouldRenderPage(page);
 }
 
-export function shouldRenderPage(page: CollectionEntry<"notes" | "projects">) {
-  const isDev = process.env.NODE_ENV === "development";
-  const isDraft = page.data.draft === true; // Default is `false`
+export function shouldRenderPage(_page: CollectionEntry<"notes" | "projects">) {
+  return true;
+}
 
-  return isDev || !isDraft;
+// Unlike shouldRenderPage, this always excludes drafts - used for feeds and
+// other contexts with no client-side toggle to hide them behind.
+export function isNotDraft(page: CollectionEntry<"notes" | "projects">) {
+  return page.data.draft !== true;
 }
 
 const SOCIAL_ICON_MAP: Record<string, string> = {

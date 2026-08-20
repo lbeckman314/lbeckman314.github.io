@@ -1,6 +1,7 @@
 ---
 import PagefindConfig from "astro-pagefind/components/PagefindConfig.astro";
 import { navLinks as quickLinks } from "@lib/navLinks";
+import { Icon } from "astro-icon/components";
 ---
 
 <PagefindConfig excerpt-length="15" />
@@ -23,17 +24,7 @@ import { navLinks as quickLinks } from "@lib/navLinks";
             quickLinks.map((link) => (
               <li>
                 <a href={link.href}>
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    set:html={link.icon}
-                  />
+                  <Icon name={`tabler:${link.icon}`} />
                   <span>{link.label}</span>
                 </a>
               </li>
@@ -44,6 +35,37 @@ import { navLinks as quickLinks } from "@lib/navLinks";
     </div>
   </pagefind-modal-body>
 </pagefind-modal>
+
+<script>
+  // @pagefind/component-ui keeps a page-lifetime registry of every
+  // <pagefind-modal>/<pagefind-modal-trigger> that has ever connected and
+  // never prunes disconnected ones (see getUtilities() in component-ui.mjs).
+  // After an Astro client-side navigation, PagefindModalTrigger.openModal()
+  // can therefore resolve to a stale, disconnected dialog from a previous
+  // page — throwing "Dialog element is not connected" on showModal(). Route
+  // the trigger click straight to whichever <pagefind-modal> is currently in
+  // the document instead of trusting Pagefind's internal lookup.
+  function bindSearchTrigger() {
+    const trigger = document.querySelector("pagefind-modal-trigger");
+    const button = trigger?.querySelector("button");
+    if (!button || button.dataset.directOpenBound) return;
+    button.dataset.directOpenBound = "true";
+    button.addEventListener(
+      "click",
+      (event) => {
+        const modal = document.querySelector("pagefind-modal");
+        if (modal?.isConnected && typeof modal.open === "function") {
+          event.stopImmediatePropagation();
+          modal.open();
+        }
+      },
+      true,
+    );
+  }
+
+  bindSearchTrigger();
+  document.addEventListener("astro:page-load", bindSearchTrigger);
+</script>
 
 <style is:global>
   :root {

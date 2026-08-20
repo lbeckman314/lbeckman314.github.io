@@ -1,0 +1,69 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import PostCard from "@components/PostCard.astro";
+import { BLOG_SERIES } from "@consts";
+import { shouldListPage, shouldRenderPage, slugify } from "@lib/utils";
+
+type Props = {
+  series: string;
+};
+
+const { series } = Astro.props;
+
+const posts = (await getCollection("notes"))
+  .filter(shouldListPage)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+const allSeries = posts
+  .map((post) => post.data.series)
+  .filter((value, index, self) => value && self.indexOf(value) === index) as string[];
+
+const seriesPosts = posts.filter((post) => post.data.series === series);
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("notes"))
+    .filter(shouldRenderPage)
+    .map((post) => post.data.series)
+    .filter((value): value is string => Boolean(value));
+
+  const series = posts.filter((value, index, self) => self.indexOf(value) === index);
+
+  return series.map((series) => ({
+    params: { slug: slugify(series) },
+    props: { series },
+  }));
+}
+---
+
+<Layout
+  title={`${BLOG_SERIES.TITLE}: ${series}`}
+  description={`Posts that are part of the ${series} series`}
+  route={`notes/series/${slugify(series)}`}
+>
+  <div class="page-head">
+    <h1 class="page-title">{series}</h1>
+    <p class="page-intro">
+      {seriesPosts.length} post{seriesPosts.length === 1 ? "" : "s"} in this
+      series.
+    </p>
+  </div>
+
+  <div class="filter-row">
+    <a class="pill" href="/notes">all posts</a>
+    {
+      allSeries.map((name) => (
+        <a
+          class:list={["pill", name === series && "active"]}
+          href={`/notes/series/${slugify(name)}`}
+        >
+          {name}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="card-list">
+    {seriesPosts.map((post) => <PostCard entry={post} />)}
+  </div>
+</Layout>

@@ -252,6 +252,31 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     });
   }
 
+  function applyShowDrafts(show) {
+    document.documentElement.toggleAttribute("data-show-drafts", show);
+    const btn = document.getElementById("draftsToggle");
+    if (btn) {
+      btn.classList.toggle("active", show);
+      btn.setAttribute("aria-pressed", String(show));
+    }
+    localStorage.setItem("ddb-show-drafts", show ? "1" : "0");
+  }
+
+  function preloadShowDrafts() {
+    applyShowDrafts(localStorage.getItem("ddb-show-drafts") === "1");
+  }
+
+  function bindDraftsToggle() {
+    const btn = document.getElementById("draftsToggle");
+    if (!btn || btn.dataset.bound) {
+      return;
+    }
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      applyShowDrafts(localStorage.getItem("ddb-show-drafts") !== "1");
+    });
+  }
+
   function applyFontSize(size) {
     document.documentElement.setAttribute("data-fs", size);
     for (const btn of document.querySelectorAll(".ctl-btn[data-fs]")) {
@@ -430,9 +455,11 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
   function init() {
     preloadTheme();
     preloadFontSize();
+    preloadShowDrafts();
     injectBrand();
     bindThemeToggle();
     bindFontSize();
+    bindDraftsToggle();
     updateActiveNav();
     animate();
     decodeEmails();
@@ -442,4 +469,5 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
   document.addEventListener("astro:after-swap", () => init());
   preloadTheme();
   preloadFontSize();
+  preloadShowDrafts();
 </script>

@@ -1,0 +1,41 @@
+---
+title: Spot the Cow 🐮
+subtitle: Experimenting with Three.js
+date: 2026-08-20
+tags:
+  - three.js
+  - webgl
+---
+
+import ModelViewer from "@components/ModelViewer.astro";
+
+<ModelViewer
+  src="/models/spot_morph_material.glb"
+  alt="Spot the cow, morphable between its normal shape and a sphere"
+  morphToggle
+  grid
+  rotationY={Math.PI}
+/>
+
+```sh
+curl -sL "https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/spot.zip" -o spot.zip
+
+unzip -o spot.zip
+
+cd ./spot
+
+{ echo "mtllib spot.mtl"; echo "usemtl spot"; cat spot_triangulated.obj; } > spot.obj
+
+npx --yes obj2gltf -i spot.obj -o spot.glb --binary
+```
+
+`spot.mtl`
+```mtl
+newmtl spot
+Ka 1.000 1.000 1.000
+Kd 1.000 1.000 1.000
+Ks 0.000 0.000 0.000
+d 1.0
+illum 2
+map_Kd spot_texture.png
+```

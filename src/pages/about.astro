@@ -2,6 +2,174 @@
 import Layout from "@layouts/Layout.astro";
 import { SITE } from "@consts";
 import { Icon } from "astro-icon/components";
+
+const skills = [
+  {
+    label: "Languages",
+    items: ["Go", "Python", "TypeScript/JavaScript", "Java", "Rust", "C/C++", "Bash"],
+  },
+  {
+    label: "Cloud & Infrastructure",
+    items: ["AWS", "Azure", "OpenStack", "Kubernetes", "Helm", "Docker", "GitHub Actions CI/CD"],
+  },
+  {
+    label: "Data & Workflow Systems",
+    items: [
+      "Nextflow",
+      "GA4GH Task Execution API",
+      "HL7 FHIR",
+      "Protocol Buffers/gRPC",
+      "PostgreSQL",
+      "Jupyter",
+    ],
+  },
+  { label: "Frontend", items: ["React", "HTML/CSS"] },
+  {
+    label: "AI/ML Tooling",
+    items: ["Ollama", "Unsloth", "Claude Code", "Local & hosted LLM deployment and fine-tuning"],
+  },
+];
+
+const experience = [
+  {
+    title: "Research Software Engineer",
+    org: "Knight Cancer Institute, Oregon Health & Science University",
+    location: "Portland, OR — Fulltime / Individual Contributor",
+    period: "2023 — Present",
+    groups: [
+      {
+        heading: "Software Development & Workflow Orchestration",
+        items: [
+          "Lead developer of Funnel, a workflow orchestration toolkit that executes genomic analysis tasks across cloud and HPC environments through a standard task-execution API, enabling scalable, autonomous data processing for research pipelines.",
+          "Wrote the Kubernetes deployment templates (Helm charts) used to deploy the lab's data commons and analysis services into production.",
+          "Built a Nextflow plugin integrating the GA4GH Task Execution API, allowing existing genomic workflows to run against multiple execution backends without rewriting pipeline code.",
+          "Contributed to Gen3-Workflow, the workflow execution service used by the Gen3 data commons platform to run researcher-submitted analysis jobs.",
+          "Coordinated task dependencies and delivery milestones with external GA4GH consortium partners across institutions to align the Task Execution API specification with implementation work, reporting progress and surfacing blockers to stakeholders.",
+        ],
+      },
+      {
+        heading: "Cloud Infrastructure & DevOps",
+        items: [
+          "Built and scaled cloud-native infrastructure and CI/CD systems across AWS, Azure, and OpenStack, including automated service provisioning, backup/restore procedures, and compliance workflows.",
+          "Developed the Backup Service, an automated backup and restore system protecting genomic data and metadata against loss and supporting compliance requirements.",
+          "Built the CALYPR Status Monitor, a real-time dashboard tracking the health and availability of the lab's public-facing data commons services.",
+          "Developed the DRS Downloader, a data transfer tool implementing the GA4GH Data Repository Service standard to move data between cloud storage systems and local research environments.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Full Stack Software Developer",
+    org: "Saltire Software Inc.",
+    location: "Portland, OR — Fulltime / Individual Contributor",
+    period: "2022",
+    intro: "Contributed to the full-stack development of Greatmats, an e-commerce site for specialty flooring products, and On the Sensations of Tone, an educational website:",
+    groups: [
+      {
+        items: [
+          "Integrated RESTful APIs for use in authenticating clients during online checkouts.",
+          "Set up and managed hosting and SSL certification for On the Sensations of Tone.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Research Software Developer",
+    org: "Oregon Health & Science University",
+    location: "Portland, OR — Fulltime / Individual Contributor",
+    period: "2019 — 2020",
+    intro: "Furthered development of the Java Swing desktop application used to curate data for Reactome, an open-source database and visualizer of biological pathways used for research.",
+    groups: [
+      {
+        items: [
+          "Implemented a custom class to flag pathway and reaction revisions between varying data sets.",
+          "Added new UI/UX features based upon communication with users and research database curators.",
+          "Updated API calls and data processing for REACH, a remote natural-language-processing document parser used to extract pathway information from published literature.",
+        ],
+      },
+    ],
+  },
+];
+
+const education = [
+  {
+    degree: "Bachelor of Science; Computer Science",
+    org: "Oregon State University",
+    location: "Corvallis, OR / Welches, OR",
+    period: "Class of 2019",
+  },
+  {
+    degree: "Bachelor of Science; Biology",
+    org: "University of Oregon",
+    location: "Eugene, OR / Uppsala, Sweden",
+    period: "Class of 2017",
+  },
+];
+
+const softwareProducts = [
+  {
+    name: "Funnel",
+    description: "A toolkit for distributed task execution built around the GA4GH Task Execution Schema (TES), a standard API for describing and running batch tasks across cloud and HPC backends. Lead developer; used in production to orchestrate genomic analysis pipelines at OHSU.",
+    href: "https://github.com/calypr/funnel",
+  },
+  {
+    name: "DRS Downloader",
+    description: "A data transfer tool implementing the GA4GH Data Repository Service (DRS) standard, enabling cross-platform data retrieval between cloud storage systems and local research environments.",
+    href: "https://github.com/ga4gh/drs-downloader",
+  },
+  {
+    name: "py-tes",
+    description: "A Python client library for the GA4GH Task Execution Schema (TES), giving researchers and pipeline developers a simple interface for submitting and monitoring tasks on any TES-compliant execution backend.",
+    href: "https://github.com/ga4gh/py-tes",
+  },
+  {
+    name: "nf-ga4gh",
+    description: "A Nextflow plugin integrating the GA4GH Task Execution API, allowing existing Nextflow genomic workflows to run against multiple cloud and HPC execution backends without rewriting pipeline code.",
+    href: "https://github.com/nextflow-io/nf-ga4gh",
+  },
+  {
+    name: "FHIR-Aggregator Client",
+    description: "An HL7 FHIR client for the NIH Cloud Platform Interoperability program, using GraphDefinition-driven traversals to query and locally analyze interconnected clinical and genomic data hosted on Google's Cloud Healthcare API. Lead developer.",
+    href: "https://github.com/ga4gh/fhir-aggregator",
+  },
+];
+
+const publications = [
+  {
+    title: "Data Science Garage: Building Tools for Genomic Research",
+    venue: "PyCascades 2025",
+    href: "https://www.pycascades.com/2025/speakers/data-science-garage-building-tools-for-genomic-research",
+  },
+  {
+    title: "Building a Data Science Platform for Biomedical Research",
+    venue: "OHSU Knight Science Day 2025",
+    href: "https://www.ohsu.edu/knight-science-day-2025",
+  },
+  {
+    title: "SyntheVAEiser: augmenting traditional machine learning methods with VAE-based gene expression sample generation for improved cancer subtype predictions",
+    venue: "Genome Biology 2024",
+    href: "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-024-03000-0",
+  },
+  {
+    title: "The GA4GH Task Execution Application Programming Interface: Enabling Easy Multicloud Task Execution",
+    venue: "Computing in Science & Engineering 2024",
+    href: "https://ieeexplore.ieee.org/document/10116813",
+  },
+  {
+    title: "An Integrated Data Platform to Support the International Alliance for Cancer Early Detection",
+    venue: "Cancer Research 2024",
+    href: "https://cancerres.aacrjournals.org/content/84/3_Supplement/CT001",
+  },
+  { title: "The Reactome Pathway Knowledgebase",
+    venue: "Nucleic Acids Research 2022",
+    href: "https://academic.oup.com/nar/article/50/D1/D1094/6507398"
+  },
+  {
+    title: "Vegetation Recovery in Slash-Pile Scars Following Conifer Removal in a Grassland-Restoration Experiment",
+    venue: "Restoration Ecology 2014",
+    href: "https://onlinelibrary.wiley.com/doi/abs/10.1111/rec.12065"
+  },
+];
 ---
 
 <Layout title="About me" description="All about me, Liam" route="about">
@@ -20,7 +188,7 @@ import { Icon } from "astro-icon/components";
         rel="noopener"
       >
         <span class="ic"
-          ><Icon name="tabler:brand-github" width={16} height={16} /></span
+          ><Icon name="tabler:brand-github" /></span
         >
         <span
           ><span class="lbl">GitHub</span><br /><span class="handle"
@@ -28,7 +196,7 @@ import { Icon } from "astro-icon/components";
           ></span
         >
       </a>
-      
+
       <!-- LinkedIn -->
       <a
         class="social-row"
@@ -37,7 +205,7 @@ import { Icon } from "astro-icon/components";
         rel="noopener"
       >
         <span class="ic"
-          ><Icon name="tabler:brand-linkedin" width={16} height={16} /></span
+          ><Icon name="tabler:brand-linkedin" /></span
         >
         <span
           ><span class="lbl">LinkedIn</span><br /><span class="handle"
@@ -45,7 +213,7 @@ import { Icon } from "astro-icon/components";
           ></span
         >
       </a>
-      
+
       <!-- Resume -->
       <a
         class="social-row"
@@ -54,7 +222,7 @@ import { Icon } from "astro-icon/components";
         rel="noopener"
       >
         <span class="ic"
-          ><Icon name="tabler:file-cv" width={16} height={16} /></span
+          ><Icon name="tabler:file-cv" /></span
         >
         <span
           ><span class="lbl">Resume</span><br /><span class="handle"
@@ -66,7 +234,7 @@ import { Icon } from "astro-icon/components";
       <!-- RSS -->
       <a class="social-row" href="/rss.xml">
         <span class="ic"
-          ><Icon name="tabler:rss" width={16} height={16} /></span
+          ><Icon name="tabler:rss" /></span
         >
         <span
           ><span class="lbl">RSS</span><br /><span class="handle">/rss.xml</span
@@ -75,7 +243,7 @@ import { Icon } from "astro-icon/components";
       </a>
       <a class="social-row email" href={SITE.EMAIL} aria-label="Email Drew">
         <span class="ic"
-          ><Icon name="tabler:mail" width={16} height={16} /></span
+          ><Icon name="tabler:mail" /></span
         >
         <span
           ><span class="lbl">Email</span><br /><span
@@ -84,6 +252,106 @@ import { Icon } from "astro-icon/components";
         >
       </a>
     </div>
+
+    <hr />
+
+    <h2>Education</h2>
+    <div class="timeline">
+      {
+        education.map((ed) => (
+          <div class="timeline-item">
+            <div class="timeline-head">
+              <h3>{ed.degree}</h3>
+              <span class="timeline-period">{ed.period}</span>
+            </div>
+            <div class="timeline-org">{ed.org}</div>
+            <div class="timeline-loc">{ed.location}</div>
+          </div>
+        ))
+      }
+    </div>
+
+    <hr />
+
+    <h2>Skills</h2>
+    <dl class="skills-list">
+      {
+        skills.map((group) => (
+          <div class="skills-row">
+            <dt>{group.label}</dt>
+            <dd>
+              <span class="tags">
+                {group.items.map((item) => (
+                  <span class="tag">{item}</span>
+                ))}
+              </span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <hr />
+
+    <h2>Experience</h2>
+    <div class="timeline">
+      {
+        experience.map((job) => (
+          <div class="timeline-item">
+            <div class="timeline-head">
+              <h3>{job.title}</h3>
+              <span class="timeline-period">{job.period}</span>
+            </div>
+            <div class="timeline-org">{job.org}</div>
+            <div class="timeline-loc">{job.location}</div>
+            {job.intro && <p class="timeline-intro">{job.intro}</p>}
+            {job.groups.map((group) => (
+              <div class="timeline-group">
+                {group.heading && <div class="timeline-subhead">{group.heading}</div>}
+                <ul>
+                  {group.items.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+
+    <hr />
+
+    <h2>Software Products</h2>
+    <ul class="product-list">
+      {
+        softwareProducts.map((p) => (
+          <li>
+            <span class="product-name">
+              {p.href ? <a href={p.href}>{p.name}</a> : p.name}
+            </span>
+            {" — "}
+            {p.description}
+          </li>
+        ))
+      }
+    </ul>
+
+    <hr />
+
+    <h2>Published Articles &amp; Presentations</h2>
+    <ul class="pub-list">
+      {
+        publications.map((pub) => (
+          <li>
+            <a href={pub.href}>
+              <span class="pub-title">{pub.title}</span>
+            </a>
+            <span class="pub-venue">{pub.venue}</span>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </Layout>
 
@@ -109,8 +377,15 @@ import { Icon } from "astro-icon/components";
   }
   .prose a {
     color: var(--accent-text);
-    text-decoration: underline;
+    text-decoration: none;
     text-underline-offset: 2px;
+  }
+  .prose a:hover,
+  .prose a:focus-visible {
+    text-decoration: underline;
+  }
+  .bio-p:first-of-type {
+    margin-top: 0;
   }
   .social-list {
     display: flex;
@@ -149,7 +424,11 @@ import { Icon } from "astro-icon/components";
   .social-row .lbl {
     font-size: calc(15px * var(--fsm));
     font-weight: 600;
-    color: var(--ink);
+    color: var(--accent-text);
+  }
+  .social-row:hover .lbl,
+  .social-row:focus-visible .lbl {
+    text-decoration: underline;
   }
   .social-row .handle {
     font-family: var(--mono);
@@ -181,6 +460,186 @@ import { Icon } from "astro-icon/components";
     letter-spacing: 0.04em;
     text-transform: uppercase;
     margin: 22px 0 0;
+  }
+
+  /* ============ SKILLS ============ */
+  .skills-list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .skills-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .skills-row dt {
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    font-weight: 600;
+    color: var(--mut);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .skills-row dd {
+    margin: 0;
+  }
+  @media (max-width: 620px) {
+    .skills-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+
+  /* ============ EXPERIENCE / EDUCATION TIMELINE ============ */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .timeline-item {
+    padding-left: 18px;
+    border-left: 2px solid var(--line);
+  }
+  .timeline-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .timeline-head h3 {
+    margin: 0;
+    font-size: calc(17px * var(--fsm));
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .timeline-period {
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    color: var(--dim);
+    white-space: nowrap;
+  }
+  .timeline-org {
+    margin-top: 3px;
+    font-size: calc(14.5px * var(--fsm));
+    color: var(--mut);
+    font-weight: 500;
+  }
+  .timeline-loc {
+    margin-top: 2px;
+    font-size: calc(13px * var(--fsm));
+    color: var(--mut);
+  }
+  .timeline-intro {
+    margin: 12px 0 8px;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.6;
+    color: var(--reading);
+  }
+  .timeline-group {
+    margin-top: 14px;
+  }
+  .timeline-subhead {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    font-weight: 600;
+    color: var(--mut);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .timeline-item ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .timeline-item li {
+    position: relative;
+    padding-left: 16px;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.6;
+    color: var(--reading);
+    text-wrap: pretty;
+  }
+  .timeline-item li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--dim);
+  }
+
+  /* ============ SOFTWARE PRODUCTS ============ */
+  .product-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .product-list li {
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.65;
+    color: var(--reading);
+    text-wrap: pretty;
+  }
+  .product-name {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .product-name a {
+    color: var(--accent-text);
+    text-decoration: none;
+  }
+  .product-name a:hover,
+  .product-name a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* ============ PUBLICATIONS ============ */
+  .pub-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pub-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pub-title {
+    font-size: calc(14.5px * var(--fsm));
+    color: var(--accent-text);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .pub-list a {
+    text-decoration: none;
+  }
+  .pub-list a:hover .pub-title,
+  .pub-list a:focus-visible .pub-title {
+    text-decoration: underline;
+  }
+  .pub-venue {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--mut);
+    font-style: italic;
   }
 </style>
 

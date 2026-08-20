@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import Card from "@components/Card.astro";
+
+type Props = { entry: CollectionEntry<"favorites"> };
+
+const { entry } = Astro.props;
+const { title, author, src, img, imgSrc } = entry.data;
+const { Content } = await render(entry);
+const isPoem = entry.id.startsWith("poems/");
+---
+
+<Card as="div" class="favorite-card">
+  {
+    src && (
+      <a
+        slot="stretch-link"
+        class="card-stretch"
+        href={src}
+        aria-label={title}
+      />
+    )
+  }
+  <Fragment slot="title">
+    {
+      img && (
+        <img
+          class="favorite-card-img"
+          src={`/assets/favorites/${img}`}
+          alt={title}
+          loading="lazy"
+        />
+      )
+    }
+    <div class="favorite-card-head">
+      <h3 class="card-title favorite-card-title">{title}</h3>
+      {author && <span class="favorite-card-author">{author}</span>}
+    </div>
+  </Fragment>
+  <Fragment slot="description">
+    {
+      isPoem ? (
+        <pre class="favorite-card-poem">
+          <Content />
+        </pre>
+      ) : (
+        <div class="card-sub favorite-card-blurb">
+          <Content />
+        </div>
+      )
+    }
+  </Fragment>
+  <Fragment slot="foot">
+    {imgSrc && (
+      <a class="favorite-card-credit" href={imgSrc} title="Image source">
+        image ⓘ
+      </a>
+    )}
+  </Fragment>
+  <Fragment slot="chevron" />
+</Card>
+
+<style is:global>
+  .favorite-card-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .favorite-card-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .favorite-card-title {
+    margin: 0;
+  }
+  .favorite-card-author {
+    font-size: calc(13px * var(--fsm));
+    color: var(--dim);
+    font-style: italic;
+  }
+  .favorite-card-blurb {
+    margin-top: 4px;
+  }
+  .favorite-card-poem {
+    margin: 6px 0 0;
+    padding: 0;
+    background: none;
+    border: none;
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: calc(14px * var(--fsm));
+    line-height: 1.6;
+    color: var(--mut);
+  }
+  .favorite-card-credit {
+    position: relative;
+    z-index: 2;
+    font-family: var(--mono);
+    font-size: calc(11.5px * var(--fsm));
+    color: var(--dim);
+    text-decoration: none;
+  }
+  .favorite-card-credit:hover {
+    color: var(--accent-text);
+  }
+</style>

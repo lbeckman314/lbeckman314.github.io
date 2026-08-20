@@ -1,0 +1,139 @@
+---
+// Shared visual shell for PostCard and ProjectCard: background, border,
+// hover state, title/description typography, and footer row layout all
+// live here so the two card types can't drift apart. Structural
+// differences that CAN'T be unified (ProjectCard needs a nested "Demo ↗"
+// link, so it can't be a single <a> like PostCard) stay in the wrappers.
+type Props =
+  | ({ as?: "a"; href: string; ariaLabel?: string; class?: string } & Record<
+      string,
+      unknown
+    >)
+  | ({ as: "div"; href?: never; ariaLabel?: never; class?: string } & Record<
+      string,
+      unknown
+    >);
+
+const {
+  as = "a",
+  href,
+  ariaLabel,
+  class: className,
+  ...rest
+} = Astro.props;
+const Tag = as;
+---
+
+<Tag
+  class:list={["card", className]}
+  {...rest}
+  {...Tag === "a" ? { href, "aria-label": ariaLabel } : {}}
+>
+  <slot name="stretch-link" />
+  <div class="card-content">
+    <div class="body">
+      <slot name="title" />
+      <slot name="description" />
+    </div>
+    <div class="card-foot">
+      <slot name="foot" />
+    </div>
+  </div>
+  <slot name="chevron">
+    <span class="chev" aria-hidden="true">›</span>
+  </slot>
+</Tag>
+
+<style is:global>
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    text-decoration: none;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    transition:
+      border-color 0.15s,
+      background 0.15s;
+    /* Cards are one big <a>, but their text should still be normally
+       click-and-drag selectable rather than triggering the link's native
+       drag-to-navigate/drag-ghost gesture. */
+    user-select: text;
+    -webkit-user-drag: none;
+    position: relative;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--card-hover);
+  }
+  .card-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .card .body {
+    min-width: 0;
+  }
+  .card-title {
+    margin: 0 0 12px;
+    font-size: calc(18px * var(--fsm));
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  /* When there's no subtitle line, drop the title's own bottom margin so
+     the gap before .card-foot is a flat 12px (from .card-content's gap)
+     instead of 12px + 12px - keeps the title-to-date rhythm identical
+     whether or not a subtitle is present, and matches .card-foot's own
+     12px gap between date/tags for one consistent line-to-line rhythm. */
+  .card-title:last-child {
+    margin-bottom: 0;
+  }
+  .card-sub {
+    margin: 0;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.5;
+    color: var(--mut);
+    text-wrap: pretty;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .card-foot:empty {
+    display: none;
+  }
+  .card-foot .spacer {
+    flex: 1;
+  }
+  .card .chev {
+    color: var(--dim);
+    font-size: calc(20px * var(--fsm));
+    flex: none;
+    transition:
+      transform 0.15s,
+      color 0.15s;
+  }
+  .card:hover .chev {
+    transform: translateX(3px);
+    color: var(--accent-text);
+  }
+  /* Transparent anchor stretched across the whole card so it is clickable
+     end-to-end, for cards that need a second, independently-clickable
+     link (e.g. ProjectCard's "Demo ↗") and so can't be a single <a>. */
+  .card .card-stretch {
+    position: absolute;
+    inset: 0;
+    display: block;
+    border-radius: inherit;
+    z-index: 1;
+  }
+</style>

@@ -1,7 +1,7 @@
 import rss from "@astrojs/rss";
 import { SITE } from "@consts";
 import { withProjectsData } from "@lib/projects";
-import { dateSortDesc, shouldRenderPage } from "@lib/utils";
+import { dateSortDesc, isNotDraft, shouldRenderPage } from "@lib/utils";
 import { getCollection } from "astro:content";
 
 function escapeXml(value) {
@@ -26,11 +26,14 @@ export async function GET(context) {
     : context.site;
 
   // Archived pages get listed in the RSS even if they're not listed on the site itself.
+  // Drafts never do, regardless of the site's "Show drafts" toggle.
 
-  const blog = (await getCollection("notes")).filter(shouldRenderPage);
-  const projectEntries = (await getCollection("projects")).filter(
-    shouldRenderPage,
-  );
+  const blog = (await getCollection("notes"))
+    .filter(shouldRenderPage)
+    .filter(isNotDraft);
+  const projectEntries = (await getCollection("projects"))
+    .filter(shouldRenderPage)
+    .filter(isNotDraft);
   const projects = await withProjectsData(projectEntries);
 
   const items = [

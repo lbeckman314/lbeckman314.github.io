@@ -1,3 +1,4 @@
+import { globSync, readFileSync } from "node:fs";
 import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
@@ -47,12 +48,26 @@ const admonitionBuild = (alertOptions, originalChildren) => {
   };
 };
 
+// Drafts are always built (so the site's "Show drafts" toggle has pages to
+// reveal) but should never be indexed - find their slugs so the sitemap can
+// exclude them regardless of the toggle.
+const draftSlugs = new Set(
+  globSync("src/content/{notes,projects}/**/*.{md,mdx}")
+    .filter((file) => /^draft:\s*true\s*$/m.test(readFileSync(file, "utf-8")))
+    .map((file) =>
+      file.replace(/^src\/content\//, "").replace(/\.(md|mdx)$/, ""),
+    ),
+);
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://liambeckman.com",
   // The order of integrations is important here.
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) =>
+        ![...draftSlugs].some((slug) => page.includes(`/${slug}/`)),
+    }),
     pagefind(),
     icon(),
     expressiveCode({

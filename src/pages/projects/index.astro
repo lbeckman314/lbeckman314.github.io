@@ -5,6 +5,7 @@ import ProjectCard from "@components/ProjectCard.astro";
 import { PROJECTS } from "@consts";
 import { withProjectsData } from "@lib/projects";
 import { shouldListPage } from "@lib/utils";
+import { Icon } from "astro-icon/components";
 
 const projects = (await getCollection("projects"))
   .filter(shouldListPage)
@@ -28,7 +29,7 @@ const tags = projectCards
   route="projects"
 >
   <div class="page-head">
-    <h1 class="page-title">Projects</h1>
+    <h1 class="page-title">Projects<Icon name="tabler:code" /></h1>
   </div>
 
   <div class="filter-row">

@@ -4,6 +4,7 @@ import { defineCollection } from "astro:content";
 
 const baseSchema = z.object({
   title: z.string(),
+  subtitle: z.string().optional(),
   description: z.string().optional(),
   date: z.coerce.date().optional(),
   updated: z.coerce.date().optional(),
@@ -11,6 +12,7 @@ const baseSchema = z.object({
   archive: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   socials: z.array(z.string()).optional(),
+  series: z.string().optional(),
 });
 
 const notes = defineCollection({
@@ -33,4 +35,15 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { notes, projects };
+const favorites = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/favorites" }),
+  schema: z.object({
+    title: z.string(),
+    author: z.string().optional(),
+    src: z.string().optional(),
+    img: z.string().optional(),
+    imgSrc: z.string().optional(),
+  }),
+});
+
+export const collections = { notes, projects, favorites };

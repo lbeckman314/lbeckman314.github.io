@@ -1,23 +1,73 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
+import Card from "@components/Card.astro";
 import FormattedDate from "@components/FormattedDate.astro";
+import { shouldListPage } from "@lib/utils";
+import { Icon } from "astro-icon/components";
 
 type Props = { entry: CollectionEntry<"notes"> };
 
 const { entry } = Astro.props;
 const tags = entry.data.tags ?? [];
+
+let seriesPosition: number | undefined;
+if (entry.data.series) {
+  const seriesPosts = (await getCollection("notes"))
+    .filter(shouldListPage)
+    .filter((post) => post.data.series === entry.data.series)
+    .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+  const index = seriesPosts.findIndex((post) => post.id === entry.id);
+  if (index !== -1) seriesPosition = index + 1;
+}
+
+const subtitleText = entry.data.series
+  ? undefined
+  : (entry.data.description ?? entry.data.subtitle);
 ---
 
-<a class="card" href={`/notes/${entry.id}`}>
-  <div class="body">
+<Card
+  href={`/notes/${entry.id}`}
+  class="post-card"
+  {...entry.data.draft ? { "data-draft": "" } : {}}
+>
+  <Fragment slot="title">
+    {
+      entry.data.draft && (
+        <div class="admonition admonition-warning series-note-compact">
+          <p class="admonition-title">
+            <Icon name="tabler:alert-triangle" />
+            Draft Post 🚧
+          </p>
+        </div>
+      )
+    }
     <h3 class="card-title">{entry.data.title}</h3>
-    <p class="card-sub">{entry.data.description}</p>
-    <div class="card-foot post-card-foot">
-      <span class="tags">
-        {tags.map((tag) => <span class="tag">#{tag}</span>)}
-      </span>
-      <span class="meta-bit"><FormattedDate date={entry.data.date} /></span>
-    </div>
-  </div>
-  <span class="chev">›</span>
-</a>
+  </Fragment>
+  {
+    entry.data.series && (
+      <div slot="description" class="admonition admonition-note series-note-compact">
+        <p class="admonition-title">
+          <Icon name="tabler:book" />
+          #{seriesPosition} in {entry.data.series}
+        </p>
+      </div>
+    )
+  }
+  {subtitleText && <p slot="description" class="card-sub">{subtitleText}</p>}
+  <Fragment slot="foot">
+    <span class="meta-bit"><FormattedDate date={entry.data.date} /></span>
+    {
+      tags.length > 0 && (
+        <span class="tags">
+          {tags.map((tag) => <span class="tag">#{tag}</span>)}
+        </span>
+      )
+    }
+  </Fragment>
+</Card>
+
+<style is:global>
+  .post-card .tags {
+    flex-basis: 100%;
+  }
+</style>

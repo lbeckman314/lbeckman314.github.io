@@ -23,8 +23,8 @@ export function getProjectLinks(
   data: ProjectData,
 ): ProjectLink[] {
   return [
-    entry.data.repoURL && { href: entry.data.repoURL, text: "Repo" },
     data.demoURL && { href: data.demoURL, text: "Demo" },
+    entry.data.repoURL && { href: entry.data.repoURL, text: "Repo" },
     entry.data.packageURL && {
       href: entry.data.packageURL,
       text: "package",

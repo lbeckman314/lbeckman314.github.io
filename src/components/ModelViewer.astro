@@ -1,0 +1,372 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  height?: string;
+  morphToggle?: boolean;
+  grid?: boolean;
+  rotationY?: number;
+}
+
+const {
+  src,
+  alt,
+  height = "420px",
+  morphToggle = false,
+  grid = false,
+  rotationY = 0,
+} = Astro.props;
+---
+
+<div
+  class="model-viewer"
+  data-src={src}
+  data-morph-toggle={morphToggle ? "true" : "false"}
+  data-grid={grid ? "true" : "false"}
+  data-rotation-y={rotationY}
+  style={`--mv-height: ${height}`}
+>
+  <canvas aria-label={alt}></canvas>
+  {
+    morphToggle && (
+      <div class="model-viewer-morph">
+        <label for="morph-range" class="model-viewer-morph-label">
+          cow
+        </label>
+        <input
+          id="morph-range"
+          class="model-viewer-morph-range"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0"
+          disabled
+        />
+        <span class="model-viewer-morph-label">sphere</span>
+        <button
+          type="button"
+          class="model-viewer-reset-btn"
+          title="Reset view"
+          aria-label="Reset view"
+          disabled
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="13"
+            height="13"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+        </button>
+      </div>
+    )
+  }
+  <p class="model-viewer-hint">drag to rotate · scroll to zoom</p>
+</div>
+
+<script>
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+  // Each viewer owns its own renderer/scene/loop; teardown cancels the loop
+  // and frees GPU resources so navigating away (view transitions) doesn't
+  // leak contexts.
+  function initModelViewer(container: HTMLElement) {
+    if (container.dataset.mvInit === "true") return;
+    container.dataset.mvInit = "true";
+
+    const src = container.dataset.src;
+    if (!src) return;
+
+    const canvas = container.querySelector("canvas");
+    if (!canvas) return;
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      40,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      100,
+    );
+    camera.position.set(2.2, 1.4, 2.6);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearAlpha(0);
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2.2));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    keyLight.position.set(3, 4, 2);
+    scene.add(keyLight);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.minDistance = 1;
+    controls.maxDistance = 8;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.2;
+
+    // Any user-driven interaction (drag, zoom, touch) permanently stops the
+    // idle spin — "start" fires on pointerdown, before "change", so this
+    // catches the very first touch rather than waiting for movement. Three's
+    // EventDispatcher has no `{ once: true }` support, so remove manually.
+    // Re-armed by the reset button, which brings the spin back too.
+    const stopAutoRotate = () => {
+      controls.autoRotate = false;
+      controls.removeEventListener("start", stopAutoRotate);
+    };
+    const armAutoRotateStop = () => {
+      controls.autoRotate = true;
+      controls.addEventListener("start", stopAutoRotate);
+    };
+    armAutoRotateStop();
+
+    if (container.dataset.grid === "true") {
+      const grid = new THREE.GridHelper(4, 16, 0x60a5fa, 0x2a2f3a);
+      grid.position.y = -0.8;
+      scene.add(grid);
+    }
+
+    const morphMeshes: THREE.Mesh[] = [];
+
+    const morphRange = container.querySelector<HTMLInputElement>(
+      ".model-viewer-morph-range",
+    );
+
+    const applyMorph = (value: number) => {
+      for (const mesh of morphMeshes) {
+        if (!mesh.morphTargetInfluences) continue;
+        for (let i = 0; i < mesh.morphTargetInfluences.length; i++) {
+          mesh.morphTargetInfluences[i] = value;
+        }
+      }
+    };
+
+    if (morphRange) {
+      morphRange.addEventListener("input", () => {
+        applyMorph(morphRange.valueAsNumber);
+      });
+    }
+
+    const resetBtn = container.querySelector<HTMLButtonElement>(
+      ".model-viewer-reset-btn",
+    );
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        controls.reset();
+        if (morphRange) {
+          morphRange.value = "0";
+          applyMorph(0);
+        }
+        armAutoRotateStop();
+      });
+    }
+
+    let model: THREE.Object3D | null = null;
+    const loader = new GLTFLoader();
+    loader.load(
+      src,
+      (gltf) => {
+        model = gltf.scene;
+
+        // Center and scale the model to a consistent size regardless of the
+        // source mesh's original units.
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        model.scale.setScalar(1.6 / maxDim);
+        model.position.sub(center.multiplyScalar(1.6 / maxDim));
+
+        const rotationY = Number(container.dataset.rotationY) || 0;
+        model.rotation.y = rotationY;
+
+        scene.add(model);
+        container.classList.add("is-loaded");
+
+        model.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.morphTargetInfluences?.length) {
+            morphMeshes.push(child);
+          }
+        });
+        if (morphRange) morphRange.disabled = morphMeshes.length === 0;
+        if (resetBtn) resetBtn.disabled = false;
+      },
+      undefined,
+      (error) => {
+        console.error("Failed to load model", src, error);
+        container.classList.add("is-error");
+      },
+    );
+
+    let frameId = 0;
+    const animate = () => {
+      frameId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    const resize = () => {
+      const { clientWidth, clientHeight } = container;
+      if (clientWidth === 0 || clientHeight === 0) return;
+      camera.aspect = clientWidth / clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(clientWidth, clientHeight);
+    };
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(container);
+
+    const teardown = () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      controls.dispose();
+      renderer.dispose();
+      model?.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.geometry.dispose();
+          const materials = Array.isArray(child.material)
+            ? child.material
+            : [child.material];
+          for (const material of materials) material.dispose();
+        }
+      });
+    };
+
+    document.addEventListener("astro:before-swap", teardown, { once: true });
+  }
+
+  // Lazy-init: skip the WebGL/GPU cost entirely until a viewer scrolls into
+  // view, since a note can embed more than one model.
+  function initAllModelViewers() {
+    const containers = document.querySelectorAll<HTMLElement>(".model-viewer");
+    if (containers.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          initModelViewer(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "200px" },
+    );
+
+    for (const container of containers) observer.observe(container);
+  }
+
+  document.addEventListener("astro:page-load", initAllModelViewers);
+  initAllModelViewers();
+</script>
+
+<style is:global>
+  .model-viewer {
+    position: relative;
+    margin: 24px 0;
+    height: var(--mv-height);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .model-viewer canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+  }
+  .model-viewer canvas:active {
+    cursor: grabbing;
+  }
+  .model-viewer-hint {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    margin: 0;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: var(--chip-bg);
+    border: 1px solid var(--line);
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: calc(11px * var(--fsm));
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .model-viewer.is-loaded .model-viewer-hint {
+    opacity: 1;
+  }
+  .model-viewer-morph {
+    position: absolute;
+    left: 12px;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: var(--chip-bg);
+    border: 1px solid var(--line);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .model-viewer.is-loaded .model-viewer-morph {
+    opacity: 1;
+  }
+  .model-viewer-morph-label {
+    font-family: var(--mono);
+    font-size: calc(11.5px * var(--fsm));
+    color: var(--mut);
+    user-select: none;
+  }
+  .model-viewer-morph-range {
+    width: 90px;
+    accent-color: var(--tip-line);
+    cursor: pointer;
+  }
+  .model-viewer-morph-range:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  .model-viewer-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    margin: 0;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--mut);
+    cursor: pointer;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
+  }
+  .model-viewer-reset-btn:hover:not(:disabled) {
+    border-color: var(--line);
+    color: var(--ink);
+  }
+  .model-viewer-reset-btn:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+</style>

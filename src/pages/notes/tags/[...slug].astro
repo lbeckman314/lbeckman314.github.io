@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/PostCard.astro";
+import DraftsToggle from "@components/DraftsToggle.astro";
 import { BLOG } from "@consts";
 import { shouldListPage, shouldRenderPage } from "@lib/utils";
 
@@ -62,6 +63,7 @@ export async function getStaticPaths() {
         </a>
       ))
     }
+    <DraftsToggle />
   </div>
 
   <div class="card-list">
