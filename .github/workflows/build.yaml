@@ -41,6 +41,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build with Astro
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             COMMIT=$(git rev-parse --short HEAD) pnpm exec astro build \
             --site "${{ steps.pages.outputs.origin }}" \

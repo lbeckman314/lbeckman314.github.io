@@ -443,6 +443,47 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     }
   }
 
+  // "Back to notes" / "Back to projects" links should restore the list
+  // page's scroll position, like a real browser-back does, instead of
+  // navigating forward to a fresh top-of-page load. We can only safely go
+  // back if the entry we'd land on is actually within that section
+  // (notes/tags, notes/series, etc. all count) - otherwise, e.g. arriving
+  // from search or a shared link, history.back() could leave the site
+  // entirely or land somewhere unrelated.
+  function recordListVisit() {
+    // .filter-row only exists on the list pages (notes/projects index, tags,
+    // series) - never on an individual post page - so it's a reliable way
+    // to tell "list page" apart from "post page" even though both can share
+    // the same /notes/... or /projects/... URL shape.
+    if (!document.querySelector(".filter-row")) {
+      return;
+    }
+    const path = window.location.pathname;
+    if (/^\/(notes|projects)(\/|$)/.test(path)) {
+      sessionStorage.setItem("ddb-last-list-page", path);
+    }
+  }
+
+  function bindBacklinks() {
+    for (const link of document.querySelectorAll("a.backlink")) {
+      if (link.dataset.bound) {
+        continue;
+      }
+      link.dataset.bound = "1";
+      link.addEventListener("click", (event) => {
+        const target = link.getAttribute("href");
+        const lastList = sessionStorage.getItem("ddb-last-list-page");
+        const sameSection =
+          target && lastList &&
+          (lastList === target || lastList.startsWith(`${target}/`));
+        if (sameSection && window.history.length > 1) {
+          event.preventDefault();
+          window.history.back();
+        }
+      });
+    }
+  }
+
   function updateActiveNav() {
     const path = window.location.pathname;
     for (const link of document.querySelectorAll(".nav-links a")) {
@@ -460,6 +501,8 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     bindThemeToggle();
     bindFontSize();
     bindDraftsToggle();
+    recordListVisit();
+    bindBacklinks();
     updateActiveNav();
     animate();
     decodeEmails();

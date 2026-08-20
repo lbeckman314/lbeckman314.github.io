@@ -653,6 +653,16 @@ p {
   font-size: calc(13px * var(--fsm));
   line-height: 1.65;
 }
+.poem-body {
+  margin: 22px 0;
+  border: 1px solid var(--line);
+  padding: 2em;
+  border-radius: 2em;
+  background: var(--card);
+}
+.poem-body > p {
+  white-space: pre-wrap;
+}
 .article table {
   width: 100%;
   border-collapse: collapse;

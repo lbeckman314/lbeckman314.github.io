@@ -369,4 +369,21 @@ const {
     cursor: default;
     opacity: 0.4;
   }
+
+  /* .model-viewer-morph and .model-viewer-hint both sit on the bottom row
+     (morph pinned left, hint pinned right) and have enough combined width to
+     collide once the viewer narrows on mobile. Move the hint to the top
+     instead of fighting for the same row. */
+  @media (max-width: 520px) {
+    .model-viewer-hint {
+      top: 10px;
+      right: 12px;
+      bottom: auto;
+    }
+    .model-viewer-morph {
+      right: 12px;
+      left: 12px;
+      justify-content: center;
+    }
+  }
 </style>

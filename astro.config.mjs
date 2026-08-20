@@ -14,6 +14,45 @@ import { rehypeGithubAlerts } from "rehype-github-alerts";
 import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import remarkMath from "remark-math";
+import { visit } from "unist-util-visit";
+
+// Escape text that's going into a raw HTML mdast node - unlike normal
+// markdown text nodes, nothing else sanitizes this for us.
+const escapeHtml = (value) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+// Renders ```poem fenced code blocks as the same "poem" box
+// used on the favorites page (.poem-body, white-space: pre-wrap) instead of
+// letting astro-expressive-code turn them into a syntax-highlighted code
+// block. Blank lines split the fence into separate paragraphs, same as a
+// normal markdown poem would; a single paragraph's internal line breaks and
+// leading whitespace are preserved via pre-wrap.
+const POEM_LANGS = new Set([
+  "poem",
+]);
+
+function remarkPoemFence() {
+  return (tree) => {
+    visit(tree, "code", (node, index, parent) => {
+      if (!parent || index === undefined || !POEM_LANGS.has(node.lang)) {
+        return;
+      }
+      const paragraphs = node.value
+        .split(/\n{2,}/)
+        .map((block) => escapeHtml(block).trim())
+        .filter(Boolean)
+        .map((block) => `<p>${block}</p>`)
+        .join("");
+      parent.children[index] = {
+        type: "html",
+        value: `<div class="poem-body">${paragraphs}</div>`,
+      };
+    });
+  };
+}
 
 // Keep the admonition markup/classes the site's existing CSS already targets
 // (.admonition / .admonition-{type} / .admonition-title) instead of the
@@ -90,7 +129,7 @@ export default defineConfig({
     // remark/rehype plugins, so stick with the classic unified pipeline for
     // KaTeX math, heading autolinks, and GitHub-style admonitions.
     processor: unified({
-      remarkPlugins: [remarkMath],
+      remarkPlugins: [remarkPoemFence, remarkMath],
       rehypePlugins: [
         rehypeKatex,
         rehypeSlug, // ToC adds IDs, but that happens too late for the autolink plugin.

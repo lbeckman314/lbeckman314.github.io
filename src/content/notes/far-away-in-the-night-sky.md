@@ -8,7 +8,7 @@ tags:
   - poem
 ---
 
-```
+```poem
 Far away in the night sky
 past our moon and past our sun
 out among the oldest & coldest corners of the Universe
