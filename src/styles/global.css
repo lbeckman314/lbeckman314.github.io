@@ -35,7 +35,7 @@ html[data-theme="dark"] {
   --bg-nav: rgba(13, 13, 15, 0.82);
   --card: #161619;
   --card-hover: #1b1b1f;
-  --line: rgba(255, 255, 255, 0.08);
+  --line: rgba(255, 255, 255, 0.2);
   --line-soft: rgba(255, 255, 255, 0.05);
   --ink: #ececee;
   --reading: #cfcfd4;
@@ -385,7 +385,7 @@ html:not([data-show-tags]) .tag-filter-row {
 .year {
   margin: 40px 0 16px;
   font-family: var(--mono);
-  font-size: calc(13px * var(--fsm));
+  /* font-size: calc(13px * var(--fsm)); */
   font-weight: 600;
   color: var(--dim);
   letter-spacing: 0.1em;
