@@ -1,0 +1,513 @@
+<div id="cowLayer" aria-hidden="true" transition:persist>
+  <canvas></canvas>
+</div>
+
+<script>
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+  const MODEL_SRC = "/models/spot_morph_material.glb";
+  const MAX_COWS = 20;
+  const BOB_SPEED = 0.6;
+  const BOB_HEIGHT = 0.35;
+
+  const PUFFS_PER_BURST = 5;
+  const BURST_LIFETIME = 0.55;
+
+  // How quickly a thrown cow's velocity decays (world units/sec, applied
+  // as exponential drag), and the speed floor below which it's considered
+  // to have coasted to a stop and resumes floating in place.
+  const THROW_DAMPING = 1.4;
+  const THROW_SETTLE_SPEED = 0.15;
+
+  type FloatingCow = {
+    root: THREE.Object3D;
+    baseY: number;
+    bobPhase: number;
+    spin: THREE.Vector3;
+    dragging: boolean;
+    velocity: THREE.Vector3;
+  };
+
+  type Puff = {
+    mesh: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>;
+    velocity: THREE.Vector3;
+    age: number;
+  };
+
+  let puffGeometry: THREE.SphereGeometry | null = null;
+  let puffs: Puff[] = [];
+
+  let scene: THREE.Scene | null = null;
+  let camera: THREE.PerspectiveCamera | null = null;
+  let renderer: THREE.WebGLRenderer | null = null;
+  let sourceModel: THREE.Object3D | null = null;
+  let loadingModel: Promise<THREE.Object3D> | null = null;
+  let cows: FloatingCow[] = [];
+  let frameId = 0;
+  let lastTime = 0;
+  let elapsed = 0;
+  let initialized = false;
+
+  const raycaster = new THREE.Raycaster();
+  let activePointerId: number | null = null;
+  let draggedCow: FloatingCow | null = null;
+  let lastPointerX = 0;
+  let lastPointerY = 0;
+  let lastPointerTime = 0;
+  // A short trailing history of drag movement, used at release to gauge
+  // throw speed from recent motion rather than a single noisy last delta.
+  let recentMoves: { dx: number; dy: number; dt: number }[] = [];
+
+  function getLayer() {
+    return document.getElementById("cowLayer");
+  }
+
+  function viewportSize() {
+    const w = window.innerWidth || document.documentElement.clientWidth || 1;
+    const h = window.innerHeight || document.documentElement.clientHeight || 1;
+    return { w, h };
+  }
+
+  // The visible extent of the camera's view frustum at z=0, so cows are
+  // placed within frame (and wrapped at its edges) instead of against a
+  // fixed world-space box that only lines up with the screen for one
+  // particular viewport size. Casts rays through the screen edges and
+  // finds where they cross z=0.
+  function visibleBoundsAtZ0() {
+    if (!camera) return { top: 2, bottom: -1.4, left: -4, right: 4 };
+    const ray = new THREE.Raycaster();
+    const edgeAt = (ndcX: number, ndcY: number) => {
+      ray.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera!);
+      const distance = -ray.ray.origin.z / ray.ray.direction.z;
+      return {
+        x: ray.ray.origin.x + ray.ray.direction.x * distance,
+        y: ray.ray.origin.y + ray.ray.direction.y * distance,
+      };
+    };
+    return {
+      top: edgeAt(0, 1).y,
+      bottom: edgeAt(0, -1).y,
+      left: edgeAt(-1, 0).x,
+      right: edgeAt(1, 0).x,
+    };
+  }
+
+  function ensureScene() {
+    if (initialized) return;
+    const layer = getLayer();
+    const canvas = layer?.querySelector("canvas");
+    if (!layer || !canvas) return;
+    initialized = true;
+
+    scene = new THREE.Scene();
+
+    const { w, h } = viewportSize();
+
+    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    camera.position.set(0, 1.6, 9);
+    camera.lookAt(0, -1, 0);
+
+    renderer = new THREE.WebGLRenderer({
+      canvas: canvas as HTMLCanvasElement,
+      antialias: true,
+      alpha: true,
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h);
+    renderer.setClearAlpha(0);
+
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2.2));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    keyLight.position.set(3, 6, 4);
+    scene.add(keyLight);
+
+    puffGeometry = new THREE.SphereGeometry(0.16, 8, 8);
+
+    window.addEventListener("resize", onResize);
+  }
+
+  function onResize() {
+    if (!camera || !renderer) return;
+    const { w, h } = viewportSize();
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  function pointerToNdc(clientX: number, clientY: number) {
+    const { w, h } = viewportSize();
+    return new THREE.Vector2((clientX / w) * 2 - 1, -(clientY / h) * 2 + 1);
+  }
+
+  function cowAt(clientX: number, clientY: number): FloatingCow | null {
+    if (!camera || cows.length === 0) return null;
+    raycaster.setFromCamera(pointerToNdc(clientX, clientY), camera);
+    for (let i = cows.length - 1; i >= 0; i--) {
+      const hits = raycaster.intersectObject(cows[i].root, true);
+      if (hits.length > 0) return cows[i];
+    }
+    return null;
+  }
+
+  // Where a ray through the given screen point crosses the plane z = planeZ,
+  // so a dragged cow can track the pointer at a fixed depth.
+  function pointOnPlaneAtZ(clientX: number, clientY: number, planeZ: number) {
+    if (!camera) return null;
+    raycaster.setFromCamera(pointerToNdc(clientX, clientY), camera);
+    const { origin, direction } = raycaster.ray;
+    if (Math.abs(direction.z) < 1e-6) return null;
+    const t = (planeZ - origin.z) / direction.z;
+    return new THREE.Vector3(origin.x + direction.x * t, origin.y + direction.y * t, planeZ);
+  }
+
+  function onPointerDown(e: PointerEvent) {
+    if (activePointerId !== null) return;
+    const cow = cowAt(e.clientX, e.clientY);
+    if (!cow) return;
+
+    activePointerId = e.pointerId;
+    draggedCow = cow;
+    cow.dragging = true;
+    cow.velocity.set(0, 0, 0);
+    lastPointerX = e.clientX;
+    lastPointerY = e.clientY;
+    lastPointerTime = performance.now();
+    recentMoves = [];
+    e.preventDefault();
+
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerUp);
+  }
+
+  function onPointerMove(e: PointerEvent) {
+    if (e.pointerId !== activePointerId || !draggedCow) return;
+    const dx = e.clientX - lastPointerX;
+    const dy = e.clientY - lastPointerY;
+    const now = performance.now();
+    const dt = Math.max(now - lastPointerTime, 1);
+    lastPointerX = e.clientX;
+    lastPointerY = e.clientY;
+    lastPointerTime = now;
+
+    const root = draggedCow.root;
+    const prevPos = root.position.clone();
+    const target = pointOnPlaneAtZ(e.clientX, e.clientY, root.position.z);
+    if (target) {
+      root.position.x = target.x;
+      root.position.y = target.y;
+    }
+
+    // Track how far the cow itself moved in world space (not just screen
+    // pixels), so the throw speed at release matches the on-screen motion
+    // regardless of how far away the cow is from the camera.
+    recentMoves.push({
+      dx: root.position.x - prevPos.x,
+      dy: root.position.y - prevPos.y,
+      dt,
+    });
+    if (recentMoves.length > 5) recentMoves.shift();
+
+    // A little tumble from the drag motion itself, so carrying the cow
+    // around still feels tactile rather than a flat, un-rotating drag.
+    root.rotation.y += dx * 0.01;
+    root.rotation.x += dy * 0.01;
+
+    if (renderer && scene && camera) renderer.render(scene, camera);
+  }
+
+  function onPointerUp(e: PointerEvent) {
+    if (e.pointerId !== activePointerId) return;
+    if (draggedCow) {
+      draggedCow.dragging = false;
+
+      // Throw velocity from the average of recent drag samples, so a
+      // flick right before release sends the cow flying rather than
+      // just spinning it in place.
+      let vx = 0;
+      let vy = 0;
+      let totalDt = 0;
+      for (const move of recentMoves) {
+        vx += move.dx;
+        vy += move.dy;
+        totalDt += move.dt;
+      }
+      if (totalDt > 0) {
+        draggedCow.velocity.set(vx / (totalDt / 1000), vy / (totalDt / 1000), 0);
+      }
+      draggedCow.spin.set(
+        draggedCow.velocity.y * 0.4,
+        draggedCow.velocity.x * 0.4,
+        0,
+      );
+
+      // Resume floating from wherever the cow was dropped, instead of
+      // snapping back to its original height or popping to catch up
+      // with the bob offset it missed while being carried. A thrown cow
+      // (non-zero velocity) settles into its float once it decelerates,
+      // handled in step().
+      draggedCow.baseY = draggedCow.root.position.y;
+      draggedCow.bobPhase = -elapsed * BOB_SPEED;
+    }
+    activePointerId = null;
+    draggedCow = null;
+    recentMoves = [];
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+    document.removeEventListener("pointercancel", onPointerUp);
+  }
+
+  function loadModel(): Promise<THREE.Object3D> {
+    if (sourceModel) return Promise.resolve(sourceModel);
+    if (loadingModel) return loadingModel;
+
+    const loader = new GLTFLoader();
+    loadingModel = new Promise((resolve, reject) => {
+      loader.load(
+        MODEL_SRC,
+        (gltf) => {
+          const model = gltf.scene;
+          const box = new THREE.Box3().setFromObject(model);
+          const size = box.getSize(new THREE.Vector3());
+          const center = box.getCenter(new THREE.Vector3());
+          const maxDim = Math.max(size.x, size.y, size.z) || 1;
+          const scale = 1.4 / maxDim;
+          model.scale.setScalar(scale);
+          model.position.sub(center.multiplyScalar(scale));
+          sourceModel = model;
+          resolve(model);
+        },
+        undefined,
+        (error) => {
+          console.error("Failed to load cow model", error);
+          reject(error);
+        },
+      );
+    });
+    return loadingModel;
+  }
+
+  function startLoop() {
+    if (frameId) return;
+    lastTime = performance.now();
+    const tick = (time: number) => {
+      frameId = requestAnimationFrame(tick);
+      const dt = Math.min((time - lastTime) / 1000, 0.05);
+      lastTime = time;
+      step(dt);
+    };
+    frameId = requestAnimationFrame(tick);
+  }
+
+  function stopLoopIfIdle() {
+    if (cows.length === 0 && puffs.length === 0 && frameId) {
+      cancelAnimationFrame(frameId);
+      frameId = 0;
+    }
+  }
+
+  function stepPuffs(dt: number) {
+    if (puffs.length === 0 || !scene) return;
+    for (let i = puffs.length - 1; i >= 0; i--) {
+      const puff = puffs[i];
+      puff.age += dt;
+      const t = puff.age / BURST_LIFETIME;
+      if (t >= 1) {
+        scene.remove(puff.mesh);
+        puff.mesh.material.dispose();
+        puffs.splice(i, 1);
+        continue;
+      }
+
+      puff.mesh.position.addScaledVector(puff.velocity, dt);
+      // Gentle upward drift, like a puff of smoke rather than debris.
+      puff.mesh.position.y += dt * 0.6;
+      const scale = 1 + t * 1.8;
+      puff.mesh.scale.setScalar(scale);
+      puff.mesh.material.opacity = 0.85 * (1 - t);
+    }
+  }
+
+  // A little breathing room past the frustum edges before a cow wraps, so
+  // it visibly leaves the screen rather than teleporting while still
+  // partly in view.
+  const WRAP_MARGIN = 0.9;
+
+  function wrapCow(cow: FloatingCow, bounds: ReturnType<typeof visibleBoundsAtZ0>) {
+    const { left, right, top, bottom } = bounds;
+    const width = right - left;
+    const height = top - bottom;
+    if (width <= 0 || height <= 0) return;
+
+    const pos = cow.root.position;
+    if (pos.x > right + WRAP_MARGIN) pos.x -= width + WRAP_MARGIN * 2;
+    else if (pos.x < left - WRAP_MARGIN) pos.x += width + WRAP_MARGIN * 2;
+
+    if (pos.y > top + WRAP_MARGIN) {
+      pos.y -= height + WRAP_MARGIN * 2;
+      cow.baseY -= height + WRAP_MARGIN * 2;
+    } else if (pos.y < bottom - WRAP_MARGIN) {
+      pos.y += height + WRAP_MARGIN * 2;
+      cow.baseY += height + WRAP_MARGIN * 2;
+    }
+  }
+
+  function step(dt: number) {
+    if (!renderer || !scene || !camera) return;
+    elapsed += dt;
+    const bounds = cows.length > 0 ? visibleBoundsAtZ0() : null;
+    for (const cow of cows) {
+      if (cow.dragging) continue;
+
+      if (cow.velocity.lengthSq() > THROW_SETTLE_SPEED * THROW_SETTLE_SPEED) {
+        // Still coasting from a throw: fly on the trajectory and let it
+        // decay, rather than following the idle bob.
+        cow.root.position.addScaledVector(cow.velocity, dt);
+        cow.velocity.multiplyScalar(Math.max(0, 1 - THROW_DAMPING * dt));
+        if (cow.velocity.lengthSq() <= THROW_SETTLE_SPEED * THROW_SETTLE_SPEED) {
+          // Just settled: resume the bob from here instead of snapping
+          // back to wherever it was thrown from.
+          cow.velocity.set(0, 0, 0);
+          cow.baseY = cow.root.position.y;
+          cow.bobPhase = -elapsed * BOB_SPEED;
+        }
+      } else {
+        cow.root.position.y =
+          cow.baseY + Math.sin(elapsed * BOB_SPEED + cow.bobPhase) * BOB_HEIGHT;
+      }
+
+      cow.root.rotation.x += cow.spin.x * dt;
+      cow.root.rotation.y += cow.spin.y * dt;
+      cow.root.rotation.z += cow.spin.z * dt;
+      if (bounds) wrapCow(cow, bounds);
+    }
+    stepPuffs(dt);
+    renderer.render(scene, camera);
+    stopLoopIfIdle();
+  }
+
+  async function dropCow() {
+    ensureScene();
+    if (!scene) return;
+
+    let model: THREE.Object3D;
+    try {
+      model = await loadModel();
+    } catch {
+      return;
+    }
+    if (!scene || !renderer || !camera) return;
+
+    const root = model.clone(true);
+    const { top, bottom, left, right } = visibleBoundsAtZ0();
+    // Keep clear of the very edges so the bob motion doesn't clip a cow
+    // out of frame right after it spawns.
+    const marginY = (top - bottom) * 0.15;
+    const marginX = (right - left) * 0.1;
+    const baseY = bottom + marginY + Math.random() * (top - bottom - marginY * 2);
+    const x = left + marginX + Math.random() * (right - left - marginX * 2);
+    root.position.set(x, baseY, (Math.random() - 0.5) * 2);
+    root.rotation.y = Math.random() * Math.PI * 2;
+    scene.add(root);
+
+    if (cows.length >= MAX_COWS) {
+      const oldest = cows.shift();
+      if (oldest) {
+        spawnBurst(oldest.root.position);
+        scene.remove(oldest.root);
+      }
+    }
+
+    cows.push({
+      root,
+      baseY,
+      bobPhase: Math.random() * Math.PI * 2,
+      spin: new THREE.Vector3(
+        (Math.random() - 0.5) * 0.8,
+        (Math.random() - 0.5) * 0.8,
+        (Math.random() - 0.5) * 0.8,
+      ),
+      dragging: false,
+      velocity: new THREE.Vector3(),
+    });
+
+    renderer.render(scene, camera);
+    startLoop();
+  }
+
+  // A little poof of smoke-puff spheres at a cow's position, expanding and
+  // fading out over BURST_LIFETIME seconds.
+  function spawnBurst(position: THREE.Vector3) {
+    if (!scene || !puffGeometry) return;
+    for (let i = 0; i < PUFFS_PER_BURST; i++) {
+      const material = new THREE.MeshBasicMaterial({
+        color: 0xe8e8ec,
+        transparent: true,
+        opacity: 0.85,
+        depthWrite: false,
+      });
+      const mesh = new THREE.Mesh(puffGeometry, material);
+      mesh.position.copy(position);
+      scene.add(mesh);
+
+      const direction = new THREE.Vector3(
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+        Math.random() - 0.5,
+      ).normalize();
+      const speed = 1.2 + Math.random() * 1.2;
+
+      puffs.push({
+        mesh,
+        velocity: direction.multiplyScalar(speed),
+        age: 0,
+      });
+    }
+  }
+
+  function clearCows() {
+    if (!scene || cows.length === 0) return;
+    for (const cow of cows) {
+      spawnBurst(cow.root.position);
+      scene.remove(cow.root);
+    }
+    cows = [];
+    renderer?.render(scene, camera!);
+    startLoop();
+  }
+
+  let bound = false;
+  function bindEvents() {
+    if (bound) return;
+    bound = true;
+    window.addEventListener("ddb-drop-cow", () => dropCow());
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") clearCows();
+    });
+    document.addEventListener("dblclick", (e) => {
+      if (e.target instanceof Element && e.target.closest("#cowButton")) {
+        return;
+      }
+      clearCows();
+    });
+    document.addEventListener("pointerdown", onPointerDown);
+  }
+
+  bindEvents();
+</script>
+
+<style is:global>
+  #cowLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  #cowLayer canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

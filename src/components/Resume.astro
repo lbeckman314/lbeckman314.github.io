@@ -23,6 +23,22 @@ const experienceContents = await Promise.all(
 );
 ---
 
+<h2>Skills</h2>
+<dl class="skills-list">
+  {skills.map((group) => (
+    <div class="skills-row">
+      <dt>{group.data.label}</dt>
+      <dd>
+        <span class="tags">
+          {group.data.items.map((item) => <span class="tag">{item}</span>)}
+        </span>
+      </dd>
+    </div>
+  ))}
+</dl>
+
+<hr />
+
 <h2>Education</h2>
 <div class="timeline">
   {education.map((entry) => (
@@ -38,22 +54,6 @@ const experienceContents = await Promise.all(
     </div>
   ))}
 </div>
-
-<hr />
-
-<h2>Skills</h2>
-<dl class="skills-list">
-  {skills.map((group) => (
-    <div class="skills-row">
-      <dt>{group.data.label}</dt>
-      <dd>
-        <span class="tags">
-          {group.data.items.map((item) => <span class="tag">{item}</span>)}
-        </span>
-      </dd>
-    </div>
-  ))}
-</dl>
 
 <hr />
 

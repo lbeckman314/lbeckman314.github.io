@@ -30,6 +30,14 @@ const isActive = (prefix: string) =>
     <div class="ctl-group" role="group" aria-label="Theme">
       <button class="ctl-btn" id="themeToggle" aria-label="Theme"></button>
     </div>
+    <div class="ctl-group" role="group" aria-label="Theme">
+      <button
+        class="ctl-btn"
+        id="cowButton"
+        aria-label="Release the cows! (Esc or double-click to clear)"
+        title="Release the cows! (Esc or double-click to clear)">🐮</button
+      >
+    </div>
     <pagefind-modal-trigger class="search" placeholder="Search" title="Search"
     ></pagefind-modal-trigger>
   </div>
@@ -233,6 +241,9 @@ const isActive = (prefix: string) =>
   }
   .ctl-btn.fs-l {
     font-size: 16px;
+  }
+  #cowButton {
+    font-size: 14px;
   }
   :is(*, #\#):is(*, #\#):is(*, #\#) .search .pf-trigger-btn {
     display: flex;

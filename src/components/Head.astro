@@ -533,6 +533,17 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     }
   }
 
+  function bindCowButton() {
+    const btn = document.getElementById("cowButton");
+    if (!btn || btn.dataset.bound) {
+      return;
+    }
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      window.dispatchEvent(new CustomEvent("ddb-drop-cow"));
+    });
+  }
+
   function updateActiveNav() {
     const path = window.location.pathname;
     for (const link of document.querySelectorAll(".nav-links a")) {
@@ -552,6 +563,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     bindFontSize();
     bindDraftsToggle();
     bindTagsToggle();
+    bindCowButton();
     recordListVisit();
     bindBacklinks();
     updateActiveNav();
