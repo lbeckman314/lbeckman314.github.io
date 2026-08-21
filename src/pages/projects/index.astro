@@ -2,6 +2,8 @@
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import ProjectCard from "@components/ProjectCard.astro";
+import TagsToggle from "@components/TagsToggle.astro";
+import PageSearch from "@components/PageSearch.astro";
 import { PROJECTS } from "@consts";
 import { withProjectsData } from "@lib/projects";
 import { shouldListPage } from "@lib/utils";
@@ -32,40 +34,72 @@ const tags = projectCards
     <h1 class="page-title">Projects<Icon name="tabler:code" /></h1>
   </div>
 
+  <PageSearch placeholder="Search projects..." />
+
   <div class="filter-row">
-    <a class="pill active" href="/projects">all projects</a>
+    <TagsToggle />
+  </div>
+
+  <div class="filter-row tag-filter-row">
+    <button class="pill active" type="button" data-tag="" aria-pressed="true">
+      all projects
+    </button>
     {
       tags.map((tag) => (
-        <a class="pill" href={`/projects/tags/${tag}`}>
+        <button class="pill" type="button" data-tag={tag} aria-pressed="false">
           #{tag}
-        </a>
+        </button>
       ))
     }
   </div>
 
   {
     professionalProjects.length > 0 && (
-      <>
+      <div data-search-group>
         <h2 class="section-heading">Professional</h2>
         <div class="card-list">
           {professionalProjects.map((project) => (
-            <ProjectCard entry={project.entry} data={project.data} />
+            <div
+              data-search-text={[
+                project.data.title,
+                project.data.subtitle,
+                project.data.description,
+                ...(project.data.tags ?? []),
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              data-tags={(project.data.tags ?? []).join(" ")}
+            >
+              <ProjectCard entry={project.entry} data={project.data} />
+            </div>
           ))}
         </div>
-      </>
+      </div>
     )
   }
 
   {
     personalProjects.length > 0 && (
-      <>
+      <div data-search-group>
         <h2 class="section-heading">Personal</h2>
         <div class="card-list">
           {personalProjects.map((project) => (
-            <ProjectCard entry={project.entry} data={project.data} />
+            <div
+              data-search-text={[
+                project.data.title,
+                project.data.subtitle,
+                project.data.description,
+                ...(project.data.tags ?? []),
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              data-tags={(project.data.tags ?? []).join(" ")}
+            >
+              <ProjectCard entry={project.entry} data={project.data} />
+            </div>
           ))}
         </div>
-      </>
+      </div>
     )
   }
 </Layout>

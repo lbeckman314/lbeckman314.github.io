@@ -1,7 +1,9 @@
 ---
 title: "Funnel"
+description: "A toolkit for distributed task execution built around the GA4GH Task Execution Schema (TES), a standard API for describing and running batch tasks across cloud and HPC backends. Lead developer; used in production to orchestrate genomic analysis pipelines at OHSU."
 repoURL: "https://github.com/calypr/funnel"
 professional: true
+order: 1
 ---
 
 [![Tests][tests-badge]][tests]

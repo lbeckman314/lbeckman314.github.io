@@ -101,7 +101,8 @@ const isActive = (prefix: string) =>
       center / contain no-repeat;
   }
   @media (prefers-reduced-motion: no-preference) {
-    .brand:hover .mark::after {
+    .brand:hover .mark::after,
+    .brand.auto-play .mark::after {
       opacity: 1;
       animation-play-state: running;
     }

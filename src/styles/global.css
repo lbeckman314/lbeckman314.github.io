@@ -71,7 +71,7 @@ html[data-theme="light"] {
   --mut: #6a655b;
   --dim: #9a9488;
   --accent: #f5a623;
-  --accent-text: #ac6b12;
+  --accent-text: #da8b07;
   --accent-ink: #1a1206;
   --chip-bg: rgba(20, 18, 12, 0.04);
   --shadow: 0 1px 2px rgba(20, 18, 12, 0.04);
@@ -338,6 +338,22 @@ a.tag:hover {
   width: 13px;
   height: 13px;
 }
+.pill.tags-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.pill.tags-toggle svg {
+  width: 13px;
+  height: 13px;
+}
+
+html:not([data-show-tags]) .tag-filter-row {
+  display: none;
+}
+.filter-row + .tag-filter-row {
+  margin-top: -14px;
+}
 
 /* ============ SECTION HEAD ============ */
 .sec-head {
@@ -603,7 +619,7 @@ p {
 }
 .article > p {
   /* margin: 18px 0; */
-  font-size: calc(16.5px * var(--fsm));
+  font-size: calc(15.5px * var(--fsm));
   line-height: 1.72;
   text-wrap: pretty;
 }
@@ -698,7 +714,7 @@ p {
   margin-right: 0.4em;
 }
 .article h2 {
-  margin: 46px 0 16px;
+  /* margin: 46px 0 16px; */
   font-size: calc(27px * var(--fsm));
   font-weight: 700;
   letter-spacing: -0.02em;

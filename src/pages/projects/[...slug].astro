@@ -80,23 +80,6 @@ const socials = projectEntry.data.socials ?? [];
       <div class="article">
         <Content />
       </div>
-
-      <div class="article-foot">
-        <div class="prevnext">
-          <a class="pn prev" href="/projects">
-            <span class="dir">‹ All projects</span>
-            <span class="t">Back to the full list</span>
-          </a>
-          {
-            nextProject && (
-              <a class="pn next" href={`/projects/${nextProject.entry.id}`}>
-                <span class="dir">Next project ›</span>
-                <span class="t">{nextProject.data.title}</span>
-              </a>
-            )
-          }
-        </div>
-      </div>
     </div>
   </article>
 </Layout>

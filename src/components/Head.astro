@@ -277,6 +277,31 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     });
   }
 
+  function applyShowTags(show) {
+    document.documentElement.toggleAttribute("data-show-tags", show);
+    const btn = document.getElementById("tagsToggle");
+    if (btn) {
+      btn.classList.toggle("active", show);
+      btn.setAttribute("aria-pressed", String(show));
+    }
+    localStorage.setItem("ddb-show-tags", show ? "1" : "0");
+  }
+
+  function preloadShowTags() {
+    applyShowTags(localStorage.getItem("ddb-show-tags") === "1");
+  }
+
+  function bindTagsToggle() {
+    const btn = document.getElementById("tagsToggle");
+    if (!btn || btn.dataset.bound) {
+      return;
+    }
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      applyShowTags(localStorage.getItem("ddb-show-tags") !== "1");
+    });
+  }
+
   function applyFontSize(size) {
     document.documentElement.setAttribute("data-fs", size);
     for (const btn of document.querySelectorAll(".ctl-btn[data-fs]")) {
@@ -333,8 +358,13 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
       const plain = fullText.slice(0, fullText.length - tld.length);
       const total = fullText.length;
       let busy = false;
-      brand.addEventListener("mouseenter", () => {
+
+      // Shared by the real :hover trigger and the one-shot auto-play on
+      // load - `withCaret` is false for auto-play so the retyping plays
+      // without the blinking-cursor span ever entering the DOM.
+      const playRetype = (withCaret, onDone) => {
         if (busy || reduceMotion) {
+          onDone?.();
           return;
         }
         busy = true;
@@ -352,7 +382,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
           word.innerHTML =
             plainShown +
             (tldShown ? `<span class="tld">${tldShown}</span>` : "") +
-            `<span class="caret"></span>`;
+            (withCaret ? `<span class="caret"></span>` : "");
           if (i < total) {
             i++;
             setTimeout(step, 26);
@@ -360,9 +390,28 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
             word.style.minWidth = "";
             word.style.display = "";
             busy = false;
+            onDone?.();
           }
         })();
-      });
+      };
+
+      brand.addEventListener("mouseenter", () => playRetype(true));
+
+      if (!reduceMotion && !brand.dataset.autoPlayed) {
+        brand.dataset.autoPlayed = "1";
+        brand.classList.add("auto-play");
+        playRetype(false);
+        // Keep the mark's gradient roll (a separate, continuously-looping
+        // CSS animation tied to .auto-play) spinning for a few full
+        // rotations on load, well past the ~365ms retype - then let it
+        // settle instead of cutting it off mid-spin.
+        const brandRollCycleMs = 4500;
+        const autoPlayCycles = 3;
+        setTimeout(
+          () => brand.classList.remove("auto-play"),
+          brandRollCycleMs * autoPlayCycles,
+        );
+      }
     }
   }
 
@@ -497,10 +546,12 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
     preloadTheme();
     preloadFontSize();
     preloadShowDrafts();
+    preloadShowTags();
     injectBrand();
     bindThemeToggle();
     bindFontSize();
     bindDraftsToggle();
+    bindTagsToggle();
     recordListVisit();
     bindBacklinks();
     updateActiveNav();
@@ -513,4 +564,5 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
   preloadTheme();
   preloadFontSize();
   preloadShowDrafts();
+  preloadShowTags();
 </script>

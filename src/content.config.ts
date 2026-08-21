@@ -32,6 +32,7 @@ const projects = defineCollection({
     packageURL: z.string().optional(),
     professional: z.boolean().optional(),
     languages: z.array(z.string()).optional(),
+    order: z.number().optional(),
   }),
 });
 
@@ -46,4 +47,55 @@ const favorites = defineCollection({
   }),
 });
 
-export const collections = { notes, projects, favorites };
+const resumeEducation = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/resume/education" }),
+  schema: z.object({
+    degree: z.string(),
+    org: z.string(),
+    orgHref: z.string().optional(),
+    location: z.string(),
+    period: z.string(),
+    order: z.number(),
+  }),
+});
+
+const resumeExperience = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/resume/experience" }),
+  schema: z.object({
+    title: z.string(),
+    org: z.string(),
+    orgHref: z.string().optional(),
+    location: z.string(),
+    period: z.string(),
+    order: z.number(),
+  }),
+});
+
+const resumeSkills = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/resume/skills" }),
+  schema: z.object({
+    label: z.string(),
+    items: z.array(z.string()),
+    order: z.number(),
+  }),
+});
+
+const resumePublications = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/resume/publications" }),
+  schema: z.object({
+    title: z.string(),
+    venue: z.string(),
+    href: z.string(),
+    order: z.number(),
+  }),
+});
+
+export const collections = {
+  notes,
+  projects,
+  favorites,
+  resumeEducation,
+  resumeExperience,
+  resumeSkills,
+  resumePublications,
+};

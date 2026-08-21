@@ -3,6 +3,8 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/PostCard.astro";
 import DraftsToggle from "@components/DraftsToggle.astro";
+import TagsToggle from "@components/TagsToggle.astro";
+import PageSearch from "@components/PageSearch.astro";
 import { BLOG } from "@consts";
 import { shouldListPage } from "@lib/utils";
 import { Icon } from "astro-icon/components";
@@ -36,28 +38,50 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
     <h1 class="page-title">Notes<Icon name="tabler:notes" /></h1>
   </div>
 
+  <PageSearch placeholder="Search notes..." />
+
   <div class="filter-row">
-    <a class="pill active" href="/notes">all posts</a>
+    <TagsToggle />
+    <DraftsToggle />
+  </div>
+
+  <div class="filter-row tag-filter-row">
+    <button class="pill active" type="button" data-tag="" aria-pressed="true">
+      all posts
+    </button>
     {
       tags.map((tag) => (
-        <a class="pill" href={`/notes/tags/${tag}`}>
+        <button class="pill" type="button" data-tag={tag} aria-pressed="false">
           #{tag}
-        </a>
+        </button>
       ))
     }
-    <DraftsToggle />
   </div>
 
   {
     years.map((year) => (
-      <>
+      <div data-search-group>
         <div class="year">{year}</div>
         <div class="card-list">
           {postsMap[year].map((post) => (
-            <PostCard entry={post} />
+            <div
+              data-search-text={[
+                post.data.title,
+                post.data.subtitle,
+                post.data.date.toISOString(),
+                post.data.description,
+                post.data.series,
+                ...(post.data.tags ?? []),
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              data-tags={(post.data.tags ?? []).join(" ")}
+            >
+              <PostCard entry={post} />
+            </div>
           ))}
         </div>
-      </>
+      </div>
     ))
   }
 </Layout>

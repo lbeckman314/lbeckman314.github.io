@@ -1,0 +1,333 @@
+---
+import { getCollection, render } from "astro:content";
+import { withProjectsData } from "@lib/projects";
+import { shouldListPage } from "@lib/utils";
+
+const byOrder = (a: { data: { order: number } }, b: { data: { order: number } }) =>
+  a.data.order - b.data.order;
+
+const education = (await getCollection("resumeEducation")).sort(byOrder);
+const skills = (await getCollection("resumeSkills")).sort(byOrder);
+const experience = (await getCollection("resumeExperience")).sort(byOrder);
+const publications = (await getCollection("resumePublications")).sort(byOrder);
+
+const professionalProjects = (await getCollection("projects")).filter(
+  (p) => p.data.professional && shouldListPage(p),
+);
+const softwareProducts = (await withProjectsData(professionalProjects)).sort(
+  (a, b) => (a.data.order ?? 0) - (b.data.order ?? 0),
+);
+
+const experienceContents = await Promise.all(
+  experience.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+---
+
+<h2>Education</h2>
+<div class="timeline">
+  {education.map((entry) => (
+    <div class="timeline-item">
+      <div class="timeline-head">
+        <h3>{entry.data.degree}</h3>
+        <span class="timeline-period">{entry.data.period}</span>
+      </div>
+      <div class="timeline-org">
+        {entry.data.orgHref ? <a href={entry.data.orgHref}>{entry.data.org}</a> : entry.data.org}
+      </div>
+      <div class="timeline-loc">{entry.data.location}</div>
+    </div>
+  ))}
+</div>
+
+<hr />
+
+<h2>Skills</h2>
+<dl class="skills-list">
+  {skills.map((group) => (
+    <div class="skills-row">
+      <dt>{group.data.label}</dt>
+      <dd>
+        <span class="tags">
+          {group.data.items.map((item) => <span class="tag">{item}</span>)}
+        </span>
+      </dd>
+    </div>
+  ))}
+</dl>
+
+<hr />
+
+<h2>Experience</h2>
+<div class="timeline">
+  {experienceContents.map(({ entry, Content }) => (
+    <div class="timeline-item">
+      <div class="timeline-head">
+        <h3>{entry.data.title}</h3>
+        <span class="timeline-period">{entry.data.period}</span>
+      </div>
+      <div class="timeline-org">
+        {entry.data.orgHref ? <a href={entry.data.orgHref}>{entry.data.org}</a> : entry.data.org}
+      </div>
+      <div class="timeline-loc">{entry.data.location}</div>
+      <div class="timeline-body">
+        <Content />
+      </div>
+    </div>
+  ))}
+</div>
+
+<hr />
+
+<h2>Software Products</h2>
+<ul class="product-list">
+  {softwareProducts.map((product) => (
+    <li>
+      <span class="product-name">
+        {product.data.repoURL ? (
+          <a href={product.data.repoURL}>{product.data.title}</a>
+        ) : (
+          product.data.title
+        )}
+      </span>
+      {" — "}
+      {product.data.description}
+    </li>
+  ))}
+</ul>
+
+<hr />
+
+<h2>Published Articles &amp; Presentations</h2>
+<ul class="pub-list">
+  {publications.map((publication) => (
+    <li>
+      <a href={publication.data.href}>
+        <span class="pub-title">{publication.data.title}</span>
+      </a>
+      <span class="pub-venue">{publication.data.venue}</span>
+    </li>
+  ))}
+</ul>
+
+<style is:global>
+  .prose h2:not(.timeline-body *) {
+    margin: 40px 0 14px;
+    font-size: calc(22px * var(--fsm));
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .prose p {
+    margin: 16px 0;
+    font-size: calc(16.5px * var(--fsm));
+    line-height: 1.7;
+    color: var(--reading);
+    text-wrap: pretty;
+  }
+  .prose a {
+    color: var(--accent-text);
+    text-decoration: none;
+    text-underline-offset: 2px;
+  }
+  .prose a:hover,
+  .prose a:focus-visible {
+    text-decoration: underline;
+  }
+  .skills-list {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .skills-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+  .skills-row dt {
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    font-weight: 600;
+    color: var(--mut);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .skills-row dd {
+    margin: 0;
+  }
+  @media (max-width: 620px) {
+    .skills-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .timeline-item {
+    padding-left: 18px;
+    border-left: 2px solid var(--line);
+  }
+  .timeline-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .timeline-head h3 {
+    margin: 0;
+    font-size: calc(17px * var(--fsm));
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .timeline-period {
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    color: var(--dim);
+    white-space: nowrap;
+  }
+  .timeline-org {
+    margin-top: 3px;
+    font-size: calc(14.5px * var(--fsm));
+    color: var(--mut);
+    font-weight: 500;
+  }
+  .timeline-org a {
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 2px;
+  }
+  .timeline-org a:hover,
+  .timeline-org a:focus-visible {
+    color: var(--accent-text);
+    text-decoration: underline;
+  }
+  .timeline-loc {
+    margin-top: 2px;
+    font-size: calc(13px * var(--fsm));
+    color: var(--mut);
+  }
+  .timeline-body {
+    margin-top: 14px;
+  }
+  .timeline-body .section-anchor-link {
+    display: none;
+  }
+  .timeline-body :is(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    font-weight: 600;
+    color: var(--mut);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 14px 0 8px;
+  }
+  .timeline-body :is(h1, h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
+  }
+  .timeline-body p {
+    margin: 12px 0 8px;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.6;
+    color: var(--reading);
+  }
+  .timeline-body ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .timeline-body li {
+    position: relative;
+    padding-left: 16px;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.6;
+    color: var(--reading);
+    text-wrap: pretty;
+  }
+  .timeline-body li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--dim);
+  }
+  .timeline-body li a {
+    color: var(--accent-text);
+    text-decoration: none;
+    text-underline-offset: 2px;
+  }
+  .timeline-body li a:hover,
+  .timeline-body li a:focus-visible {
+    text-decoration: underline;
+  }
+  .product-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .product-list li {
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.65;
+    color: var(--reading);
+    text-wrap: pretty;
+  }
+  .product-name {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .product-name a {
+    color: var(--accent-text);
+    text-decoration: none;
+  }
+  .product-name a:hover,
+  .product-name a:focus-visible {
+    text-decoration: underline;
+  }
+  .pub-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pub-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pub-title {
+    font-size: calc(14.5px * var(--fsm));
+    color: var(--accent-text);
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+  .pub-list a {
+    text-decoration: none;
+  }
+  .pub-list a:hover .pub-title,
+  .pub-list a:focus-visible .pub-title {
+    text-decoration: underline;
+  }
+  .pub-venue {
+    font-family: var(--mono);
+    font-size: calc(12px * var(--fsm));
+    color: var(--mut);
+    font-style: italic;
+  }
+</style>
