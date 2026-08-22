@@ -38,6 +38,15 @@
   let puffGeometry: THREE.SphereGeometry | null = null;
   let puffs: Puff[] = [];
 
+  // A glowing rim outline hugging whichever cow is currently being held,
+  // so it's unambiguous which one you're dragging - especially with
+  // several cows on screen or a finger occluding the model on mobile.
+  // Built as a slightly-scaled, backface-only clone of the model: normal
+  // front-face rendering hides it everywhere except the silhouette edge,
+  // where the enlarged backfaces peek out from behind the real mesh.
+  const SELECTION_OUTLINE_SCALE = 1.06;
+  let selectionOutline: THREE.Object3D | null = null;
+
   let scene: THREE.Scene | null = null;
   let camera: THREE.PerspectiveCamera | null = null;
   let renderer: THREE.WebGLRenderer | null = null;
@@ -161,6 +170,54 @@
     return new THREE.Vector3(origin.x + direction.x * t, origin.y + direction.y * t, planeZ);
   }
 
+  // Builds a slightly-enlarged, backface-only, flat-colored clone of the
+  // model. Rendered behind the real mesh, its front faces are invisible
+  // (culled) and only the enlarged silhouette poking out past the real
+  // model's edges shows - a glowing rim outline that hugs the model's
+  // actual shape instead of a generic ring.
+  function buildSelectionOutline(): THREE.Object3D | null {
+    if (!sourceModel) return null;
+    const outline = sourceModel.clone(true);
+    // sourceModel's own scale/position are the normalization baked in by
+    // loadModel(); the outline will be parented to the cow's root, which
+    // already carries that same normalization, so reset it here to avoid
+    // applying it twice (which would shrink the outline inside the model
+    // instead of it peeking out past the edges).
+    outline.scale.set(SELECTION_OUTLINE_SCALE, SELECTION_OUTLINE_SCALE, SELECTION_OUTLINE_SCALE);
+    outline.position.set(0, 0, 0);
+    outline.rotation.set(0, 0, 0);
+    outline.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.material = new THREE.MeshBasicMaterial({
+          color: 0xf5a623,
+          side: THREE.BackSide,
+          depthWrite: false,
+        });
+      }
+    });
+    return outline;
+  }
+
+  // Attaches (or detaches) the glowing outline to whichever cow is
+  // currently held. Only one cow can be dragged at a time, so a single
+  // outline built on grab and disposed on release is enough. Parented to
+  // the cow's root so it inherits position and rotation automatically.
+  function setSelected(cow: FloatingCow | null, selected: boolean) {
+    if (selectionOutline) {
+      selectionOutline.removeFromParent();
+      selectionOutline.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          (child.material as THREE.Material).dispose();
+        }
+      });
+      selectionOutline = null;
+    }
+    if (selected && cow) {
+      selectionOutline = buildSelectionOutline();
+      if (selectionOutline) cow.root.add(selectionOutline);
+    }
+  }
+
   function onPointerDown(e: PointerEvent) {
     if (activePointerId !== null) return;
     const cow = cowAt(e.clientX, e.clientY);
@@ -176,6 +233,25 @@
     recentMoves = [];
     e.preventDefault();
 
+    // Snap the cow to the cursor/finger immediately on grab, rather than
+    // waiting for the first pointermove - picking it up wherever on its
+    // body you touched shouldn't leave it lagging a frame behind.
+    const target = pointOnPlaneAtZ(e.clientX, e.clientY, cow.root.position.z);
+    if (target) {
+      cow.root.position.x = target.x;
+      cow.root.position.y = target.y;
+    }
+    setSelected(cow, true);
+
+    // Belt-and-suspenders alongside preventDefault in onPointerMove: some
+    // mobile browsers commit to a scroll/pan gesture from the touch's
+    // starting element before any JS runs, based on its touch-action.
+    // #cowLayer itself is pointer-events:none (so page content underneath
+    // stays clickable), meaning the actual touch target is whatever's on
+    // the page - so suppress scrolling document-wide for the drag's
+    // duration instead, and restore it in onPointerUp.
+    document.documentElement.style.touchAction = "none";
+
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
     document.addEventListener("pointercancel", onPointerUp);
@@ -183,6 +259,9 @@
 
   function onPointerMove(e: PointerEvent) {
     if (e.pointerId !== activePointerId || !draggedCow) return;
+    // Without this, touch browsers treat the move as a page scroll/pan
+    // gesture (pointerdown's preventDefault alone doesn't suppress it).
+    e.preventDefault();
     const dx = e.clientX - lastPointerX;
     const dy = e.clientY - lastPointerY;
     const now = performance.now();
@@ -211,6 +290,9 @@
 
     // A little tumble from the drag motion itself, so carrying the cow
     // around still feels tactile rather than a flat, un-rotating drag.
+    // The selection outline is parented to the cow's root (see
+    // setSelected), so it inherits this position/rotation automatically -
+    // no need to touch it here.
     root.rotation.y += dx * 0.01;
     root.rotation.x += dy * 0.01;
 
@@ -250,9 +332,11 @@
       draggedCow.baseY = draggedCow.root.position.y;
       draggedCow.bobPhase = -elapsed * BOB_SPEED;
     }
+    setSelected(null, false);
     activePointerId = null;
     draggedCow = null;
     recentMoves = [];
+    document.documentElement.style.touchAction = "";
     document.removeEventListener("pointermove", onPointerMove);
     document.removeEventListener("pointerup", onPointerUp);
     document.removeEventListener("pointercancel", onPointerUp);
@@ -382,6 +466,12 @@
       cow.root.rotation.z += cow.spin.z * dt;
       if (bounds) wrapCow(cow, bounds);
     }
+    if (selectionOutline) {
+      // A gentle pulse in rim thickness so the outline reads as a live
+      // "selected" indicator rather than a static decal.
+      const pulse = SELECTION_OUTLINE_SCALE + Math.sin(elapsed * 6) * 0.01;
+      selectionOutline.scale.setScalar(pulse);
+    }
     stepPuffs(dt);
     renderer.render(scene, camera);
     stopLoopIfIdle();
@@ -473,6 +563,21 @@
       scene.remove(cow.root);
     }
     cows = [];
+
+    // A clear can land mid-drag (e.g. Escape while dragging with a mouse
+    // in one hand) - cancel it so onPointerMove/onPointerUp don't keep
+    // acting on a cow that's no longer in the scene.
+    if (draggedCow) {
+      setSelected(null, false);
+      activePointerId = null;
+      draggedCow = null;
+      recentMoves = [];
+      document.documentElement.style.touchAction = "";
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointercancel", onPointerUp);
+    }
+
     renderer?.render(scene, camera!);
     startLoop();
   }
