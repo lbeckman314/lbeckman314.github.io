@@ -243,14 +243,12 @@
     }
     setSelected(cow, true);
 
-    // Belt-and-suspenders alongside preventDefault in onPointerMove: some
-    // mobile browsers commit to a scroll/pan gesture from the touch's
-    // starting element before any JS runs, based on its touch-action.
-    // #cowLayer itself is pointer-events:none (so page content underneath
-    // stays clickable), meaning the actual touch target is whatever's on
-    // the page - so suppress scrolling document-wide for the drag's
-    // duration instead, and restore it in onPointerUp.
-    document.documentElement.style.touchAction = "none";
+    // touch-action (set ahead of time in CSS) governs scroll/pan gestures
+    // but not text selection, which has its own long-press trigger on the
+    // page content underneath - block it only for the drag's duration so
+    // dragging over text doesn't select it, without disabling selection
+    // globally.
+    document.body.style.userSelect = "none";
 
     document.addEventListener("pointermove", onPointerMove);
     document.addEventListener("pointerup", onPointerUp);
@@ -336,7 +334,7 @@
     activePointerId = null;
     draggedCow = null;
     recentMoves = [];
-    document.documentElement.style.touchAction = "";
+    document.body.style.userSelect = "";
     document.removeEventListener("pointermove", onPointerMove);
     document.removeEventListener("pointerup", onPointerUp);
     document.removeEventListener("pointercancel", onPointerUp);
@@ -572,7 +570,7 @@
       activePointerId = null;
       draggedCow = null;
       recentMoves = [];
-      document.documentElement.style.touchAction = "";
+      document.body.style.userSelect = "";
       document.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerup", onPointerUp);
       document.removeEventListener("pointercancel", onPointerUp);
@@ -603,6 +601,16 @@
 </script>
 
 <style is:global>
+  /* Set ahead of time (not from JS at pointerdown) so the browser's touch
+     gesture recognizer sees the restrictive value from the very first
+     touchstart - toggling touch-action mid-gesture is too late on some
+     mobile engines and lets the native scroll win once the finger moves
+     past the slop threshold. pan-y (not none) keeps normal vertical
+     scrolling working everywhere except an active cow drag, which is
+     fully cancelled via preventDefault in onPointerMove instead. */
+  html {
+    touch-action: pan-y;
+  }
   #cowLayer {
     position: fixed;
     inset: 0;

@@ -36,7 +36,7 @@ order: 1
 [helm]: https://github.com/calypr/helm-charts
 
 <a title="Funnel Homepage" href="https://calypr.org/tools/funnel/">
-  <img title="Funnel Logo" src="https://github.com/user-attachments/assets/f51cf06b-d802-4e20-bde1-bcd1fc5657e6" />
+  <img title="Funnel Logo" src="https://github.com/user-attachments/assets/f51cf06b-d802-4e20-bde1-bcd1fc5657e6" width="712" height="270" />
 </a>
 
 Funnel is a toolkit for distributed, batch task execution, including a server, worker, and a set of compute, storage, and database backends. Given a task description, Funnel will find a worker to execute the task, download inputs, run a series of (Docker) containers, upload outputs, capture logs, and track the whole process.
