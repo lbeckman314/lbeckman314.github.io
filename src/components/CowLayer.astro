@@ -1,10 +1,24 @@
 <div id="cowLayer" aria-hidden="true" transition:persist>
   <canvas></canvas>
+  <!-- tabindex="-1" keeps it out of the tab order: the whole layer above
+       is aria-hidden (a floating, click-to-reveal decoration, not primary
+       content), so a real link inside it would otherwise be a keyboard
+       stop that's invisible to assistive tech. -->
+  <a
+    id="cowFortune"
+    class="word"
+    href="https://en.wikipedia.org/wiki/Cowsay"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="cowsay on Wikipedia"
+    tabindex="-1"></a>
 </div>
 
 <script>
   import * as THREE from "three";
   import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { say } from "cowsay";
+  import { randomFortune } from "@lib/fortunes";
 
   const MODEL_SRC = "/models/spot_morph_material.glb";
   const MAX_COWS = 20;
@@ -47,6 +61,15 @@
   const SELECTION_OUTLINE_SCALE = 1.06;
   let selectionOutline: THREE.Object3D | null = null;
 
+  // The cow currently showing a cowsay fortune bubble above its head, set
+  // on click/tap (see onPointerDown) and cleared once it's deselected or
+  // removed from the scene. Persists past pointerup - a plain tap should
+  // give you time to actually read the fortune, not just flash it while
+  // held.
+  let fortuneCow: FloatingCow | null = null;
+  const FORTUNE_HEIGHT_OFFSET = 0.9;
+  let fortuneTypeTimer: ReturnType<typeof setTimeout> | null = null;
+
   let scene: THREE.Scene | null = null;
   let camera: THREE.PerspectiveCamera | null = null;
   let renderer: THREE.WebGLRenderer | null = null;
@@ -70,6 +93,90 @@
 
   function getLayer() {
     return document.getElementById("cowLayer");
+  }
+
+  function getFortuneBubble() {
+    return getLayer()?.querySelector<HTMLElement>("#cowFortune") ?? null;
+  }
+
+  // Projects the cow's world position to screen pixels (relative to
+  // #cowLayer, which is inset:0 so viewport pixels line up directly) and
+  // anchors the bubble above its head.
+  function positionFortuneBubble(cow: FloatingCow, bubble: HTMLElement) {
+    if (!camera) return;
+    const worldPos = cow.root.position.clone();
+    worldPos.y += FORTUNE_HEIGHT_OFFSET;
+    worldPos.project(camera);
+    const { w, h } = viewportSize();
+    bubble.style.left = `${((worldPos.x + 1) / 2) * w}px`;
+    bubble.style.top = `${((1 - worldPos.y) / 2) * h}px`;
+  }
+
+  // Reveals a cowsay balloon in `bubble` character-by-character with a
+  // blinking caret, same mechanic as the brand wordmark's retype effect in
+  // Head.astro (see the ".word .caret" rules in Header.astro this shares).
+  // Reveals more characters per tick for a longer balloon rather than
+  // ticking slower, so a long-winded fortune doesn't take proportionally
+  // longer to type out than a short one.
+  function typeFortune(bubble: HTMLElement, quote: string) {
+    if (fortuneTypeTimer) {
+      clearTimeout(fortuneTypeTimer);
+      fortuneTypeTimer = null;
+    }
+
+    const fullText = say({ text: quote });
+    const textNode = document.createTextNode("");
+    const caret = document.createElement("span");
+    caret.className = "caret";
+    bubble.replaceChildren(textNode, caret);
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) {
+      textNode.nodeValue = fullText;
+      caret.remove();
+      return;
+    }
+
+    bubble.classList.add("typing");
+    const total = fullText.length;
+    const charsPerTick = Math.max(1, Math.ceil(total / 90));
+    let shown = 0;
+    const tick = () => {
+      shown = Math.min(shown + charsPerTick, total);
+      textNode.nodeValue = fullText.slice(0, shown);
+      if (shown < total) {
+        fortuneTypeTimer = setTimeout(tick, 16);
+      } else {
+        fortuneTypeTimer = null;
+        bubble.classList.remove("typing");
+        caret.remove();
+      }
+    };
+    tick();
+  }
+
+  // Selects (or deselects, when cow is null) the cow showing the fortune
+  // bubble. Rolls a fresh fortune on every selection, including re-picking
+  // the same cow, so re-tapping a cow doesn't just repeat itself.
+  function setFortuneCow(cow: FloatingCow | null) {
+    fortuneCow = cow;
+    const bubble = getFortuneBubble();
+    if (!bubble) return;
+    if (!cow) {
+      if (fortuneTypeTimer) {
+        clearTimeout(fortuneTypeTimer);
+        fortuneTypeTimer = null;
+      }
+      bubble.classList.remove("typing");
+      bubble.replaceChildren();
+      bubble.style.display = "none";
+      return;
+    }
+    bubble.style.display = "block";
+    positionFortuneBubble(cow, bubble);
+    typeFortune(bubble, randomFortune());
   }
 
   function viewportSize() {
@@ -167,7 +274,11 @@
     const { origin, direction } = raycaster.ray;
     if (Math.abs(direction.z) < 1e-6) return null;
     const t = (planeZ - origin.z) / direction.z;
-    return new THREE.Vector3(origin.x + direction.x * t, origin.y + direction.y * t, planeZ);
+    return new THREE.Vector3(
+      origin.x + direction.x * t,
+      origin.y + direction.y * t,
+      planeZ,
+    );
   }
 
   // Builds a slightly-enlarged, backface-only, flat-colored clone of the
@@ -183,7 +294,11 @@
     // already carries that same normalization, so reset it here to avoid
     // applying it twice (which would shrink the outline inside the model
     // instead of it peeking out past the edges).
-    outline.scale.set(SELECTION_OUTLINE_SCALE, SELECTION_OUTLINE_SCALE, SELECTION_OUTLINE_SCALE);
+    outline.scale.set(
+      SELECTION_OUTLINE_SCALE,
+      SELECTION_OUTLINE_SCALE,
+      SELECTION_OUTLINE_SCALE,
+    );
     outline.position.set(0, 0, 0);
     outline.rotation.set(0, 0, 0);
     outline.traverse((child) => {
@@ -220,8 +335,18 @@
 
   function onPointerDown(e: PointerEvent) {
     if (activePointerId !== null) return;
+    // The fortune bubble accepts pointer events (so its text is
+    // selectable/copyable) - a click starting there is the user selecting
+    // text, not a click on empty space, so don't tear the bubble down.
+    if (e.target instanceof Element && e.target.closest("#cowFortune")) {
+      return;
+    }
     const cow = cowAt(e.clientX, e.clientY);
-    if (!cow) return;
+    if (!cow) {
+      setFortuneCow(null);
+      return;
+    }
+    setFortuneCow(cow);
 
     activePointerId = e.pointerId;
     draggedCow = cow;
@@ -314,7 +439,11 @@
         totalDt += move.dt;
       }
       if (totalDt > 0) {
-        draggedCow.velocity.set(vx / (totalDt / 1000), vy / (totalDt / 1000), 0);
+        draggedCow.velocity.set(
+          vx / (totalDt / 1000),
+          vy / (totalDt / 1000),
+          0,
+        );
       }
       draggedCow.spin.set(
         draggedCow.velocity.y * 0.4,
@@ -416,7 +545,10 @@
   // partly in view.
   const WRAP_MARGIN = 0.9;
 
-  function wrapCow(cow: FloatingCow, bounds: ReturnType<typeof visibleBoundsAtZ0>) {
+  function wrapCow(
+    cow: FloatingCow,
+    bounds: ReturnType<typeof visibleBoundsAtZ0>,
+  ) {
     const { left, right, top, bottom } = bounds;
     const width = right - left;
     const height = top - bottom;
@@ -447,7 +579,10 @@
         // decay, rather than following the idle bob.
         cow.root.position.addScaledVector(cow.velocity, dt);
         cow.velocity.multiplyScalar(Math.max(0, 1 - THROW_DAMPING * dt));
-        if (cow.velocity.lengthSq() <= THROW_SETTLE_SPEED * THROW_SETTLE_SPEED) {
+        if (
+          cow.velocity.lengthSq() <=
+          THROW_SETTLE_SPEED * THROW_SETTLE_SPEED
+        ) {
           // Just settled: resume the bob from here instead of snapping
           // back to wherever it was thrown from.
           cow.velocity.set(0, 0, 0);
@@ -469,6 +604,10 @@
       // "selected" indicator rather than a static decal.
       const pulse = SELECTION_OUTLINE_SCALE + Math.sin(elapsed * 6) * 0.01;
       selectionOutline.scale.setScalar(pulse);
+    }
+    if (fortuneCow) {
+      const bubble = getFortuneBubble();
+      if (bubble) positionFortuneBubble(fortuneCow, bubble);
     }
     stepPuffs(dt);
     renderer.render(scene, camera);
@@ -493,7 +632,8 @@
     // out of frame right after it spawns.
     const marginY = (top - bottom) * 0.15;
     const marginX = (right - left) * 0.1;
-    const baseY = bottom + marginY + Math.random() * (top - bottom - marginY * 2);
+    const baseY =
+      bottom + marginY + Math.random() * (top - bottom - marginY * 2);
     const x = left + marginX + Math.random() * (right - left - marginX * 2);
     root.position.set(x, baseY, (Math.random() - 0.5) * 2);
     root.rotation.y = Math.random() * Math.PI * 2;
@@ -502,6 +642,7 @@
     if (cows.length >= MAX_COWS) {
       const oldest = cows.shift();
       if (oldest) {
+        if (oldest === fortuneCow) setFortuneCow(null);
         spawnBurst(oldest.root.position);
         scene.remove(oldest.root);
       }
@@ -561,6 +702,7 @@
       scene.remove(cow.root);
     }
     cows = [];
+    setFortuneCow(null);
 
     // A clear can land mid-drag (e.g. Escape while dragging with a mouse
     // in one hand) - cancel it so onPointerMove/onPointerUp don't keep
@@ -589,7 +731,13 @@
       if (e.key === "Escape") clearCows();
     });
     document.addEventListener("dblclick", (e) => {
-      if (e.target instanceof Element && e.target.closest("#cowButton")) {
+      if (
+        e.target instanceof Element &&
+        (e.target.closest("#cowButton") || e.target.closest("#cowFortune"))
+      ) {
+        // A double-click here is selecting a word in the fortune text
+        // (the standard double-click-to-select-word gesture), not a
+        // request to clear the scene.
         return;
       }
       clearCows();
@@ -622,5 +770,52 @@
     display: block;
     width: 100%;
     height: 100%;
+  }
+  #cowFortune {
+    display: none;
+    position: absolute;
+    z-index: 41;
+    transform: translate(-50%, -100%);
+    margin: 0;
+    padding: 10px 14px;
+    /* Everything else in #cowLayer is pointer-events:none so the overlay
+       never blocks clicks to the page underneath, but this element is a
+       real link (to cowsay's Wikipedia article) whose text should still
+       be selectable/copyable - re-enable hit-testing just for it (see the
+       pointerdown/dblclick guards in the script, which let clicks/double-
+       clicks that land in here through instead of treating them as a
+       deselect/clear - a plain click still falls through to the browser's
+       normal <a> navigation since neither guard calls preventDefault). */
+    pointer-events: auto;
+    user-select: text;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: pre;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.3;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+  }
+  #cowFortune:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+  }
+  /* Shows/blinks the shared .word .caret (see Header.astro) only while
+     typeFortune() is actively revealing text, instead of the brand mark's
+     :hover trigger. */
+  #cowFortune.typing .caret {
+    display: inline-block;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    #cowFortune.typing .caret {
+      animation: ddb-caret 0.7s steps(1) infinite;
+    }
   }
 </style>

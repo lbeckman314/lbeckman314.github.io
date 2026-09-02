@@ -120,7 +120,10 @@ const isActive = (prefix: string) =>
       --brand-angle: 360deg;
     }
   }
-  .brand .word .caret {
+  /* Base caret box shared by any ".word" typewriter element (the brand
+     mark here, the cow fortune bubble in CowLayer.astro) - hidden until
+     something (a :hover, a JS-toggled class) opts it into showing. */
+  .word .caret {
     display: none;
     width: 0.55em;
     height: 1em;

@@ -1,0 +1,39 @@
+---
+interface Props {
+  data: string;
+  theme: string;
+  url: string;
+}
+
+const { data, theme, url } = Astro.props;
+---
+
+<div id="demonic">
+    <div id="demonic-examples">
+        <code>withfeathers --print</code>
+        <code>pipes.sh</code>
+        <code>fortune | cowsay | lolcat</code>
+        <code>cmatrix | lolcat</code>
+    </div>
+
+    <div class="demonic-web"></div>
+    <div class="what-is-this">
+        <a href="/code/demonic">About</a> |
+        <a href="https://github.com/lbeckman314/demonic">Source Code</a>
+    </div>
+</div>
+
+<script>
+import DemonicWeb from "../../public/assets/js/demonic-web.bundle";
+
+const theme = localStorage.getItem('theme');
+
+// Wrap initialization in DOMContentLoaded or a safe runner
+document.addEventListener('DOMContentLoaded', () => {
+    DemonicWeb.run({
+        data: 'fortune | cowsay | lolcat',
+        theme: theme,
+        url: 'wss://demonic.liambeckman.com',
+    });
+});
+</script>

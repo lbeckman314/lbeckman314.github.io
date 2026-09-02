@@ -101,6 +101,7 @@ const draftSlugs = new Set(
 // https://astro.build/config
 export default defineConfig({
   site: "https://liambeckman.com",
+  
   // The order of integrations is important here.
   integrations: [
     sitemap({
@@ -124,6 +125,7 @@ export default defineConfig({
     }),
     mdx(),
   ],
+  
   markdown: {
     // Sätteri (Astro's default processor as of v6) doesn't support
     // remark/rehype plugins, so stick with the classic unified pipeline for
@@ -155,4 +157,10 @@ export default defineConfig({
       },
     },
   },
+
+  redirects: {
+    '/code': '/projects',
+    '/code/[...slug]': '/projects/[...slug]'
+  }
 });
+
