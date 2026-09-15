@@ -1,14 +1,10 @@
 ---
-import { getCollection, render } from "astro:content";
-import Layout from "@layouts/Layout.astro";
-import { iconForSocial, shouldListPage, shouldRenderPage } from "@lib/utils";
-import TableOfContents from "@components/TableOfContents.astro";
-import ProjectLinks from "@components/ProjectLinks.astro";
-import {
-  getProjectData,
-  getProjectLinks,
-  withProjectsData,
-} from "@lib/projects";
+// Projects no longer have their own detail page - old links here (and the
+// /code/[...slug] redirect above them) go straight to the project's demo
+// (or repo, if there's no demo) instead.
+import { getCollection } from "astro:content";
+import { shouldRenderPage } from "@lib/utils";
+import { getPrimaryProjectLink, getProjectData } from "@lib/projects";
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects")).filter(shouldRenderPage);
@@ -19,67 +15,11 @@ export async function getStaticPaths() {
 }
 
 const projectEntry = Astro.props;
-const projectList = await getCollection("projects");
-
-const { Content, headings } = await render(projectEntry);
 const projectData = await getProjectData(projectEntry);
+const href = getPrimaryProjectLink(projectEntry, projectData);
 
-const projects = await withProjectsData(projectList.filter(shouldListPage));
-const projectIndex = projects.findIndex((p) => p.entry.id === projectEntry.id);
-const nextProject = projects[projectIndex + 1];
-
-const links = getProjectLinks(projectEntry, projectData);
-
-const tags = projectData.tags;
-const socials = projectEntry.data.socials ?? [];
+if (!href) {
+  return Astro.redirect("/projects", 301);
+}
+return Astro.redirect(href, 301);
 ---
-
-<Layout
-  title={projectData.title}
-  description={projectData.description}
-  route={`${projectEntry.collection}/${projectEntry.id}`}
-  article={{
-    title: projectData.title,
-    publishedDate: projectData.date ?? new Date(),
-    updatedDate: projectData.updated,
-    tags,
-  }}
->
-  <a class="backlink" href="/projects">‹ Back to projects</a>
-
-  <article class="post-grid">
-    <aside class="post-aside">
-      {headings.length > 0 && <TableOfContents headings={headings} />}
-    </aside>
-
-    <div class="post-main">
-      <div class="article-head">
-        <div class="article-tags">
-          <ProjectLinks links={links} />
-          {
-            socials.length > 0 && (
-              <>
-                <span class="repo">Discuss on</span>
-                {socials.toSorted().map((social) => (
-                  <a
-                    class="repo discuss-link"
-                    href={social}
-                    target="_blank"
-                    rel="noopener"
-                    aria-label="Discuss"
-                  >
-                    <span set:html={iconForSocial(social)} />
-                  </a>
-                ))}
-              </>
-            )
-          }
-        </div>
-      </div>
-
-      <div class="article">
-        <Content />
-      </div>
-    </div>
-  </article>
-</Layout>

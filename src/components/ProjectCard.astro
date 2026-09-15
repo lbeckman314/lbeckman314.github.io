@@ -4,23 +4,34 @@ import Card from "@components/Card.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import RepoStars from "@components/RepoStars.astro";
 import ProjectLinks from "@components/ProjectLinks.astro";
-import { getProjectData, getProjectLinks, type ProjectData } from "@lib/projects";
+import {
+  getPrimaryProjectLink,
+  getProjectData,
+  getProjectLinks,
+  type ProjectData,
+} from "@lib/projects";
 
 type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
 
 const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
 const tags = projectData.tags;
 const links = getProjectLinks(entry, projectData);
-const href = `/projects/${entry.id}`;
+const href = getPrimaryProjectLink(entry, projectData);
 ---
 
 <Card as="div" class="project-card">
-  <a
-    slot="stretch-link"
-    class="card-stretch"
-    href={href}
-    aria-label={`View ${projectData.title}`}
-  />
+  {
+    href && (
+      <a
+        slot="stretch-link"
+        class="card-stretch"
+        href={href}
+        target="_blank"
+        rel="noopener"
+        aria-label={`View ${projectData.title}`}
+      />
+    )
+  }
   <Fragment slot="title">
     <div class="project-card-title-row">
       <span class="proj-dot"></span>

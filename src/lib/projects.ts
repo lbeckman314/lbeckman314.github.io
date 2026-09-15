@@ -18,6 +18,15 @@ export type ProjectWithData = {
 
 export type ProjectLink = { href: string; text: string };
 
+// Where a project card should link to: its demo if it has one, otherwise
+// its repo. Projects no longer have their own detail page.
+export function getPrimaryProjectLink(
+  entry: CollectionEntry<"projects">,
+  data: ProjectData,
+): string | undefined {
+  return data.demoURL ?? entry.data.repoURL;
+}
+
 export function getProjectLinks(
   entry: CollectionEntry<"projects">,
   data: ProjectData,
