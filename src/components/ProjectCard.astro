@@ -60,6 +60,13 @@ const href = getPrimaryProjectLink(entry, projectData);
       <ProjectLinks links={links} />
     </span>
     <span class="spacer"></span>
+    {
+      projectData.updated && (
+        <span class="meta-bit">
+          Updated <FormattedDate date={projectData.updated} />
+        </span>
+      )
+    }
     <RepoStars repoURL={entry.data.repoURL} />
   </Fragment>
 </Card>
