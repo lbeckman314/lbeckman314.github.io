@@ -32,7 +32,6 @@ const projects = defineCollection({
     packageURL: z.string().optional(),
     professional: z.boolean().optional(),
     languages: z.array(z.string()).optional(),
-    order: z.number().optional(),
   }),
 });
 

@@ -15,7 +15,7 @@ const professionalProjects = (await getCollection("projects")).filter(
   (p) => p.data.professional && shouldListPage(p),
 );
 const softwareProducts = (await withProjectsData(professionalProjects)).sort(
-  (a, b) => (a.data.order ?? 0) - (b.data.order ?? 0),
+  (a, b) => a.data.title.localeCompare(b.data.title),
 );
 
 const experienceContents = await Promise.all(

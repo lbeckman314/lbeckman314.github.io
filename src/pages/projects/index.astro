@@ -11,7 +11,9 @@ import { Icon } from "astro-icon/components";
 
 const projects = (await getCollection("projects"))
   .filter(shouldListPage)
-const projectCards = await withProjectsData(projects);
+const projectCards = (await withProjectsData(projects)).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title),
+);
 
 const professionalProjects = projectCards.filter(
   (p) => p.data.professional,
@@ -38,6 +40,22 @@ const tags = projectCards
 
   <div class="filter-row">
     <TagsToggle />
+    <button
+      class="pill sort-toggle active"
+      type="button"
+      data-sort="title"
+      aria-pressed="true"
+    >
+      A→Z
+    </button>
+    <button
+      class="pill sort-toggle"
+      type="button"
+      data-sort="updated"
+      aria-pressed="false"
+    >
+      Recently updated
+    </button>
   </div>
 
   <div class="filter-row tag-filter-row">
@@ -69,6 +87,10 @@ const tags = projectCards
                 .filter(Boolean)
                 .join(" ")}
               data-tags={(project.data.tags ?? []).join(" ")}
+              data-title={project.data.title.toLowerCase()}
+              data-updated={(
+                project.data.updated ?? project.data.date
+              )?.valueOf() ?? 0}
             >
               <ProjectCard entry={project.entry} data={project.data} />
             </div>
@@ -94,6 +116,10 @@ const tags = projectCards
                 .filter(Boolean)
                 .join(" ")}
               data-tags={(project.data.tags ?? []).join(" ")}
+              data-title={project.data.title.toLowerCase()}
+              data-updated={(
+                project.data.updated ?? project.data.date
+              )?.valueOf() ?? 0}
             >
               <ProjectCard entry={project.entry} data={project.data} />
             </div>
@@ -104,6 +130,49 @@ const tags = projectCards
   }
 </Layout>
 
+<script>
+  const SORT_KEY = "ddb-project-sort";
+
+  function bindProjectSort() {
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(".sort-toggle"),
+    );
+    const lists = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-search-group] .card-list"),
+    );
+    if (buttons.length === 0 || buttons[0].dataset.bound) return;
+    for (const button of buttons) button.dataset.bound = "1";
+
+    const applySort = (sort: string) => {
+      for (const list of lists) {
+        const cards = Array.from(list.children) as HTMLElement[];
+        cards.sort((a, b) =>
+          sort === "updated"
+            ? Number(b.dataset.updated ?? 0) - Number(a.dataset.updated ?? 0)
+            : (a.dataset.title ?? "").localeCompare(b.dataset.title ?? ""),
+        );
+        for (const card of cards) list.appendChild(card);
+      }
+
+      for (const button of buttons) {
+        const active = button.dataset.sort === sort;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      }
+      localStorage.setItem(SORT_KEY, sort);
+    };
+
+    for (const button of buttons) {
+      button.addEventListener("click", () => applySort(button.dataset.sort ?? "title"));
+    }
+
+    applySort(localStorage.getItem(SORT_KEY) ?? "title");
+  }
+
+  bindProjectSort();
+  document.addEventListener("astro:page-load", bindProjectSort);
+</script>
+
 <style>
   .section-heading {
     margin: 48px 0 18px;
@@ -112,5 +181,14 @@ const tags = projectCards
     color: var(--mut);
     text-transform: uppercase;
     letter-spacing: 0.14em;
+  }
+  .sort-row {
+    align-items: center;
+    margin-top: -14px;
+  }
+  .sort-label {
+    font-family: var(--mono);
+    font-size: calc(12.5px * var(--fsm));
+    color: var(--dim);
   }
 </style>
