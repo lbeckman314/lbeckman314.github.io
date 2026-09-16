@@ -20,18 +20,14 @@ const href = getPrimaryProjectLink(entry, projectData);
 ---
 
 <Card as="div" class="project-card">
-  {
-    href && (
-      <a
-        slot="stretch-link"
-        class="card-stretch"
-        href={href}
-        target="_blank"
-        rel="noopener"
-        aria-label={`View ${projectData.title}`}
-      />
-    )
-  }
+  <a
+    slot="stretch-link"
+    class="card-stretch"
+    href={href}
+    target="_blank"
+    rel="noopener"
+    aria-label={`View ${projectData.title}`}
+  />
   <Fragment slot="title">
     <div class="project-card-title-row">
       <span class="proj-dot"></span>
@@ -60,7 +56,7 @@ const href = getPrimaryProjectLink(entry, projectData);
         </span>
       )
     }
-    <span class="card-demo">
+    <span class="card-links">
       <ProjectLinks links={links} />
     </span>
     <span class="spacer"></span>
@@ -107,7 +103,7 @@ const href = getPrimaryProjectLink(entry, projectData);
     background: var(--accent);
     flex: none;
   }
-  .card-demo {
+  .card-links {
     position: relative;
     z-index: 2;
     display: inline-flex;

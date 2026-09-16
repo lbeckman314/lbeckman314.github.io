@@ -18,8 +18,5 @@ const projectEntry = Astro.props;
 const projectData = await getProjectData(projectEntry);
 const href = getPrimaryProjectLink(projectEntry, projectData);
 
-if (!href) {
-  return Astro.redirect("/projects", 301);
-}
 return Astro.redirect(href, 301);
 ---

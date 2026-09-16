@@ -12,7 +12,7 @@ tags:
 >
 > Author → [Adam Pritchard](https://github.com/adam-p)
 >
-> Source → [markdown-cheatsheet](markdown-cheatsheet)
+> Source → [markdown-cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Here-Cheatsheet)
 
 This is intended as a quick reference and showcase. For more complete info, see [John Gruber's original spec](http://daringfireball.net/projects/markdown/) and the [Github-flavored Markdown info page](http://github.github.com/github-flavored-markdown/).
 
@@ -20,7 +20,7 @@ This cheatsheet is specifically *Markdown Here's* version of Github-flavored Mar
 
 You can play around with Markdown on our [live demo page](http://www.markdown-here.com/livedemo.html).
 
-(If you're not a Markdown Here user, check out the [Markdown Cheatsheet](./Markdown-Cheatsheet) that is not specific to MDH. But, really, you should also use Markdown Here, because it's awesome. http://markdown-here.com)
+(If you're not a Markdown Here user, check out the [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) that is not specific to MDH. But, really, you should also use Markdown Here, because it's awesome. http://markdown-here.com)
 
 ## Admonitions
 
