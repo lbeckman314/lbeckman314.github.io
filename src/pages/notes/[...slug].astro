@@ -7,8 +7,8 @@ import {
   shouldListPage,
   iconForSocial,
   slugify,
+  githubEditUrl,
 } from "@lib/utils";
-import PostNavigation from "@components/PostNavigation.astro";
 import TableOfContents from "@components/TableOfContents.astro";
 import Aside from "@components/Aside.astro";
 
@@ -25,23 +25,6 @@ export async function getStaticPaths() {
 }
 
 type Props = CollectionEntry<"notes">;
-
-const posts = (await getCollection("notes"))
-  .filter(shouldListPage)
-  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
-
-function getNextPost() {
-  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
-  return posts[postIndex + 1];
-}
-
-function getPrevPost() {
-  const postIndex = posts.findIndex((post) => post.id === Astro.params.slug);
-  return posts[postIndex - 1];
-}
-
-const nextPost = getNextPost();
-const prevPost = getPrevPost();
 
 const post = Astro.props;
 const { Content, headings } = await render(post);
@@ -84,6 +67,20 @@ import { Icon } from "astro-icon/components";
         {post.data.subtitle && <p class="article-subtitle">{post.data.subtitle}</p>}
         <div class="article-meta">
           <span><FormattedDate date={post.data.date} /></span>
+          {post.filePath && (
+            <>
+              <span class="sep">·</span>
+              <a
+                class="edit-github"
+                href={githubEditUrl(post.filePath)}
+                target="_blank"
+                rel="noopener"
+              >
+                <Icon name="tabler:brand-github" />
+                Edit on GitHub
+              </a>
+            </>
+          )}
         </div>
         <div class="article-tags">
           {tags.map((tag) => <a href={`/notes/tags/${tag}`}>#{tag}</a>)}

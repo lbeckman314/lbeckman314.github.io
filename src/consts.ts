@@ -15,6 +15,11 @@ export const SITE: Site = {
 // the discussions repo behind comments.
 export const GITHUB_USERNAME = "lbeckman314";
 
+// This site's own repo - used to build "Edit on GitHub" links back to a
+// page's source file.
+export const REPO_NAME = "website";
+export const REPO_BRANCH = "main";
+
 // User-Agent sent with build-time GitHub API requests.
 export const USER_AGENT = "lbeckman314";
 

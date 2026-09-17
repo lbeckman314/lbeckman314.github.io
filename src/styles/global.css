@@ -550,6 +550,20 @@ html:not([data-show-tags]) .tag-filter-row {
 .article-meta .sep {
   opacity: 0.5;
 }
+.edit-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--dim);
+  text-decoration: none;
+}
+.edit-github:hover {
+  color: var(--ink);
+}
+.edit-github svg {
+  width: 13px;
+  height: 13px;
+}
 .article-head h1 {
   margin: 14px 0 14px;
   font-size: calc(40px * var(--fsm));

@@ -1,4 +1,12 @@
 import type { CollectionEntry } from "astro:content";
+import { GITHUB_USERNAME, REPO_BRANCH, REPO_NAME } from "@consts";
+
+// Links a rendered page back to its source file on GitHub, given the
+// content entry's `filePath` (repo-relative, e.g.
+// "src/content/notes/example.md").
+export function githubEditUrl(filePath: string) {
+  return `https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/blob/${REPO_BRANCH}/${filePath}`;
+}
 
 export function formatDate(date: Date) {
   return Intl.DateTimeFormat("en-US", {
