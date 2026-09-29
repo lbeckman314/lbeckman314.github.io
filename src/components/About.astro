@@ -45,7 +45,26 @@ const pick = (items: string[]) =>
     if (lede?.dataset.lede) {
       lede.textContent = pick(JSON.parse(lede.dataset.lede));
     }
+    heading?.classList.add("rerolled");
+    lede?.classList.add("rerolled");
   }
 
   document.addEventListener("astro:page-load", rerollAbout);
 </script>
+
+<!-- Hide the build-time picks until the script swaps them in, so they don't
+     flash. Without JS the noscript override keeps them visible. -->
+<style>
+  [data-about]:not(.rerolled),
+  [data-lede]:not(.rerolled) {
+    visibility: hidden;
+  }
+</style>
+<noscript>
+  <style is:inline>
+    [data-about],
+    [data-lede] {
+      visibility: visible !important;
+    }
+  </style>
+</noscript>
