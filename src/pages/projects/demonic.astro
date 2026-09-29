@@ -1,0 +1,27 @@
+---
+// Live demo of demonic: a terminal in the browser, running programs in a
+// sandbox on demonic.liambeckman.com. Takes precedence over the
+// /projects/[...slug] redirects.
+import Layout from "@layouts/Layout.astro";
+import Demonic from "@components/Demonic.astro";
+---
+
+<Layout
+  title="demonic"
+  description="Try command-line programs in your browser, running in a sandbox."
+  route="projects"
+>
+  <div class="page-head">
+    <h1 class="page-title">demonic</h1>
+  </div>
+
+  <div class="prose">
+    <p>
+      A terminal in your browser, connected to a sandbox on my server. Start it
+      and try one of the programs below, like <code>pokeductor</code> (a Pokédex)
+      or <code>pipes.sh</code>.
+    </p>
+
+    <Demonic height="28em" />
+  </div>
+</Layout>
