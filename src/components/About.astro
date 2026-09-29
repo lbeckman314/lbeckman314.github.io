@@ -18,15 +18,53 @@ const lede = [
   "If that plane leaves the ground and you're not with him, you'll regret it. Maybe not today. Maybe not tomorrow, but soon and for the rest of your life.",
   "Look, I'm no good at being noble, but it doesn't take much to see that the problems of three little people don't amount to a hill of beans in this crazy world."
 ];
+
+const pick = (items: string[]) =>
+  items[Math.floor(Math.random() * items.length)];
 ---
 
-<h1>
-    {
-        about[Math.floor(Math.random() * about.length)].toUpperCase()
-    }
+<!-- Build-time picks are the no-JS fallback; the script below re-rolls them
+     on every page load (including ClientRouter navigations). -->
+<h1 data-about={JSON.stringify(about)}>
+  {pick(about).toUpperCase()}
 </h1>
-<p class="lede">
-  {
-    lede[Math.floor(Math.random() * lede.length)]
-  }
+<p class="lede" data-lede={JSON.stringify(lede)}>
+  {pick(lede)}
 </p>
+
+<script>
+  const pick = (items: string[]) =>
+    items[Math.floor(Math.random() * items.length)];
+
+  function rerollAbout() {
+    const heading = document.querySelector<HTMLElement>("[data-about]");
+    const lede = document.querySelector<HTMLElement>("[data-lede]");
+    if (heading?.dataset.about) {
+      heading.textContent = pick(JSON.parse(heading.dataset.about)).toUpperCase();
+    }
+    if (lede?.dataset.lede) {
+      lede.textContent = pick(JSON.parse(lede.dataset.lede));
+    }
+    heading?.classList.add("rerolled");
+    lede?.classList.add("rerolled");
+  }
+
+  document.addEventListener("astro:page-load", rerollAbout);
+</script>
+
+<!-- Hide the build-time picks until the script swaps them in, so they don't
+     flash. Without JS the noscript override keeps them visible. -->
+<style>
+  [data-about]:not(.rerolled),
+  [data-lede]:not(.rerolled) {
+    visibility: hidden;
+  }
+</style>
+<noscript>
+  <style is:inline>
+    [data-about],
+    [data-lede] {
+      visibility: visible !important;
+    }
+  </style>
+</noscript>
