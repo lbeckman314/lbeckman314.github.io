@@ -693,6 +693,13 @@ p {
 .poem-body > p {
   white-space: pre-wrap;
 }
+/* Book-style paragraph indents, opted into with `indent: true` in frontmatter.
+   Only consecutive top-level paragraphs are indented, so the first paragraph
+   and anything after a heading, blockquote, or admonition stays flush. */
+.article.indent-paragraphs > p + p {
+  text-indent: 2em;
+  margin-top: 0;
+}
 .article table {
   width: 100%;
   border-collapse: collapse;
@@ -728,7 +735,7 @@ p {
   margin-right: 0.4em;
 }
 .article h2 {
-  /* margin: 46px 0 16px; */
+  margin: 46px 0 16px;
   font-size: calc(27px * var(--fsm));
   font-weight: 700;
   letter-spacing: -0.02em;

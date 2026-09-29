@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/PostCard.astro";
+import About from "@components/About.astro";
 import ProjectCard from "@components/ProjectCard.astro";
 import { HOME, SITE } from "@consts";
 import { Icon } from "astro-icon/components";
@@ -8,6 +9,7 @@ import { withProjectsData } from "@lib/projects";
 import { shouldListPage, dateSortDesc } from "@lib/utils";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import Books from "@components/Books.astro";
 
 const allPosts = (await getCollection("notes"))
   .filter(shouldListPage)
@@ -48,7 +50,7 @@ for (const entry of recentlyTagged) {
       continue;
     }
     seenTags.add(tag);
-    topics.push({ tag, href: `/${entry.collection}/tags/${tag}` });
+    topics.push({ tag, href: `/${entry.collection}?tags=${encodeURIComponent(tag)}` });
   }
 }
 const recentTopics = topics.slice(0, NUM_TOPICS);
@@ -57,10 +59,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION} route="index">
   <section class="hero">
     <span class="hi"> Hello, I’m liam! </span>
-    <h1>A STUCK-UP, HALF-WITTED, SCRUFFY-LOOKING NERF HERDER.</h1>
-    <p class="lede">
-      I’m a sleepy human with a dark history of secrets and intrigue.
-    </p>
+    <About />
     <div class="cta-row">
       <a class="btn btn-primary" href="/notes">Read the latest →</a>
       <a
@@ -104,6 +103,8 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
       ))
     }
   </div>
+
+  <Books shelf="currently-reading" />
 
   <div class="contact">
     <div>

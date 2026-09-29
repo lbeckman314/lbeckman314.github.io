@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
-import { BLOG_SERIES } from "@consts";
+import { NOTE_SERIES } from "@consts";
 import { shouldListPage, slugify } from "@lib/utils";
 
 const posts = (await getCollection("notes")).filter(shouldListPage);
@@ -13,8 +13,8 @@ const series = posts
 ---
 
 <Layout
-  title={BLOG_SERIES.TITLE}
-  description={BLOG_SERIES.DESCRIPTION}
+  title={NOTE_SERIES.TITLE}
+  description={NOTE_SERIES.DESCRIPTION}
   route="notes/series"
 >
   <div class="page-head">

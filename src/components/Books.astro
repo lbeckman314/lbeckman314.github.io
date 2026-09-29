@@ -30,7 +30,15 @@ const SHELVES = [
   { id: 'currently-reading', label: 'Reading' },
   { id: 'read',              label: 'Read' },
   { id: 'to-read',           label: 'Want to Read' },
-];
+] as const;
+
+type Props = {
+  // Only show this shelf (e.g. "currently-reading"); shows all when omitted.
+  shelf?: (typeof SHELVES)[number]['id'];
+};
+
+const { shelf } = Astro.props;
+const shelves = shelf ? SHELVES.filter(s => s.id === shelf) : SHELVES;
 
 const enlargeCover = (url: string) =>
   url.replace(/\._\w+_\.jpg$/, '.jpg');
@@ -47,7 +55,7 @@ const formatMonthYear = (raw: string) => {
 let books: Book[] = [];
 
 const results = await Promise.all(
-  SHELVES.map(shelf => parser.parseURL(RSS_URL + shelf.id))
+  shelves.map(shelf => parser.parseURL(RSS_URL + shelf.id))
 );
 
 books = results.flatMap((feed, i) =>
@@ -56,21 +64,21 @@ books = results.flatMap((feed, i) =>
     author: item['author_name'] ?? '',
     link: item.link ?? '',
     cover: enlargeCover(item['book_large_image_url'] ?? ''),
-    shelf: SHELVES[i].id,
+    shelf: shelves[i].id,
     finished: formatMonthYear(item['user_read_at'] ?? ''),
   }))
 );
 
 ---
 
-{SHELVES.map(shelf => {
+{shelves.map(shelf => {
   const shelfBooks = books.filter(b => b.shelf === shelf.id);
 
   return shelfBooks.length > 0 && (
     <div class="shelf-section" data-carousel-shell>
       <div class="shelf-header">
-        <h2>{shelf.label}</h2>
-        {shelfBooks.length > 1 && (
+        <h1>{shelf.label}</h1>
+        {shelfBooks.length > 3 && (
           <button
             type="button"
             class="expand-button"
@@ -108,6 +116,15 @@ books = results.flatMap((feed, i) =>
 <style>
   .shelf-section {
     margin: 2rem 0;
+  }
+
+  /* Shrink collapsed shelves to their books so short ones sit centered
+     (heading aligned with the first cover); long ones still fill the width
+     and scroll. Expanded shelves use the full width for their grid. */
+  .shelf-section:not(.is-expanded) {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
   .shelf-header {

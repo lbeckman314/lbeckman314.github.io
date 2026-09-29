@@ -13,6 +13,7 @@ const baseSchema = z.object({
   tags: z.array(z.string()).optional(),
   socials: z.array(z.string()).optional(),
   series: z.string().optional(),
+  indent: z.boolean().optional(),
 });
 
 const notes = defineCollection({

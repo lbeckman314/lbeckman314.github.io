@@ -56,7 +56,7 @@ async function fetchRepoMetadata(
     accept: "application/vnd.github+json",
     "user-agent": USER_AGENT,
   };
-  const token = process.env.GITHUB_TOKEN;
+  const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
   if (token) headers.authorization = `Bearer ${token}`;
 
   try {

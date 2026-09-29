@@ -18,25 +18,23 @@ export type ProjectWithData = {
 
 export type ProjectLink = { href: string; text: string };
 
-// Where a project card should link to: its demo if it has one, otherwise
-// its repo (every project has one). Projects no longer have their own
-// detail page.
+// Where a project card should link to: always its repo (every project has
+// one). Projects no longer have their own detail page.
 export function getPrimaryProjectLink(
   entry: CollectionEntry<"projects">,
-  data: ProjectData,
+  _data: ProjectData,
 ): string {
-  return data.demoURL ?? entry.data.repoURL;
+  return entry.data.repoURL;
 }
 
-// The repo is already the card's own link when there's no demo, so a
-// separate "Repo" button only earns its place when the demo is occupying
-// that spot instead.
+// The repo is already the card's own link, so the demo and package get
+// their own buttons.
 export function getProjectLinks(
   entry: CollectionEntry<"projects">,
   data: ProjectData,
 ): ProjectLink[] {
   return [
-    data.demoURL && { href: entry.data.repoURL, text: "Repo" },
+    data.demoURL && { href: data.demoURL, text: "site" },
     entry.data.packageURL && {
       href: entry.data.packageURL,
       text: "package",

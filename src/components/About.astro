@@ -1,0 +1,32 @@
+---
+const about = [
+    "A stuck-up, half-witted, scruffy-looking nerf herder",
+    "I’m a sleepy human with a dark history of secrets and intrigue.",
+    "I'm a figment of your imagination. Is it cool if I kick it here for a little bit?",
+    "I'm your standard average normal human person who engages in standard normal human activities.",
+    "Hello, World!",
+    "Pobody's nerfect...",
+]
+
+const lede = [
+  "Of all the gin joints, in all the towns, in all the world, she walks into mine.",
+  "Here's looking at you, kid.",
+  "Play it, Sam. Play 'As Time Goes By.'",
+  "We'll always have Paris.",
+  "Round up the usual suspects.",
+  "Louis, I think this is the beginning of a beautiful friendship.",
+  "If that plane leaves the ground and you're not with him, you'll regret it. Maybe not today. Maybe not tomorrow, but soon and for the rest of your life.",
+  "Look, I'm no good at being noble, but it doesn't take much to see that the problems of three little people don't amount to a hill of beans in this crazy world."
+];
+---
+
+<h1>
+    {
+        about[Math.floor(Math.random() * about.length)].toUpperCase()
+    }
+</h1>
+<p class="lede">
+  {
+    lede[Math.floor(Math.random() * lede.length)]
+  }
+</p>
