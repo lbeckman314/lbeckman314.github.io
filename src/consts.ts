@@ -29,19 +29,19 @@ export const HOME: Metadata = {
     "Welcome to liam's dev blog, where I post about tech and tools I'm interested in.",
 };
 
-export const BLOG: Metadata = {
-  TITLE: "Blog",
-  DESCRIPTION: "A collection of articles on topics I'm interested in.",
+export const NOTES: Metadata = {
+  TITLE: "Notes",
+  DESCRIPTION: "This and that!",
 };
 
-export const BLOG_TAGS: Metadata = {
-  TITLE: "Blog Tags",
-  DESCRIPTION: "A collection of tags for my blog posts.",
+export const NOTE_TAGS: Metadata = {
+  TITLE: "Note Tags",
+  DESCRIPTION: "A collection of tags for my notes.",
 };
 
-export const BLOG_SERIES: Metadata = {
-  TITLE: "Blog Series",
-  DESCRIPTION: "A collection of series for my blog posts.",
+export const NOTE_SERIES: Metadata = {
+  TITLE: "Note Series",
+  DESCRIPTION: "A collection of series for my notes.",
 };
 
 export const PROJECTS: Metadata = {

@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "@layouts/Layout.astro";
 import PostCard from "@components/PostCard.astro";
-import { BLOG_SERIES } from "@consts";
+import { NOTE_SERIES } from "@consts";
 import { shouldListPage, shouldRenderPage, slugify } from "@lib/utils";
 
 type Props = {
@@ -37,7 +37,7 @@ export async function getStaticPaths() {
 ---
 
 <Layout
-  title={`${BLOG_SERIES.TITLE}: ${series}`}
+  title={`${NOTE_SERIES.TITLE}: ${series}`}
   description={`Posts that are part of the ${series} series`}
   route={`notes/series/${slugify(series)}`}
 >

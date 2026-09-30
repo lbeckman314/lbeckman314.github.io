@@ -30,7 +30,7 @@ const tags = projectCards
     <a class="pill" href="/projects">all projects</a>
     {
       tags.map((tag) => (
-        <a class="pill" href={`/projects/tags/${tag}`}>
+        <a class="pill" href={`/projects?tags=${encodeURIComponent(tag)}`}>
           #{tag}
         </a>
       ))

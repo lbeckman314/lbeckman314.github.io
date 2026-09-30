@@ -83,7 +83,7 @@ import { Icon } from "astro-icon/components";
           )}
         </div>
         <div class="article-tags">
-          {tags.map((tag) => <a href={`/notes/tags/${tag}`}>#{tag}</a>)}
+          {tags.map((tag) => <a href={`/notes?tags=${encodeURIComponent(tag)}`}>#{tag}</a>)}
           {
             socials.length > 0 && (
               <>
@@ -126,7 +126,7 @@ import { Icon } from "astro-icon/components";
         )
       }
 
-      <div class="article">
+      <div class:list={["article", { "indent-paragraphs": post.data.indent }]}>
         <Content components={{ Aside }} />
       </div>
     </div>

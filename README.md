@@ -31,7 +31,7 @@ Then browse to http://localhost:4321 to see the site!
 
 <p align="center">
 <a href="https://liambeckman.com">
-<img width="825" height="1115" alt="Website!" src="https://github.com/user-attachments/assets/1b9146b4-432c-4a01-874f-d87d7120cbc4" />
+<img width="785" height="724" alt="Website!" src="https://github.com/user-attachments/assets/42a80c6d-4220-4619-adf4-c6ac0eab337e" />
 </a>
 </p>
 
