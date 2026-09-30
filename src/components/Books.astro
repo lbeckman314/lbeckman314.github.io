@@ -75,7 +75,7 @@ books = results.flatMap((feed, i) =>
   const shelfBooks = books.filter(b => b.shelf === shelf.id);
 
   return shelfBooks.length > 0 && (
-    <div class="shelf-section" data-carousel-shell>
+    <div class="shelf-section is-expanded" data-carousel-shell>
       <div class="shelf-header">
         <h1>{shelf.label}</h1>
         {shelfBooks.length > 3 && (
@@ -85,7 +85,7 @@ books = results.flatMap((feed, i) =>
             data-expand-toggle
             aria-expanded="false"
           >
-            <span class="expand-label">Expand</span>
+            <span class="expand-label">Collapse</span>
           </button>
         )}
       </div>
