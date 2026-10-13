@@ -1,11 +1,11 @@
 ---
 label: "Data & Workflow Systems"
 items:
-  - "Nextflow"
-  - "GA4GH Task Execution API"
-  - "HL7 FHIR"
-  - "Protocol Buffers/gRPC"
   - "PostgreSQL"
-  - "Jupyter"
+  - "gRPC/Protocol Buffers"
+  - "Elasticsearch"
+  - "Nextflow"
+  - "GA4GH TES/DRS"
+  - "HL7 FHIR"
 order: 3
 ---

@@ -1,0 +1,68 @@
+name: Link Check
+
+on:
+  pull_request:
+  schedule:
+    # Catches link rot on content that hasn't changed - Mondays 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lychee:
+    name: Check links
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Check the built site rather than raw markdown, so relative links
+      # resolve the way they do for real visitors.
+      - name: Build with Astro
+        run: COMMIT=$(git rev-parse --short HEAD) pnpm exec astro build
+
+      - name: Link Checker
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: >-
+            --config lychee.toml
+            --no-progress
+            './dist/**/*.html'
+          fail: false
+
+      # PRs get a failing check right away. Scheduled/manual runs (nothing
+      # in the diff to blame) file an issue instead, since no one is
+      # watching the Actions tab for those.
+      - name: File an issue for scheduled/manual runs
+        if: steps.lychee.outputs.exit_code != 0 && github.event_name != 'pull_request'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Broken links found
+          content-filepath: ./lychee/out.md
+          labels: broken-links
+
+      - name: Fail PR checks on broken links
+        if: steps.lychee.outputs.exit_code != 0 && github.event_name == 'pull_request'
+        run: exit 1
