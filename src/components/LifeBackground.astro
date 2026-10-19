@@ -1,0 +1,291 @@
+<!-- A faint, full-viewport Conway's Game of Life drifting behind the page.
+     Purely decorative: aria-hidden and pointer-events:none so it never
+     intercepts clicks or reaches assistive tech. -->
+<canvas id="lifeBg" aria-hidden="true" transition:persist></canvas>
+
+<script>
+  const CELL = 14; // px per cell (CSS pixels)
+  const STEP_MS = 140; // time between generations
+  const FADE = 0.12; // per-frame easing of cell opacity toward alive/dead
+  // The board starts empty; cells are seeded under the pointer, a click
+  // stamps a pulsar, and a double click or Escape clears it.
+
+  // Cells carry a color index; a newborn cell takes the majority color of
+  // its three parents (the "Immigration" variant), so colonies keep a hue.
+  // Same colors as the header's .popstripe (see Header.astro).
+  const COLORS = ["#db37c4", "#ed68d9", "#49ccd4", "#678cfa", "#4635f7"];
+
+  let canvas: HTMLCanvasElement | null = null;
+  let ctx: CanvasRenderingContext2D | null = null;
+  let cols = 0;
+  let rows = 0;
+  let alive = new Uint8Array(0); // 0 = dead, else 1 + palette index
+  let next = new Uint8Array(0);
+  let opacity = new Float32Array(0);
+  // Color a cell last had, so a dying cell fades out in its own hue.
+  let lastColor = new Uint8Array(0);
+  let maxAlpha = 0.1;
+  let lastStep = 0;
+  let reducedMotion = false;
+
+  function readTheme() {
+    maxAlpha =
+      document.documentElement.getAttribute("data-theme") === "light"
+        ? 0.13
+        : 0.1;
+  }
+
+  function randomColor() {
+    return 1 + Math.floor(Math.random() * COLORS.length);
+  }
+
+  function seedPatch(cx: number, cy: number, radius: number) {
+    const color = randomColor();
+    for (let dy = -radius; dy <= radius; dy++) {
+      for (let dx = -radius; dx <= radius; dx++) {
+        if (dx * dx + dy * dy > radius * radius) continue;
+        if (Math.random() > 0.45) continue;
+        const x = (cx + dx + cols) % cols;
+        const y = (cy + dy + rows) % rows;
+        alive[y * cols + x] = color;
+      }
+    }
+  }
+
+  function resize() {
+    if (!canvas || !ctx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const newCols = Math.ceil(width / CELL);
+    const newRows = Math.ceil(height / CELL);
+    if (newCols === cols && newRows === rows) return;
+
+    // Keep whatever overlaps the old board so a resize doesn't wipe it.
+    const oldAlive = alive;
+    const oldOpacity = opacity;
+    const oldLastColor = lastColor;
+    const oldCols = cols;
+    const oldRows = rows;
+    cols = newCols;
+    rows = newRows;
+    alive = new Uint8Array(cols * rows);
+    next = new Uint8Array(cols * rows);
+    opacity = new Float32Array(cols * rows);
+    lastColor = new Uint8Array(cols * rows);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const i = y * cols + x;
+        if (x < oldCols && y < oldRows) {
+          alive[i] = oldAlive[y * oldCols + x];
+          opacity[i] = oldOpacity[y * oldCols + x];
+          lastColor[i] = oldLastColor[y * oldCols + x];
+        }
+      }
+    }
+  }
+
+  function step() {
+    for (let y = 0; y < rows; y++) {
+      const up = ((y - 1 + rows) % rows) * cols;
+      const mid = y * cols;
+      const down = ((y + 1) % rows) * cols;
+      for (let x = 0; x < cols; x++) {
+        const left = (x - 1 + cols) % cols;
+        const right = (x + 1) % cols;
+        const neighbors = [
+          alive[up + left],
+          alive[up + x],
+          alive[up + right],
+          alive[mid + left],
+          alive[mid + right],
+          alive[down + left],
+          alive[down + x],
+          alive[down + right],
+        ];
+        let count = 0;
+        for (const n of neighbors) if (n) count++;
+
+        const i = mid + x;
+        if (alive[i]) {
+          next[i] = count === 2 || count === 3 ? alive[i] : 0;
+        } else if (count === 3) {
+          // Majority color among the three parents (first one on a 3-way tie).
+          const parents = neighbors.filter((n) => n);
+          next[i] = parents[1] === parents[2] ? parents[1] : parents[0];
+        } else {
+          next[i] = 0;
+        }
+      }
+    }
+    [alive, next] = [next, alive];
+  }
+
+  function draw() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < alive.length; i++) {
+      const target = alive[i] ? 1 : 0;
+      opacity[i] += (target - opacity[i]) * (reducedMotion ? 1 : FADE);
+      if (opacity[i] < 0.01) continue;
+      if (alive[i]) lastColor[i] = alive[i];
+      const color = lastColor[i];
+      if (!color) continue;
+      ctx.globalAlpha = opacity[i] * maxAlpha;
+      ctx.fillStyle = COLORS[color - 1];
+      const x = (i % cols) * CELL;
+      const y = Math.floor(i / cols) * CELL;
+      ctx.fillRect(x + 1, y + 1, CELL - 2, CELL - 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function frame(now: number) {
+    if (now - lastStep >= STEP_MS) {
+      step();
+      lastStep = now;
+    }
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // Pulsar: a period-3 oscillator, 13x13 cells. Four bars of three along
+  // rows/columns 0, 5, 7 and 12, at offsets 2-4 and 8-10.
+  const PULSAR: [number, number][] = [];
+  for (const line of [0, 5, 7, 12]) {
+    for (const offset of [2, 3, 4, 8, 9, 10]) {
+      PULSAR.push([offset, line], [line, offset]);
+    }
+  }
+
+  function stampPulsar(cx: number, cy: number) {
+    const color = randomColor();
+    for (const [dx, dy] of PULSAR) {
+      const x = (cx + dx - 6 + cols) % cols;
+      const y = (cy + dy - 6 + rows) % rows;
+      alive[y * cols + x] = color;
+    }
+  }
+
+  function redrawIfStill() {
+    if (reducedMotion) draw();
+  }
+
+  function onPointerMove(event: PointerEvent) {
+    if (!cols || event.pointerType === "touch") return;
+    const x = Math.floor(event.clientX / CELL);
+    const y = Math.floor(event.clientY / CELL);
+    if (Math.random() < 0.3) seedPatch(x, y, 2);
+  }
+
+  // Clicks on links, buttons and form controls belong to the page, not the
+  // board, and so do clicks that end a text selection.
+  const INTERACTIVE =
+    "a, button, input, textarea, select, label, summary, [role='button'], [contenteditable]";
+
+  function onClick(event: MouseEvent) {
+    // detail > 1 is the second click of a double click, which clears instead.
+    if (!cols || event.detail > 1) return;
+    if ((event.target as Element | null)?.closest?.(INTERACTIVE)) return;
+    if (String(window.getSelection() ?? "")) return;
+    stampPulsar(
+      Math.floor(event.clientX / CELL),
+      Math.floor(event.clientY / CELL),
+    );
+    redrawIfStill();
+  }
+
+  function clearBoard() {
+    // Live cells drop out at once; opacity keeps easing so they fade away.
+    alive.fill(0);
+    redrawIfStill();
+  }
+
+  function onDoubleClick(event: MouseEvent) {
+    if ((event.target as Element | null)?.closest?.(INTERACTIVE)) return;
+    clearBoard();
+  }
+
+  function onKeyDown(event: KeyboardEvent) {
+    // Leave Escape to whatever it is closing (search dialog, menus, ...).
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    if (document.querySelector("dialog[open]")) return;
+    clearBoard();
+  }
+
+  function onResize() {
+    resize();
+    redrawIfStill();
+  }
+
+  // The canvas is persisted across ClientRouter navigations (see Layout.astro),
+  // so this runs once and the board carries on from page to page.
+  function init() {
+    const el = document.getElementById("lifeBg") as HTMLCanvasElement | null;
+    if (!el || el === canvas) return;
+    canvas = el;
+    ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    readTheme();
+    onResize();
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("click", onClick);
+    window.addEventListener("dblclick", onDoubleClick);
+    window.addEventListener("keydown", onKeyDown);
+    new MutationObserver(() => {
+      readTheme();
+      redrawIfStill();
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    if (reducedMotion) {
+      // A still board: clicks stamp pulsars, but nothing evolves.
+      draw();
+      return;
+    }
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    requestAnimationFrame(frame);
+  }
+
+  document.addEventListener("astro:page-load", init);
+</script>
+
+<style>
+  #lifeBg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Only show in the gutters either side of the main column (.wrap), with
+       a soft fade at its edges. On viewports narrower than the column plus
+       the fade there are no gutters, so nothing shows. */
+    --life-gap: calc(var(--maxw) / 2);
+    --life-fade: 80px;
+    mask-image: linear-gradient(
+      to right,
+      #000 calc(50% - var(--life-gap) - var(--life-fade)),
+      transparent calc(50% - var(--life-gap)),
+      transparent calc(50% + var(--life-gap)),
+      #000 calc(50% + var(--life-gap) + var(--life-fade))
+    );
+  }
+  /* Article pages widen the column for the ToC rail (see .wrap--wide). */
+  @media (min-width: 1120px) {
+    :global(html:has(.wrap--wide)) #lifeBg {
+      --life-gap: calc(var(--maxw-wide) / 2);
+    }
+  }
+</style>

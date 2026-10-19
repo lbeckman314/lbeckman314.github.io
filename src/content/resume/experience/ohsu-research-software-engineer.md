@@ -9,9 +9,9 @@ order: 1
 
 # Technical Leadership
 
-- Lead developer of [Funnel](https://github.com/calypr/funnel): owned the architecture, roadmap, and release process, shipping 5+ releases and setting the direction for its storage, compute, and database backends.
-- Led design and code review on a 3-person engineering team and mentored 2 junior developers on Go, [Kubernetes](https://kubernetes.io/), and [GA4GH](https://www.ga4gh.org/) standards.
 - Worked directly with research groups and GA4GH standards partners to turn researcher needs into platform requirements and delivery plans.
+- Led design and code review on a 3-person engineering team and mentored 2 junior developers on Go, [Kubernetes](https://kubernetes.io/), and [GA4GH](https://www.ga4gh.org/) standards.
+- Lead developer of [Funnel](https://github.com/calypr/funnel): owned the architecture, roadmap, and release process, shipping 5+ releases and setting the direction for its storage, compute, and database backends.
 
 # Distributed Systems & Workflow Orchestration
 

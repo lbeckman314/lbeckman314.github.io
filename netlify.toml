@@ -9,3 +9,11 @@
 [build.environment]
   NODE_VERSION = "26"
 
+
+# Short link to the latest resume PDF published by
+# https://github.com/lbeckman314/resume's release workflow. 302 rather than
+# 301 so browsers don't cache it if the asset name ever changes.
+[[redirects]]
+  from = "/resume"
+  to = "https://github.com/lbeckman314/resume/releases/latest/download/resume-liam-beckman.pdf"
+  status = 302
