@@ -96,7 +96,7 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     <span class="spacer"></span>
     <a href="/projects">See all →</a>
   </div>
-  <div class="card-list">
+  <div class="card-list project-grid">
     {
       projects.map((project) => (
         <ProjectCard entry={project.entry} data={project.data} />

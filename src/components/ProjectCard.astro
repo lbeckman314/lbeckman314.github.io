@@ -47,7 +47,7 @@ const href = getPrimaryProjectLink(entry, projectData);
   }
   <Fragment slot="chevron" />
   <Fragment slot="foot">
-    {
+    <!-- {
       tags.length > 0 && (
         <span class="tags">
           {tags.map((tag) => (
@@ -55,7 +55,7 @@ const href = getPrimaryProjectLink(entry, projectData);
           ))}
         </span>
       )
-    }
+    } -->
     <span class="card-links">
       <ProjectLinks links={links} />
     </span>
@@ -63,7 +63,7 @@ const href = getPrimaryProjectLink(entry, projectData);
     {
       projectData.updated && (
         <span class="meta-bit">
-          Updated <FormattedDate date={projectData.updated} />
+          Updated <FormattedDate date={projectData.updated} month="short" />
         </span>
       )
     }

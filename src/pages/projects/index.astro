@@ -75,7 +75,10 @@ const tags = projectCards
     professionalProjects.length > 0 && (
       <div data-search-group>
         <h2 class="section-heading">Professional</h2>
-        <div class="card-list">
+        <p class="section-subheading">
+          Projects I've worked on professionally!
+        </p>
+        <div class="card-list project-grid">
           {professionalProjects.map((project) => (
             <div
               data-search-text={[
@@ -100,11 +103,16 @@ const tags = projectCards
     )
   }
 
+  <hr />
+
   {
     personalProjects.length > 0 && (
       <div data-search-group>
         <h2 class="section-heading">Personal</h2>
-        <div class="card-list">
+        <p class="section-subheading">
+          Projects I've worked on personally!
+        </p>
+        <div class="card-list project-grid">
           {personalProjects.map((project) => (
             <div
               data-search-text={[
@@ -176,11 +184,16 @@ const tags = projectCards
 <style>
   .section-heading {
     margin: 48px 0 18px;
-    font-size: calc(13px * var(--fsm));
+    font-size: calc(20px * var(--fsm));
     font-weight: 600;
     color: var(--mut);
     text-transform: uppercase;
     letter-spacing: 0.14em;
+  }
+  .section-subheading {
+    margin: 0 0 24px;
+    font-size: calc(15px * var(--fsm));
+    color: var(--dim);
   }
   .sort-row {
     align-items: center;
