@@ -29,3 +29,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# lychee link checker
+.lycheecache
+lychee-report.log

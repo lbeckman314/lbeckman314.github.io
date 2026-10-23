@@ -3,10 +3,9 @@ label: "Languages"
 items:
   - "Go"
   - "Python"
-  - "TypeScript/JavaScript"
+  - "TypeScript"
   - "Java"
   - "Rust"
-  - "C/C++"
   - "Bash"
 order: 1
 ---

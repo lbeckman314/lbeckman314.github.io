@@ -1,6 +1,6 @@
 ---
 title: "The Reactome Pathway Knowledgebase"
 venue: "Nucleic Acids Research 2022"
-href: "https://academic.oup.com/nar/article/50/D1/D1094/6507398"
+href: "https://doi.org/10.1093/nar/gkab1028"
 order: 6
 ---

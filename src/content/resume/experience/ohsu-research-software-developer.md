@@ -2,12 +2,9 @@
 title: "Research Software Developer"
 org: "Oregon Health & Science University"
 orgHref: "https://www.ohsu.edu"
-location: "Portland, OR — Fulltime / Individual Contributor"
-period: "2019 — 2020"
-order: 3
+location: "Portland, OR"
+period: "Sep 2019 — Jul 2020"
+order: 4
 ---
 
-Furthered development of the Java Swing desktop application used to curate data for [Reactome](https://reactome.org/), an open-source database and visualizer of biological pathways used for research.
-
-- Added new UI/UX features based upon communication with users and research database curators.
-- Updated API calls and data processing for [REACH](https://github.com/clulab/reach), a remote natural-language-processing document parser used to extract pathway information from published literature.
+- Built features for [Reactome](https://reactome.org/)'s Java curation tool with direct input from curators; updated its integration with [REACH](https://github.com/clulab/reach), an NLP service that extracts pathway data from literature.

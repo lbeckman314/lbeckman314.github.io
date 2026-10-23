@@ -1,16 +1,18 @@
 ---
 interface Props {
   date?: Date;
+  // "short" renders e.g. "30 Sep 2026" for tight spaces like project tiles.
+  month?: "long" | "short";
 }
 
-const { date } = Astro.props;
+const { date, month = "long" } = Astro.props;
 ---
 
 {
   date && (
     <time datetime={date.toISOString()}>
       {date.toLocaleDateString("en-GB", {
-        month: "long",
+        month,
         day: "2-digit",
         year: "numeric",
         timeZone: "UTC",

@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/lycheeverse/lychee.git
+    rev: lychee-v0.24.2
+    hooks:
+      - id: lychee
+        args: ["--config", "lychee.toml"]
+        # Scope to hand-written prose, where a commit is actually likely to
+        # introduce a new link worth checking now. Everything else (source
+        # code, bundled JS, SVGs, RSS/sitemap XML) is either link-free or
+        # full of template placeholders and relative paths that only
+        # resolve correctly once Astro builds them - that's what the CI
+        # link-check workflow covers, against the real built site.
+        types_or: [markdown, mdx]
+        # These are copied READMEs from other repos, kept only as reference
+        # text - they're never rendered onto a page, and their relative
+        # links (./Cargo.lock etc.) point at files in the *original* repo,
+        # not this site, so they'd only ever be false positives here.
+        exclude: ^src/content/projects/

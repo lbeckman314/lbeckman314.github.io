@@ -361,7 +361,8 @@ html:not([data-show-tags]) .tag-filter-row {
   align-items: baseline;
   margin: 48px 0 18px;
 }
-.sec-head h2 {
+.sec-head h2,
+.article .sec-head h2 {
   margin: 0;
   font-size: calc(13px * var(--fsm));
   font-weight: 600;
@@ -437,6 +438,47 @@ html:not([data-show-tags]) .tag-filter-row {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+/* Project tiles, several per row (/ and /projects). Tiles size to their
+   content; the grid stretches every tile in a row to the tallest one, and
+   the footer is pinned to the bottom so footers line up across a row.
+   Grid items are either the card itself (homepage) or a search/sort wrapper
+   div around it (/projects), in which case the card fills the wrapper. */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.project-grid > [hidden] {
+  display: none;
+}
+.project-grid > div:not(.card) {
+  display: flex;
+}
+.project-grid .card.project-card {
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 18px 20px;
+}
+.project-grid .card-content {
+  flex: 1;
+}
+.project-grid .card .body {
+  flex: 1;
+}
+.project-grid .card .body > .card-sub:last-child {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+/* Links, date and stars share one line; tags (when shown) get their own. */
+.project-grid .card-foot {
+  gap: 8px 10px;
+}
+.project-grid .card-foot .tags {
+  flex-basis: 100%;
 }
 .card-langs {
   display: flex;

@@ -76,8 +76,9 @@ books = results.flatMap((feed, i) =>
 
   return shelfBooks.length > 0 && (
     <div class="shelf-section is-expanded" data-carousel-shell>
-      <div class="shelf-header">
-        <h1>{shelf.label}</h1>
+      <div class="sec-head">
+        <h2>{shelf.label}</h2>
+        <span class="spacer"></span>
         {shelfBooks.length > 3 && (
           <button
             type="button"
@@ -125,13 +126,6 @@ books = results.flatMap((feed, i) =>
     width: fit-content;
     max-width: 100%;
     margin-inline: auto;
-  }
-
-  .shelf-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.8rem;
   }
 
   .expand-button {

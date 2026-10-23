@@ -1,0 +1,49 @@
+# Config for lychee (https://lychee.cli.rs/usage/config/).
+# We scan the *built* site (./dist), not raw markdown - that way relative
+# links resolve the same way they do for real visitors, and content that
+# never gets rendered onto a page can't produce false positives.
+
+# Resolve root-relative links (/about, /_astro/...) against the build output.
+root_dir = "dist"
+
+# Cache successful/failed results between runs so CI doesn't re-check every
+# external link on every commit.
+cache = true
+max_cache_age = "1d"
+
+# Some hosts block plain HEAD requests or non-browser user agents.
+method = "get"
+user_agent = "Mozilla/5.0 (compatible; lychee/0.15; +https://github.com/lycheeverse/lychee)"
+
+# Be patient with slow/flaky hosts before calling a link dead.
+timeout = 20
+retry_wait_time = 5
+max_retries = 3
+max_concurrency = 8
+
+# GitHub's anonymous API rate limit is tiny; lychee reads GITHUB_TOKEN from
+# the environment automatically and uses it for github.com links, so CI
+# passes that through (see the workflow) rather than listing it here.
+
+exclude = [
+  "^https?://localhost",
+  "^https?://127\\.0\\.0\\.1",
+  "^mailto:",
+
+  # These block automated/bot requests (403/999) even when the link is
+  # fine for a real browser - not worth chasing false positives for.
+  "^https?://([a-z0-9-]+\\.)?linkedin\\.com",
+  "^https?://([a-z0-9-]+\\.)?reddit\\.com",
+  "^https?://([a-z0-9-]+\\.)?poetryfoundation\\.org",
+  "^https?://([a-z0-9-]+\\.)?unsplash\\.com",
+  # DOIs for publishers that 403 bots after doi.org redirects to them
+  # (OUP, Wiley, AACR).
+  "^https://doi\\.org/10\\.(1093|1111|1158)/",
+
+  # The 404 page's canonical URL is, by design, a 404.
+  "^https://liambeckman\\.com/404/?$",
+
+  # SITE.EMAIL is an obfuscated string that client-side JS decodes into a
+  # mailto: link, so the raw href isn't a real path.
+  "0b0a0c0900010c005c4145321419141f1b561a1516",
+]
