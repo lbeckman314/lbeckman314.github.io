@@ -164,9 +164,7 @@ export default defineConfig({
     // /projects/demonic is a standalone page, so it needs its own redirect.
     '/code/demonic': '/projects/demonic',
     '/code/[...slug]': '/projects/[...slug]',
-    // Short link to the latest resume PDF published by
-    // https://github.com/lbeckman314/resume's release workflow.
-    '/resume': 'https://github.com/lbeckman314/resume/releases/latest/download/resume-liam-beckman.pdf'
+    '/resume': '/about',
   },
 
   // Listen on all interfaces so other devices (e.g. a phone over Tailscale)
