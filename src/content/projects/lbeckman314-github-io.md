@@ -15,7 +15,7 @@ This personal site is a way for me to collect my favorite things and show off pe
 | Domain            | [Porkbun](https://porkbun.com/) → liambeckman.com                        |
 | Framework         | [Astro.js](https://astro.build/)                                          |
 | Services (Live)   | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets)   |
-| Services (Static) | [Netlify](https://www.netlify.com/)                                       |
+| Services (Static) | [GitHub Pages](https://pages.github.com/)                                 |
 | Search            | [Pagefind](https://pagefind.app/)                                         |
 | Link Checking     | [Lychee](https://github.com/lycheeverse/lychee/)                          |
 | Status Page       | [Upptime](https://upptime.js.org/)                                        |

@@ -10,7 +10,7 @@ This personal site is a way for me to collect my favorite things and show off pe
 | Domain            | [Porkbun](https://porkbun.com/) → liambeckman.com                        |
 | Framework         | [Astro.js](https://astro.build/)                                          |
 | Services (Live)   | [Digital Ocean Droplet](https://www.digitalocean.com/products/droplets)   |
-| Services (Static) | [Netlify](https://www.netlify.com/)                                       |
+| Services (Static) | [GitHub Pages](https://pages.github.com/)                                 |
 | Search            | [Pagefind](https://pagefind.app/)                                         |
 | Link Checking     | [Lychee](https://github.com/lycheeverse/lychee/)                          |
 | Status Page       | [Upptime](https://upptime.js.org/)                                        |
@@ -68,5 +68,5 @@ The build + deployment is triggered for every push to the `main` branch, as part
 - [aethermug.com: Linear Algebra Explains Why Some Words Are Effectively Untranslatable](https://aethermug.com/posts/linear-algebra-explains-why-some-words-are-effectively-untranslatable)
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/lbeckman314/lbeckman314.github.io/refs/heads/main/public/assets/svg/icon-smile.svg" alt="" style="max-width: 100%;">
+<img src="https://raw.githubusercontent.com/lbeckman314/lbeckman314.github.io/refs/heads/main/public/assets/icon-smile.svg" alt="" style="max-width: 100%;">
 </p>
