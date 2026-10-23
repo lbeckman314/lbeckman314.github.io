@@ -160,6 +160,9 @@ export default defineConfig({
 
   redirects: {
     '/code': '/projects',
+    // [...slug] below only generates pages for project entries;
+    // /projects/demonic is a standalone page, so it needs its own redirect.
+    '/code/demonic': '/projects/demonic',
     '/code/[...slug]': '/projects/[...slug]'
   },
 
