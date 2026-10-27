@@ -22,35 +22,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "26"
-          cache: pnpm
+          cache: npm
 
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build with Astro
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HARDCOVER_TOKEN: ${{ secrets.HARDCOVER_TOKEN }}
         run: |
-            COMMIT=$(git rev-parse --short HEAD) pnpm exec astro build \
+            COMMIT=$(git rev-parse --short HEAD) npx astro build \
             --site "${{ steps.pages.outputs.origin }}" \
             --base "${{ steps.pages.outputs.base_path }}"
 
       - name: Add Pagefind
         run: |
-            pnpm exec pagefind --site dist
+            npx pagefind --site dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

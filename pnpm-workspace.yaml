@@ -1,7 +1,0 @@
-allowBuilds:
-  esbuild: true
-  sharp: true
-onlyBuiltDependencies:
-  - better-sqlite3
-  - esbuild
-  - sharp

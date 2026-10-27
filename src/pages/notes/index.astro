@@ -62,7 +62,7 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
     years.map((year) => (
       <div data-search-group>
         <div class="year">{year}</div>
-        <div class="card-list">
+        <div class="post-list">
           {postsMap[year].map((post) => (
             <div
               data-search-text={[

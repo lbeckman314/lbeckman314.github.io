@@ -1,6 +1,5 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
-import Card from "@components/Card.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import { shouldListPage } from "@lib/utils";
 import { Icon } from "astro-icon/components";
@@ -25,12 +24,13 @@ const subtitleText = entry.data.series
   : (entry.data.description ?? entry.data.subtitle);
 ---
 
-<Card
+<a
   href={`/notes/${entry.id}`}
-  class="post-card"
+  class="post-row"
   {...entry.data.draft ? { "data-draft": "" } : {}}
 >
-  <Fragment slot="title">
+  <span class="post-row-date meta-bit"><FormattedDate date={entry.data.date} /></span>
+  <div class="post-row-body">
     {
       entry.data.draft && (
         <div class="admonition admonition-warning series-note-compact">
@@ -41,21 +41,18 @@ const subtitleText = entry.data.series
         </div>
       )
     }
-    <h3 class="card-title">{entry.data.title}</h3>
-  </Fragment>
-  {
-    entry.data.series && (
-      <div slot="description" class="admonition admonition-note series-note-compact">
-        <p class="admonition-title">
-          <Icon name="tabler:book" />
-          #{seriesPosition} in {entry.data.series}
-        </p>
-      </div>
-    )
-  }
-  {subtitleText && <p slot="description" class="card-sub">{subtitleText}</p>}
-  <Fragment slot="foot">
-    <span class="meta-bit"><FormattedDate date={entry.data.date} /></span>
+    {
+      entry.data.series && (
+        <div class="admonition admonition-note series-note-compact">
+          <p class="admonition-title">
+            <Icon name="tabler:book" />
+            #{seriesPosition} in {entry.data.series}
+          </p>
+        </div>
+      )
+    }
+    <h3 class="post-row-title">{entry.data.title}</h3>
+    {subtitleText && <p class="post-row-sub">{subtitleText}</p>}
     {
       tags.length > 0 && (
         <span class="tags">
@@ -63,11 +60,85 @@ const subtitleText = entry.data.series
         </span>
       )
     }
-  </Fragment>
-</Card>
+  </div>
+</a>
 
 <style is:global>
-  .post-card .tags {
-    flex-basis: 100%;
+  /* Posts are listed as plain rows separated by thin rules rather than
+     boxed cards: the date sits in a left-hand column, and moves above the
+     title on narrow screens. */
+  .post-row {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: 24px;
+    padding: 24px 0;
+    text-decoration: none;
+    color: inherit;
+    /* Rows are one big <a>, but their text should still be normally
+       click-and-drag selectable (see .card in Card.astro). */
+    user-select: text;
+    -webkit-user-drag: none;
+  }
+  /* Rules go only *between* posts: above each visible post that has a
+     visible post before it, so a year with a single post has none. List
+     items are either the row itself or a search wrapper around it, and can
+     be hidden by search ([hidden]) or by the drafts toggle ([data-draft]). */
+  html[data-show-drafts] .post-list > :not([hidden]) ~ :not([hidden]),
+  html:not([data-show-drafts])
+    .post-list
+    > :not([hidden], [data-draft], :has([data-draft]))
+    ~ :not([hidden], [data-draft], :has([data-draft])) {
+    border-top: 1px solid var(--line);
+  }
+  .post-row-date {
+    padding-top: 4px;
+  }
+  .post-row-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .post-row-body .series-note-compact {
+    margin-bottom: 4px;
+  }
+  .post-row-title {
+    margin: 0;
+    font-size: calc(19px * var(--fsm));
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    text-decoration: underline transparent;
+    text-underline-offset: 4px;
+    transition: text-decoration-color 0.15s;
+  }
+  .post-row:hover .post-row-title {
+    text-decoration-color: var(--accent);
+  }
+  .post-row-sub {
+    margin: 0;
+    font-size: calc(14.5px * var(--fsm));
+    line-height: 1.5;
+    color: var(--mut);
+    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .post-row .tags {
+    margin-top: 4px;
+  }
+  @media (max-width: 560px) {
+    .post-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 8px;
+      padding: 20px 0;
+    }
+    .post-row-date {
+      padding-top: 0;
+    }
   }
 </style>

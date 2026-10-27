@@ -1,10 +1,10 @@
 ---
 // Projects no longer have their own detail page - old links here (and the
 // /code/[...slug] redirect above them) go straight to the project's repo
-// instead.
+// instead. (Not the site: a project's site can itself be a /projects/ path,
+// which would redirect back here.)
 import { getCollection } from "astro:content";
 import { shouldRenderPage } from "@lib/utils";
-import { getPrimaryProjectLink, getProjectData } from "@lib/projects";
 
 export async function getStaticPaths() {
   const projects = (await getCollection("projects")).filter(shouldRenderPage);
@@ -15,8 +15,6 @@ export async function getStaticPaths() {
 }
 
 const projectEntry = Astro.props;
-const projectData = await getProjectData(projectEntry);
-const href = getPrimaryProjectLink(projectEntry, projectData);
 
-return Astro.redirect(href, 301);
+return Astro.redirect(projectEntry.data.repoURL, 301);
 ---

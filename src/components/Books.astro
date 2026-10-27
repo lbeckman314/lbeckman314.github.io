@@ -1,6 +1,7 @@
 ---
-// Goodreads RSS
-const RSS_URL = 'https://www.goodreads.com/review/list_rss/64018209?shelf=';
+// Hardcover GraphQL API
+const HARDCOVER_ENDPOINT = 'https://api.hardcover.app/v1/graphql';
+const HARDCOVER_TOKEN = import.meta.env.HARDCOVER_TOKEN;
 
 type Book = {
   title: string;
@@ -8,28 +9,15 @@ type Book = {
   link: string;
   cover: string;
   shelf: string;
+  started: string;
   finished: string;
 };
 
-import Parser from 'rss-parser';
-const parser = new Parser({
-  customFields: {
-    item: [
-      'author_name',
-      'book_medium_image_url',
-      'book_large_image_url',
-      'num_pages',
-      'average_rating',
-      'book_published',
-      'user_read_at',
-    ],
-  },
-});
-
+// statusId is Hardcover's status_id for each shelf.
 const SHELVES = [
-  { id: 'currently-reading', label: 'Reading' },
-  { id: 'read',              label: 'Read' },
-  { id: 'to-read',           label: 'Want to Read' },
+  { id: 'currently-reading', statusId: 2, label: 'Reading' },
+  { id: 'read',              statusId: 3, label: 'Read' },
+  { id: 'to-read',           statusId: 1, label: 'Want to Read' },
 ] as const;
 
 type Props = {
@@ -40,10 +28,19 @@ type Props = {
 const { shelf } = Astro.props;
 const shelves = shelf ? SHELVES.filter(s => s.id === shelf) : SHELVES;
 
-const enlargeCover = (url: string) =>
-  url.replace(/\._\w+_\.jpg$/, '.jpg');
+type HardcoverUserBook = {
+  status_id: number;
+  first_started_reading_date: string | null;
+  last_read_date: string | null;
+  book: {
+    slug: string | null;
+    title: string | null;
+    image: { url: string | null } | null;
+    contributions: { author: { name: string | null } | null }[];
+  } | null;
+};
 
-// Format a Goodreads RSS date (e.g. "Mon, 15 Jun 2026 …") as "Jun 2026".
+// Format a Hardcover date (ISO "2026-04-01") as "Apr 2026".
 const formatMonthYear = (raw: string) => {
   if (!raw) return '';
   const d = new Date(raw);
@@ -52,22 +49,67 @@ const formatMonthYear = (raw: string) => {
     : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 };
 
+const QUERY = `
+  query CurrentlyReading {
+    me {
+      user_books {
+        status_id
+        first_started_reading_date
+        last_read_date
+        book {
+          slug
+          title
+          image { url }
+          contributions { author { name } }
+        }
+      }
+    }
+  }
+`;
+
 let books: Book[] = [];
 
-const results = await Promise.all(
-  shelves.map(shelf => parser.parseURL(RSS_URL + shelf.id))
-);
+if (!HARDCOVER_TOKEN) {
+  console.warn('Books.astro: HARDCOVER_TOKEN is not set — skipping fetch.');
+} else {
+  try {
+    const res = await fetch(HARDCOVER_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: HARDCOVER_TOKEN.startsWith('Bearer ')
+          ? HARDCOVER_TOKEN
+          : `Bearer ${HARDCOVER_TOKEN}`,
+      },
+      body: JSON.stringify({ query: QUERY }),
+    });
 
-books = results.flatMap((feed, i) =>
-  feed.items.map(item => ({
-    title: item.title ?? '',
-    author: item['author_name'] ?? '',
-    link: item.link ?? '',
-    cover: enlargeCover(item['book_large_image_url'] ?? ''),
-    shelf: shelves[i].id,
-    finished: formatMonthYear(item['user_read_at'] ?? ''),
-  }))
-);
+    const json = await res.json();
+
+    if (json.errors) {
+      console.error('Books.astro: Hardcover API errors', json.errors);
+    }
+
+    const userBooks: HardcoverUserBook[] = json.data?.me?.[0]?.user_books ?? [];
+
+    books = userBooks.flatMap((ub) => {
+      const shelf = shelves.find((s) => s.statusId === ub.status_id);
+      if (!ub.book || !shelf) return [];
+
+      return [{
+        title: ub.book.title ?? '',
+        author: ub.book.contributions?.[0]?.author?.name ?? '',
+        link: ub.book.slug ? `https://hardcover.app/books/${ub.book.slug}` : '',
+        cover: ub.book.image?.url ?? '',
+        shelf: shelf.id,
+        started: formatMonthYear(ub.first_started_reading_date ?? ''),
+        finished: formatMonthYear(ub.last_read_date ?? ''),
+      }];
+    });
+  } catch (e) {
+    console.error('Books.astro: failed to fetch from Hardcover', e);
+  }
+}
 
 ---
 
@@ -102,6 +144,9 @@ books = results.flatMap((feed, i) =>
               <div class="reading-meta">
                 <span class="reading-title">{book.title}</span>
                 <span class="reading-author">{book.author}</span>
+                {book.started && (
+                  <span class="reading-date">Started {book.started}</span>
+                )}
                 {book.finished && (
                   <span class="reading-date">Finished {book.finished}</span>
                 )}
