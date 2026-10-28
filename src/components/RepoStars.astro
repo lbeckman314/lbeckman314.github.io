@@ -1,10 +1,10 @@
 ---
 import { getRepoStars, formatStars } from "@lib/github";
 
-type Props = { repoURL?: string };
+type Props = { repo?: string };
 
-const { repoURL } = Astro.props;
-const stars = await getRepoStars(repoURL);
+const { repo } = Astro.props;
+const stars = await getRepoStars(repo);
 ---
 
 {

@@ -28,8 +28,8 @@ const projects = defineCollection({
   schema: baseSchema.extend({
     title: z.string().optional(),
     date: z.coerce.date().optional(),
-    demoURL: z.string().optional(),
-    repoURL: z.string(),
+    demo: z.string().optional(),
+    repo: z.string(),
     packageURL: z.string().optional(),
     pro: z.boolean().optional(),
     languages: z.array(z.string()).optional(),

@@ -85,10 +85,10 @@ content:
         label: Socials
         type: string
         list: true
-      - name: demoURL
+      - name: demo
         label: Demo URL
         type: string
-      - name: repoURL
+      - name: repo
         label: Repository URL
         type: string
         required: true

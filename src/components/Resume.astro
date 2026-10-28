@@ -84,7 +84,7 @@ const experienceContents = await Promise.all(
   {softwareProducts.map((product) => (
     <li>
       <span class="product-name">
-        <a href={product.data.repoURL}>{product.data.title}</a>
+        <a href={product.data.repo}>{product.data.title}</a>
       </span>
       {" — "}
       {product.data.description}

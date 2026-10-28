@@ -25,7 +25,7 @@ export function getPrimaryProjectLink(
   entry: CollectionEntry<"projects">,
   data: ProjectData,
 ): string {
-  return data.demoURL || entry.data.repoURL;
+  return data.demo || entry.data.repo;
 }
 
 // Every card gets a repo button (even when the repo is also the card's own
@@ -35,7 +35,7 @@ export function getProjectLinks(
   _data: ProjectData,
 ): ProjectLink[] {
   return [
-    { href: entry.data.repoURL, text: "repo" },
+    { href: entry.data.repo, text: "repo" },
     entry.data.packageURL && {
       href: entry.data.packageURL,
       text: "package",
@@ -46,14 +46,14 @@ export function getProjectLinks(
 export async function getProjectData(
   entry: CollectionEntry<"projects">,
 ): Promise<ProjectData> {
-  const repoMetadata = await getRepoMetadata(entry.data.repoURL);
+  const repoMetadata = await getRepoMetadata(entry.data.repo);
 
   return {
     ...entry.data,
     title: entry.data.title ?? repoMetadata?.name ?? entry.id,
     description:
       entry.data.description ?? repoMetadata?.description ?? undefined,
-    demoURL: entry.data.demoURL ?? repoMetadata?.homepage ?? undefined,
+    demo: entry.data.demo ?? repoMetadata?.homepage ?? undefined,
     date: entry.data.date ?? repoMetadata?.createdAt ?? undefined,
     updated: entry.data.updated ?? repoMetadata?.pushedAt ?? undefined,
     tags: entry.data.tags ?? repoMetadata?.topics ?? [],

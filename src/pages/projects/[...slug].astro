@@ -16,5 +16,5 @@ export async function getStaticPaths() {
 
 const projectEntry = Astro.props;
 
-return Astro.redirect(projectEntry.data.repoURL, 301);
+return Astro.redirect(projectEntry.data.repo, 301);
 ---

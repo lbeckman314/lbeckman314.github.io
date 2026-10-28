@@ -21,8 +21,8 @@ export type RepoMetadata = {
   pushedAt: Date | null;
 };
 
-function parseRepo(repoURL: string): { owner: string; repo: string } | null {
-  const match = /github\.com\/([^/]+)\/([^/#?]+)/i.exec(repoURL);
+function parseRepo(repo: string): { owner: string; repo: string } | null {
+  const match = /github\.com\/([^/]+)\/([^/#?]+)/i.exec(repo);
   if (!match) return null;
   return { owner: match[1], repo: match[2].replace(/\.git$/, "") };
 }
@@ -47,9 +47,9 @@ async function fetchLanguages(
 }
 
 async function fetchRepoMetadata(
-  repoURL: string,
+  repo: string,
 ): Promise<RepoMetadata | null> {
-  const parsed = parseRepo(repoURL);
+  const parsed = parseRepo(repo);
   if (!parsed) return null;
 
   const headers: Record<string, string> = {
@@ -95,25 +95,25 @@ async function fetchRepoMetadata(
 }
 
 export function getRepoMetadata(
-  repoURL?: string,
+  repo?: string,
 ): Promise<RepoMetadata | null> {
-  if (!repoURL) return Promise.resolve(null);
-  let pending = metadataCache.get(repoURL);
+  if (!repo) return Promise.resolve(null);
+  let pending = metadataCache.get(repo);
   if (!pending) {
-    pending = fetchRepoMetadata(repoURL);
-    metadataCache.set(repoURL, pending);
+    pending = fetchRepoMetadata(repo);
+    metadataCache.set(repo, pending);
   }
   return pending;
 }
 
-export function getRepoStars(repoURL?: string): Promise<number | null> {
-  if (!repoURL) return Promise.resolve(null);
-  let pending = starCache.get(repoURL);
+export function getRepoStars(repo?: string): Promise<number | null> {
+  if (!repo) return Promise.resolve(null);
+  let pending = starCache.get(repo);
   if (!pending) {
-    pending = getRepoMetadata(repoURL).then(
+    pending = getRepoMetadata(repo).then(
       (metadata) => metadata?.stargazersCount ?? null,
     );
-    starCache.set(repoURL, pending);
+    starCache.set(repo, pending);
   }
   return pending;
 }
