@@ -1,0 +1,51 @@
+# Projects shown on / and /projects. Each entry needs an `id` (also its
+# /projects/<id> redirect to the repo) and a `repoURL`; anything left out
+# (description, demoURL, dates, tags, languages) is filled in from the
+# GitHub repo. See the `projects` schema in src/content.config.ts.
+
+# Professional work (listed first on /projects)
+- id: drs-downloader
+  repoURL: https://github.com/anvilproject/drs_downloader/
+  pro: true
+
+- id: fhir-aggregator-client
+  repoURL: https://github.com/FHIR-Aggregator/fhir-aggregator-client
+  pro: true
+
+- id: funnel
+  repoURL: https://github.com/calypr/funnel
+  pro: true
+
+- id: nf-ga4gh
+  repoURL: https://github.com/nextflow-io/nf-ga4gh
+  pro: true
+
+- id: py-tes
+  repoURL: https://github.com/calypr/py-tes
+  pro: true
+
+# Personal projects
+- id: apod-grid
+  repoURL: https://github.com/lbeckman314/apod-grid
+
+- id: convida
+  repoURL: https://github.com/lbeckman314/convida
+
+- id: demonic-web
+  repoURL: https://github.com/lbeckman314/demonic-web
+  demoURL: /projects/demonic
+
+- id: halley
+  repoURL: https://github.com/lbeckman314/halley
+
+- id: mdbook-latex
+  repoURL: https://github.com/lbeckman314/mdbook-latex
+
+- id: lbeckman314-github-io
+  repoURL: https://github.com/lbeckman314/lbeckman314.github.io
+
+- id: tao-te-ching
+  repoURL: https://github.com/lbeckman314/tao-te-ching
+
+- id: with-feathers
+  repoURL: https://github.com/lbeckman314/withfeathers

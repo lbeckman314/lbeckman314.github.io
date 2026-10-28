@@ -11,10 +11,10 @@ const skills = (await getCollection("resumeSkills")).sort(byOrder);
 const experience = (await getCollection("resumeExperience")).sort(byOrder);
 const publications = (await getCollection("resumePublications")).sort(byOrder);
 
-const professionalProjects = (await getCollection("projects")).filter(
-  (p) => p.data.professional && shouldListPage(p),
+const proProjects = (await getCollection("projects")).filter(
+  (p) => p.data.pro && shouldListPage(p),
 );
-const softwareProducts = (await withProjectsData(professionalProjects)).sort(
+const softwareProducts = (await withProjectsData(proProjects)).sort(
   (a, b) => a.data.title.localeCompare(b.data.title),
 );
 

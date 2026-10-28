@@ -15,11 +15,11 @@ const projectCards = (await withProjectsData(projects)).sort((a, b) =>
   a.data.title.localeCompare(b.data.title),
 );
 
-const professionalProjects = projectCards.filter(
-  (p) => p.data.professional,
+const proProjects = projectCards.filter(
+  (p) => p.data.pro,
 );
 const personalProjects = projectCards.filter(
-  (p) => !p.data.professional,
+  (p) => !p.data.pro,
 );
 
 const tags = projectCards
@@ -72,14 +72,14 @@ const tags = projectCards
   </div>
 
   {
-    professionalProjects.length > 0 && (
+    proProjects.length > 0 && (
       <div data-search-group>
         <h2 class="section-heading">Professional</h2>
         <p class="section-subheading">
-          Projects I've worked on professionally!
+          Projects I've worked on proly!
         </p>
         <div class="card-list project-grid">
-          {professionalProjects.map((project) => (
+          {proProjects.map((project) => (
             <div
               data-search-text={[
                 project.data.title,

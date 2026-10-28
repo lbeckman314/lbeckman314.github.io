@@ -1,4 +1,4 @@
-import { glob } from "astro/loaders";
+import { file, glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { defineCollection } from "astro:content";
 
@@ -24,14 +24,14 @@ const notes = defineCollection({
 });
 
 const projects = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/projects" }),
+  loader: file("src/content/projects.yaml"),
   schema: baseSchema.extend({
     title: z.string().optional(),
     date: z.coerce.date().optional(),
     demoURL: z.string().optional(),
     repoURL: z.string(),
     packageURL: z.string().optional(),
-    professional: z.boolean().optional(),
+    pro: z.boolean().optional(),
     languages: z.array(z.string()).optional(),
   }),
 });

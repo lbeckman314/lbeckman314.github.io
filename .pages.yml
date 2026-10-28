@@ -49,14 +49,15 @@ content:
 
   - name: projects
     label: Projects
-    type: collection
-    path: src/content/projects
-    view:
-      fields:
-        - title
-        - date
-        - tags
+    type: file
+    path: src/content/projects.yaml
+    format: yaml
+    list: true
     fields:
+      - name: id
+        label: ID (also its /projects/<id> URL)
+        type: string
+        required: true
       - name: title
         label: Title
         type: string
@@ -90,18 +91,14 @@ content:
       - name: repoURL
         label: Repository URL
         type: string
+        required: true
       - name: packageURL
         label: Package URL
         type: string
-      - name: professional
+      - name: pro
         label: Professional
         type: boolean
       - name: languages
         label: Languages
         type: string
         list: true
-      - name: body
-        label: Project Content
-        type: code
-        options:
-          language: markdown
