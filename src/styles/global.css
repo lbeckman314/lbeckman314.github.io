@@ -725,15 +725,19 @@ p {
   font-size: calc(13px * var(--fsm));
   line-height: 1.65;
 }
+/* Poems (```poem fences in notes, and the favorites page): plain article text
+   with the poem's line breaks/indentation kept and a blockquote-style left
+   rule. Sizing is repeated from `.article > p` because inside a note the
+   paragraphs are nested one level deeper. */
 .poem-body {
   margin: 22px 0;
-  border: 1px solid var(--line);
-  padding: 2em;
-  border-radius: 2em;
-  background: var(--card);
+  padding-left: 18px;
+  border-left: 4px solid var(--line);
 }
 .poem-body > p {
   white-space: pre-wrap;
+  font-size: calc(15.5px * var(--fsm));
+  line-height: 1.72;
 }
 /* Book-style paragraph indents, opted into with `indent: true` in frontmatter.
    Only consecutive top-level paragraphs are indented, so the first paragraph

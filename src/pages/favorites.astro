@@ -104,9 +104,19 @@ const poemContents = await Promise.all(
       </>
     )
   }
+
+  <h1 class="sub center">※</h1>
 </Layout>
 
 <style is:global>
+  .sub {
+    font-size: calc(64px * var(--fsm));
+    color: var(--dim);
+    text-align: center;
+  }
+  .center {
+    text-align: center;
+  }
   .favorites-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -147,10 +157,17 @@ const poemContents = await Promise.all(
     color: var(--dim);
     margin-right: 6px;
   }
+  .poem-entry .poem-body {
+    margin: 12px 0 0;
+  }
   .poem-author {
-    margin: 4px 0 0;
+    margin: 0.5em 0em 2em 3em;
     font-size: calc(14px * var(--fsm));
     color: var(--dim);
     font-style: italic;
+  }
+  .poem-entry {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2em;
   }
 </style>

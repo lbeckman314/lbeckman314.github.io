@@ -24,7 +24,7 @@ const escapeHtml = (value) =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
-// Renders ```poem fenced code blocks as the same "poem" box
+// Renders ```poem fenced code blocks with the same poem styling
 // used on the favorites page (.poem-body, white-space: pre-wrap) instead of
 // letting astro-expressive-code turn them into a syntax-highlighted code
 // block. Blank lines split the fence into separate paragraphs, same as a
