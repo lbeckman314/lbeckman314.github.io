@@ -1,4 +1,5 @@
 import { getRepoMetadata, type Language } from "@lib/github";
+import type { ImageMetadata } from "astro";
 import type { CollectionEntry } from "astro:content";
 
 export type ProjectData = Omit<
@@ -17,6 +18,16 @@ export type ProjectWithData = {
 };
 
 export type ProjectLink = { href: string; text: string };
+
+// Screenshots live at src/assets/projects/<project id>.webp.
+const screenshots = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/projects/*.webp",
+  { eager: true },
+);
+
+export function getProjectScreenshot(id: string): ImageMetadata | undefined {
+  return screenshots[`/src/assets/projects/${id}.webp`]?.default;
+}
 
 // Where a project card should link to: its site when it has one, otherwise
 // its repo (every project has one). Projects no longer have their own
