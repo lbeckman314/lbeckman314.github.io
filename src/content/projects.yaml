@@ -51,3 +51,6 @@
 
 - id: with-feathers
   repo: https://github.com/lbeckman314/withfeathers
+
+- id: wiki-space
+  repo: https://github.com/lbeckman314/wiki-space
