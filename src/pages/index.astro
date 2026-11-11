@@ -20,12 +20,20 @@ const posts = allPosts.slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
 
 const allProjects: CollectionEntry<"projects">[] = (
   await getCollection("projects")
-)
-  .filter(shouldListPage)
-  .sort((a, b) => dateSortDesc(a.data.date, b.data.date));
+).filter(shouldListPage);
 const allProjectCards = await withProjectsData(allProjects);
 
-const projects = allProjectCards.slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
+// Homepage shows personal (non-pro) projects only, most recently updated
+// first. Sort after enrichment so GitHub's pushedAt/createdAt are available.
+const projects = allProjectCards
+  .filter((project) => !project.data.pro)
+  .sort((a, b) =>
+    dateSortDesc(
+      a.data.updated ?? a.data.date,
+      b.data.updated ?? b.data.date,
+    ),
+  )
+  .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
 
 // Topics: the most recently used tags across blog posts and projects, newest
 // first. Each links to that tag's page in the collection it last appeared in.

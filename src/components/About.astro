@@ -1,12 +1,5 @@
 ---
-const about = [
-    "A stuck-up, half-witted, scruffy-looking nerf herder",
-    "I’m a sleepy human with a dark history of secrets and intrigue.",
-    "I'm a figment of your imagination. Is it cool if I kick it here for a little bit?",
-    "I'm your standard average normal human person who engages in standard normal human activities.",
-    "Hello, World!",
-    "Pobody's nerfect...",
-]
+const about = "A stuck-up, half-witted, scruffy-looking nerf herder";
 
 const lede = [
   "Of all the gin joints, in all the towns, in all the world, she walks into mine.",
@@ -23,48 +16,27 @@ const pick = (items: string[]) =>
   items[Math.floor(Math.random() * items.length)];
 ---
 
-<!-- Build-time picks are the no-JS fallback; the script below re-rolls them
-     on every page load (including ClientRouter navigations). -->
-<h1 data-about={JSON.stringify(about)}>
-  {pick(about).toUpperCase()}
-</h1>
+<h1 class="about">{about}</h1>
+
+<!-- The build-time pick is the no-JS fallback. The inline script right after
+     it re-rolls the quote synchronously while the page is still being parsed,
+     before the first paint, so there's no hidden-then-shown delay. Astro's
+     ClientRouter re-runs inline scripts on each navigation to this page. -->
 <p class="lede" data-lede={JSON.stringify(lede)}>
   {pick(lede)}
 </p>
-
-<script>
-  const pick = (items: string[]) =>
-    items[Math.floor(Math.random() * items.length)];
-
-  function rerollAbout() {
-    const heading = document.querySelector<HTMLElement>("[data-about]");
-    const lede = document.querySelector<HTMLElement>("[data-lede]");
-    if (heading?.dataset.about) {
-      heading.textContent = pick(JSON.parse(heading.dataset.about)).toUpperCase();
+<script is:inline>
+  (() => {
+    const el = document.querySelector("[data-lede]");
+    const items = el && JSON.parse(el.dataset.lede || "[]");
+    if (items?.length) {
+      el.textContent = items[Math.floor(Math.random() * items.length)];
     }
-    if (lede?.dataset.lede) {
-      lede.textContent = pick(JSON.parse(lede.dataset.lede));
-    }
-    heading?.classList.add("rerolled");
-    lede?.classList.add("rerolled");
-  }
-
-  document.addEventListener("astro:page-load", rerollAbout);
+  })();
 </script>
 
-<!-- Hide the build-time picks until the script swaps them in, so they don't
-     flash. Without JS the noscript override keeps them visible. -->
 <style>
-  [data-about]:not(.rerolled),
-  [data-lede]:not(.rerolled) {
-    visibility: hidden;
+  .about {
+    text-transform: uppercase;
   }
 </style>
-<noscript>
-  <style is:inline>
-    [data-about],
-    [data-lede] {
-      visibility: visible !important;
-    }
-  </style>
-</noscript>
