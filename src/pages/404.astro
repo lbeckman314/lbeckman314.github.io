@@ -5,10 +5,22 @@ import { SITE } from "@consts";
 
 <Layout title="404" description={SITE.DESCRIPTION} route="404">
   <div class="page-head">
-    <h1 class="page-title">404 — page not found</h1>
+    <h1 class="page-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/404">404</a> page not found</h1>
     <p class="page-intro">
       Country Roads, take me home!
     </p>
   </div>
-  <a class="backlink" href="/">‹ Back home</a>
+  <a href="/">
+    <img
+      class="page-404-img"
+      src="/assets/images/now.gif"
+      alt="A cartoon of a person walking down a road with a sign that says '404' and a mountain in the background."
+    />
+  </a>
 </Layout>
+
+<style>
+  .page-404-img {
+    width: 100%;
+  }
+</style>
