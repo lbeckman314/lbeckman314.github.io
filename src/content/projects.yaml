@@ -40,9 +40,6 @@
 - id: mdbook-latex
   repo: https://github.com/lbeckman314/mdbook-latex
 
-- id: lbeckman314-github-io
-  repo: https://github.com/lbeckman314/lbeckman314.github.io
-
 - id: running-around-portland
   repo: https://github.com/lbeckman314/running-around-portland
 
