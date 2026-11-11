@@ -15,6 +15,7 @@ export type Metadata = {
 
 export type Socials = {
   NAME: string;
-  ICON?: string;
+  /** Iconify name for astro-icon's <Icon>, e.g. "tabler:brand-github". */
+  ICON?: `tabler:${string}`;
   HREF: string;
 }[];
