@@ -36,3 +36,5 @@ lychee-report.log
 
 # TinaCMS: generated client/schema (tina/tina-lock.json is committed)
 tina/__generated__/
+# Built by `tinacms dev` / `tinacms build`
+public/admin/
