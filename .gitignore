@@ -33,3 +33,6 @@ pnpm-debug.log*
 # lychee link checker
 .lycheecache
 lychee-report.log
+
+# TinaCMS: generated client/schema (tina/tina-lock.json is committed)
+tina/__generated__/

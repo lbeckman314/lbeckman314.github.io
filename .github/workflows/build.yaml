@@ -18,6 +18,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +36,15 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # Builds the TinaCMS admin into public/admin so Astro ships it at
+      # /admin/. Skipped until the TINA_CLIENT_ID and TINA_TOKEN repository
+      # secrets exist (from app.tina.io), so deploys keep working without it.
+      - name: Build TinaCMS admin
+        if: env.TINA_CLIENT_ID != ''
+        env:
+          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+        run: npx tinacms build --noTelemetry
 
       - name: Build with Astro
         env:

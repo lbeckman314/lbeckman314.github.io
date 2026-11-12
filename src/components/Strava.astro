@@ -1,0 +1,24 @@
+---
+// Strava activity embed for MDX notes: <Strava id="..." token="..." />.
+// Inserted from TinaCMS's "Embed" menu (see tina/config.ts). Renders the same
+// markup as Strava's own "Share → Embed" snippet.
+interface Props {
+  id: string;
+  token: string;
+  type?: string;
+  embedStyle?: string;
+}
+
+const { id, token, type = "activity", embedStyle = "standard" } = Astro.props;
+---
+
+<div
+  class="strava-embed-placeholder"
+  data-embed-type={type}
+  data-embed-id={id}
+  data-style={embedStyle}
+  data-from-embed="false"
+  data-token={token}
+>
+</div>
+<script is:inline src="https://strava-embeds.com/embed.js"></script>

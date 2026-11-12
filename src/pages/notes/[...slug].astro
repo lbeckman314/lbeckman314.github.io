@@ -11,6 +11,7 @@ import {
 } from "@lib/utils";
 import TableOfContents from "@components/TableOfContents.astro";
 import Aside from "@components/Aside.astro";
+import Strava from "@components/Strava.astro";
 
 export async function getStaticPaths() {
   // Both draft and archived posts are built (so they're reachable by direct
@@ -127,7 +128,7 @@ import { Icon } from "astro-icon/components";
       }
 
       <div class:list={["article", { "indent-paragraphs": post.data.indent }]}>
-        <Content components={{ Aside }} />
+        <Content components={{ Aside, Strava }} />
       </div>
     </div>
   </article>
