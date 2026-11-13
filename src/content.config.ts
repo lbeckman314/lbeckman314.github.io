@@ -14,8 +14,6 @@ const baseSchema = z.object({
   socials: z.array(z.string()).optional(),
   series: z.string().optional(),
   indent: z.boolean().optional(),
-  // Images uploaded via Pages CMS; referenced from the body by path.
-  images: z.array(z.string()).optional(),
 });
 
 const notes = defineCollection({
