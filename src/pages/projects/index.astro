@@ -72,6 +72,40 @@ const tags = projectCards
   </div>
 
   {
+    personalProjects.length > 0 && (
+      <div data-search-group>
+        <h2 class="section-heading">Personal</h2>
+        <p class="section-subheading">
+          Personal Projects!
+        </p>
+        <div class="card-list project-grid">
+          {personalProjects.map((project) => (
+            <div
+              data-search-text={[
+                project.data.title,
+                project.data.subtitle,
+                project.data.description,
+                ...(project.data.tags ?? []),
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              data-tags={(project.data.tags ?? []).join(" ")}
+              data-title={project.data.title.toLowerCase()}
+              data-updated={(
+                project.data.updated ?? project.data.date
+              )?.valueOf() ?? 0}
+            >
+              <ProjectCard entry={project.entry} data={project.data} />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  <hr />
+
+  {
     proProjects.length > 0 && (
       <div data-search-group>
         <h2 class="section-heading">Professional</h2>
@@ -103,39 +137,6 @@ const tags = projectCards
     )
   }
 
-  <hr />
-
-  {
-    personalProjects.length > 0 && (
-      <div data-search-group>
-        <h2 class="section-heading">Personal</h2>
-        <p class="section-subheading">
-          Projects I've worked on personally!
-        </p>
-        <div class="card-list project-grid">
-          {personalProjects.map((project) => (
-            <div
-              data-search-text={[
-                project.data.title,
-                project.data.subtitle,
-                project.data.description,
-                ...(project.data.tags ?? []),
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              data-tags={(project.data.tags ?? []).join(" ")}
-              data-title={project.data.title.toLowerCase()}
-              data-updated={(
-                project.data.updated ?? project.data.date
-              )?.valueOf() ?? 0}
-            >
-              <ProjectCard entry={project.entry} data={project.data} />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
 </Layout>
 
 <script>

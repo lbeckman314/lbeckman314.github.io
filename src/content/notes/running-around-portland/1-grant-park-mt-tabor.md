@@ -1,7 +1,7 @@
 ---
 title: Grant Park/Mt Tabor Loop
 date: 2026-07-19
-series: Running Around Portland
+series: Running Around Portland 🌲
 ---
 
 > A foolhardy effort to catalog and complete all 44 routes in [*Running Around Portland*](https://www.petermoorecreated.com/stories/running-around-portland) by John Perry and Buzz Willits with Photos by Ancil Nance (1979)

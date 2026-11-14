@@ -102,6 +102,13 @@ const draftSlugs = new Set(
 export default defineConfig({
   site: "https://liambeckman.com",
   
+  // Use the "constrained" layout for images by default, so they don't
+  // overflow the content column on mobile. Individual images can override
+  // this with the `layout` prop.
+  image: {
+    layout: "constrained"
+  },
+
   // The order of integrations is important here.
   integrations: [
     sitemap({
