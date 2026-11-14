@@ -1,6 +1,9 @@
 media:
   input: public/assets
-  output: /assets/
+  output: /assets
+  # Slugify uploaded filenames (e.g. "IMG 1234.JPG" -> "img-1234.jpg") so
+  # they're safe to paste into Markdown.
+  rename: safe
 
 content:
   - name: notes
@@ -41,6 +44,11 @@ content:
         label: Socials
         type: string
         list: true
+      - name: images
+        label: Images (upload here, then paste ![alt](/assets/...) into the content below)
+        type: image
+        multiple:
+          max: 20
       - name: body
         label: Note Content
         type: code

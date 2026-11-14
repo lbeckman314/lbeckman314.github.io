@@ -21,24 +21,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11.5.1
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "26"
-          cache: pnpm
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       # Check the built site rather than raw markdown, so relative links
       # resolve the way they do for real visitors.
       - name: Build with Astro
-        run: COMMIT=$(git rev-parse --short HEAD) pnpm exec astro build
+        run: COMMIT=$(git rev-parse --short HEAD) npx astro build
 
       - name: Link Checker
         id: lychee
