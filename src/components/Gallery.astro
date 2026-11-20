@@ -22,12 +22,18 @@ import { Icon } from "astro-icon/components";
 type Props = {
   /**
    * Number of columns. Without it, the grid fits as many columns as
-   * `minWidth` allows. With it, the grid shows this many columns, dropping
-   * to fewer only when a column would be narrower than `minWidth` (e.g. on
-   * phones); pass `minWidth={0}` to always keep exactly this many.
+   * `minWidth` allows. With it, the grid shows up to this many columns (see
+   * `responsive`).
    */
   columns?: number;
-  /** Minimum thumbnail width in px. */
+  /**
+   * When true (the default), narrow screens win over `columns` and over the
+   * visitor's zoom choice: a column is never narrower than `minWidth`, so on
+   * a phone the grid drops to fewer columns. When false, the grid keeps
+   * exactly `columns` columns at every width, however small they get.
+   */
+  responsive?: boolean;
+  /** Minimum thumbnail width in px (the floor used when `responsive`). */
   minWidth?: number;
   /**
    * Show zoom buttons (−, +) above the grid so visitors can make the
@@ -53,13 +59,17 @@ type Props = {
 
 const {
   columns,
-  minWidth = 200,
+  responsive = true,
+  minWidth = 0,
   zoom = true,
   aspect = "auto",
   captions = "title",
   id,
   className,
 } = Astro.props;
+
+// Not responsive: drop the minimum width, so the column count always holds.
+const floor = responsive ? minWidth : 0;
 ---
 
 {
@@ -77,10 +87,11 @@ const {
 
 <div
   class:list={["gallery", className]}
-  style={`--gallery-min: ${minWidth}px; --gallery-aspect: ${aspect};` +
+  style={`--gallery-min: ${floor}px; --gallery-aspect: ${aspect};` +
     (columns ? ` --gallery-cols: ${columns};` : "")}
   data-gallery
   data-columns={columns ? "" : undefined}
+  data-min-width={floor}
   data-gallery-id={id}
   data-captions={captions === false ? "none" : captions}
 >
@@ -475,7 +486,9 @@ const {
   // ---- Zoom ------------------------------------------------------------------
   // Zooming changes the column count: − adds a column (smaller thumbnails),
   // + removes one (larger), from the most that fit down to one.
-  const MIN_THUMB = 80; // px: zooming out never makes thumbnails smaller than this
+  // px: zooming out never makes thumbnails smaller than this, or than the
+  // gallery's own minWidth when it's responsive.
+  const MIN_THUMB = 80;
   const MAX_COLUMNS = 8;
 
   function setupZoom(gallery: HTMLElement, prefix: string) {
@@ -489,12 +502,15 @@ const {
     const gap = () => parseFloat(getComputedStyle(gallery).columnGap) || 0;
     const columnsNow = () =>
       getComputedStyle(gallery).gridTemplateColumns.split(" ").filter(Boolean).length;
+    // The gallery's minimum column width (0 when not responsive).
+    const floor = Number(gallery.dataset.minWidth) || 0;
+    const thumbFloor = Math.max(floor, MIN_THUMB);
     const maxColumns = () =>
       Math.max(
         1,
         Math.min(
           MAX_COLUMNS,
-          Math.floor((gallery.clientWidth + gap()) / (MIN_THUMB + gap())),
+          Math.floor((gallery.clientWidth + gap()) / (thumbFloor + gap())),
         ),
       );
 
@@ -510,7 +526,8 @@ const {
       if (chosen !== null) {
         const cols = Math.min(Math.max(chosen, 1), max);
         gallery.style.setProperty("--gallery-cols", String(cols));
-        gallery.style.setProperty("--gallery-min", "0px");
+        // --gallery-min stays as rendered: when responsive, the CSS still
+        // drops columns on narrow screens below the visitor's choice.
         gallery.setAttribute("data-columns", "");
       }
       const cols = Math.min(columnsNow(), max);
@@ -529,8 +546,14 @@ const {
     smaller.addEventListener("click", () => setColumns(columnsNow() + 1));
     larger.addEventListener("click", () => setColumns(columnsNow() - 1));
 
-    // Keep the buttons' limits in step with the gallery's width.
+    // Keep the buttons' limits in step with the gallery's width. (Window
+    // resizes too: some embedded browsers don't report the gallery's resize.)
     new ResizeObserver(() => apply()).observe(gallery);
+    const onResize = () => {
+      if (!gallery.isConnected) window.removeEventListener("resize", onResize);
+      else apply();
+    };
+    window.addEventListener("resize", onResize);
 
     controls.hidden = false;
     apply();
