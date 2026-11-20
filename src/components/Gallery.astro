@@ -1,0 +1,546 @@
+---
+import { Icon } from "astro-icon/components";
+
+/**
+ * A responsive image grid with a click-to-enlarge lightbox.
+ *
+ * Use it in an .mdx note by wrapping ordinary Markdown images, so Astro still
+ * optimizes them (relative paths, srcset, etc.):
+ *
+ *   import Gallery from "@components/Gallery.astro";
+ *
+ *   <Gallery>
+ *
+ *   ![card-1](./card-1.png)
+ *   ![card-2](./card-2.png)
+ *
+ *   </Gallery>
+ *
+ * The blank lines inside <Gallery> are required: they tell MDX to parse the
+ * contents as Markdown instead of raw JSX text.
+ */
+type Props = {
+  /**
+   * Number of columns. Without it, the grid fits as many columns as
+   * `minWidth` allows. With it, the grid shows this many columns, dropping
+   * to fewer only when a column would be narrower than `minWidth` (e.g. on
+   * phones); pass `minWidth={0}` to always keep exactly this many.
+   */
+  columns?: number;
+  /** Minimum thumbnail width in px. */
+  minWidth?: number;
+  /**
+   * Show zoom buttons (−, +) above the grid so visitors can make the
+   * thumbnails bigger (fewer columns) or smaller (more columns). Their choice
+   * is remembered per gallery in their browser. Defaults to true.
+   */
+  zoom?: boolean;
+  /** Thumbnail aspect ratio (CSS `aspect-ratio`), or "auto" to keep each image's own shape. */
+  aspect?: string;
+  /**
+   * Lightbox caption source: "title" uses each image's Markdown title
+   * (`![alt](src "title")`), falling back to its alt text; "title-only" never
+   * falls back; false hides captions.
+   */
+  captions?: "title" | "title-only" | false;
+  /**
+   * Prefix for shareable links: photo 3 opens at `#<id>-3`. Defaults to
+   * "gallery" for the first gallery on a page, "gallery-2" for the next, etc.
+   */
+  id?: string;
+  className?: string;
+};
+
+const {
+  columns,
+  minWidth = 200,
+  zoom = true,
+  aspect = "auto",
+  captions = "title",
+  id,
+  className,
+} = Astro.props;
+---
+
+{
+  zoom && (
+    <div class="gallery-zoom" data-gallery-zoom hidden>
+      <button type="button" data-zoom-step="-1" aria-label="Smaller thumbnails">
+        <Icon name="tabler:zoom-out" />
+      </button>
+      <button type="button" data-zoom-step="1" aria-label="Larger thumbnails">
+        <Icon name="tabler:zoom-in" />
+      </button>
+    </div>
+  )
+}
+
+<div
+  class:list={["gallery", className]}
+  style={`--gallery-min: ${minWidth}px; --gallery-aspect: ${aspect};` +
+    (columns ? ` --gallery-cols: ${columns};` : "")}
+  data-gallery
+  data-columns={columns ? "" : undefined}
+  data-gallery-id={id}
+  data-captions={captions === false ? "none" : captions}
+>
+  <slot />
+</div>
+
+<dialog class="gallery-lightbox" aria-label="Image viewer">
+  <button type="button" class="gl-btn gl-close" aria-label="Close"><Icon name="tabler:x" /></button>
+  <button type="button" class="gl-btn gl-prev" aria-label="Previous image"><Icon name="tabler:chevron-left" /></button>
+  <figure>
+    <img alt="" />
+    <figcaption></figcaption>
+  </figure>
+  <button type="button" class="gl-btn gl-next" aria-label="Next image"><Icon name="tabler:chevron-right" /></button>
+</dialog>
+
+<style>
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(var(--gallery-min), 100%), 1fr)
+    );
+    --gallery-gap: 12px;
+    gap: var(--gallery-gap);
+    margin: 26px 0;
+    align-items: start;
+  }
+
+  /* A set column count: each column takes 1/N of the row (minus gaps), but
+     never less than --gallery-min, so narrow screens wrap to fewer columns. */
+  .gallery[data-columns] {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(
+        max(
+          min(var(--gallery-min), 100%),
+          calc(
+            (100% - (var(--gallery-cols) - 1) * var(--gallery-gap)) /
+              var(--gallery-cols)
+          )
+        ),
+        1fr
+      )
+    );
+  }
+
+  /* Zoom controls: shown by the script once it's ready, so visitors without
+     JavaScript never see controls that do nothing. */
+  .gallery-zoom {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin: 26px 0 -20px;
+    color: var(--mut);
+  }
+
+  .gallery-zoom[hidden] {
+    display: none;
+  }
+
+  .gallery-zoom button {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .gallery-zoom button:hover:not(:disabled),
+  .gallery-zoom button:focus-visible {
+    background: var(--line);
+    color: var(--ink);
+  }
+
+  .gallery-zoom button:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .gallery-zoom :global(svg) {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  /* Markdown wraps consecutive images in a single <p>; let the images
+     themselves become the grid items. */
+  .gallery :global(p) {
+    display: contents;
+  }
+
+  .gallery :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--gallery-aspect);
+    object-fit: cover;
+    margin: 0;
+    border-radius: 12px;
+    cursor: zoom-in;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .gallery :global(img:hover),
+  .gallery :global(img:focus-visible) {
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+  }
+
+  /* Only lift thumbnails for people who haven't asked for reduced motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .gallery :global(img:hover),
+    .gallery :global(img:focus-visible) {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery :global(img) {
+      transition: none;
+    }
+  }
+
+  .gallery-lightbox {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #fff;
+  }
+
+  .gallery-lightbox::backdrop {
+    background: rgb(0 0 0 / 0.88);
+  }
+
+  .gallery-lightbox[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gallery-lightbox figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .gallery-lightbox img {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 90px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .gallery-lightbox figcaption {
+    font-size: 14px;
+    opacity: 0.8;
+    text-align: center;
+  }
+
+  .gl-btn {
+    position: absolute;
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    z-index: 1;
+  }
+
+  .gl-btn :global(svg) {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .gl-btn:hover,
+  .gl-btn:focus-visible {
+    background: rgb(255 255 255 / 0.25);
+  }
+
+  .gl-close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .gl-prev {
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .gl-next {
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .gallery-lightbox[data-single] .gl-prev,
+  .gallery-lightbox[data-single] .gl-next {
+    display: none;
+  }
+</style>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  // Pick the largest candidate from an <img>'s srcset (falls back to src).
+  function largestSrc(img: HTMLImageElement): string {
+    const candidates = (img.getAttribute("srcset") ?? "")
+      .split(",")
+      .map((entry) => entry.trim().split(/\s+/))
+      .filter(([url]) => url)
+      .map(([url, size = "1x"]) => ({ url, size: parseFloat(size) || 0 }));
+    if (candidates.length === 0) return img.currentSrc || img.src;
+    return candidates.reduce((a, b) => (b.size > a.size ? b : a)).url;
+  }
+
+  // Galleries on the current page, so each can get a default link prefix.
+  let galleryCount = 0;
+  function setupGallery(gallery: HTMLElement) {
+    if (gallery.dataset.galleryReady) return;
+    gallery.dataset.galleryReady = "true";
+
+    const dialog = gallery.nextElementSibling as HTMLDialogElement | null;
+    if (!dialog?.classList.contains("gallery-lightbox")) return;
+
+    galleryCount += 1;
+    const prefix =
+      gallery.dataset.galleryId ||
+      (galleryCount === 1 ? "gallery" : `gallery-${galleryCount}`);
+    const captionMode = gallery.dataset.captions ?? "title";
+    setupZoom(gallery, prefix);
+
+    const images = Array.from(gallery.querySelectorAll("img"));
+    const view = dialog.querySelector("img")!;
+    const caption = dialog.querySelector("figcaption")!;
+    let index = 0;
+    // True when opening the lightbox added a history entry, so closing it
+    // should go Back rather than leave a stale entry behind.
+    let pushedEntry = false;
+
+    if (images.length < 2) dialog.dataset.single = "";
+
+    const hashFor = (i: number) => `#${prefix}-${i + 1}`;
+
+    // Which photo (0-based) the current URL points at, or -1 for none.
+    const indexFromHash = () => {
+      const match = location.hash.match(/^#(.+)-(\d+)$/);
+      if (!match || decodeURIComponent(match[1]) !== prefix) return -1;
+      const i = Number(match[2]) - 1;
+      return i >= 0 && i < images.length ? i : -1;
+    };
+
+    const setUrl = (hash: string, push: boolean) => {
+      const url = location.pathname + location.search + hash;
+      // Push through Astro's router rather than history.pushState: its
+      // ClientRouter re-fetches the page on Back to any history entry it
+      // didn't create itself. (Without the ClientRouter this is a plain
+      // in-page hash change.)
+      if (push) void navigate(url);
+      else history.replaceState(history.state, "", url);
+    };
+
+    const show = (i: number, { updateUrl = true } = {}) => {
+      index = (i + images.length) % images.length;
+      const img = images[index];
+      view.src = largestSrc(img);
+      view.alt = img.alt;
+      caption.textContent =
+        captionMode === "none"
+          ? ""
+          : img.title || (captionMode === "title" ? img.alt : "");
+      caption.hidden = !caption.textContent;
+      if (updateUrl && dialog.open) setUrl(hashFor(index), false);
+    };
+
+    const open = (i: number, { updateUrl = true } = {}) => {
+      show(i, { updateUrl: false });
+      if (!dialog.open) dialog.showModal();
+      if (updateUrl) {
+        setUrl(hashFor(index), true);
+        pushedEntry = true;
+      }
+    };
+
+    images.forEach((img, i) => {
+      img.tabIndex = 0;
+      img.setAttribute("role", "button");
+      img.addEventListener("click", () => open(i));
+      img.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open(i);
+        }
+      });
+    });
+
+    // Every way of closing goes through here (rather than the dialog's
+    // "close" event, which some embedded browsers never fire).
+    const closeLightbox = ({ fromHistory = false } = {}) => {
+      if (!dialog.open) return;
+      dialog.close();
+      // If the URL still names a photo, undo our history entry, or just drop
+      // the hash when the page was loaded straight from a shared link.
+      if (!fromHistory && indexFromHash() !== -1) {
+        if (pushedEntry) history.back();
+        else setUrl("", false);
+      }
+      pushedEntry = false;
+      // Return focus to the thumbnail that was open.
+      images[index]?.focus({ preventScroll: true });
+    };
+
+    dialog.querySelector(".gl-close")!.addEventListener("click", () => closeLightbox());
+    dialog.querySelector(".gl-prev")!.addEventListener("click", () => show(index - 1));
+    dialog.querySelector(".gl-next")!.addEventListener("click", () => show(index + 1));
+
+    // Clicking the dark backdrop (but not the image or buttons) closes it.
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) closeLightbox();
+    });
+
+    dialog.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeLightbox();
+      }
+      if (e.key === "ArrowLeft") show(index - 1);
+      if (e.key === "ArrowRight") show(index + 1);
+    });
+
+    // Basic swipe support on touch screens.
+    let startX = 0;
+    dialog.addEventListener("touchstart", (e) => (startX = e.touches[0].clientX), {
+      passive: true,
+    });
+    dialog.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+    });
+
+    // Esc (or a mobile back gesture) asks the dialog to cancel.
+    dialog.addEventListener("cancel", (e) => {
+      e.preventDefault();
+      closeLightbox();
+    });
+
+    // Back/Forward and in-page #links open, move or close the lightbox.
+    const onHashChange = () => {
+      if (!gallery.isConnected) {
+        window.removeEventListener("hashchange", onHashChange);
+        return;
+      }
+      const i = indexFromHash();
+      if (i === -1) {
+        closeLightbox({ fromHistory: true });
+      } else if (dialog.open) {
+        show(i, { updateUrl: false });
+      } else {
+        open(i, { updateUrl: false });
+      }
+    };
+    window.addEventListener("hashchange", onHashChange);
+
+    // Opened straight from a shared link.
+    const initial = indexFromHash();
+    if (initial !== -1) open(initial, { updateUrl: false });
+  }
+
+  // ---- Zoom ------------------------------------------------------------------
+  // Zooming changes the column count: − adds a column (smaller thumbnails),
+  // + removes one (larger), from the most that fit down to one.
+  const MIN_THUMB = 80; // px: zooming out never makes thumbnails smaller than this
+  const MAX_COLUMNS = 8;
+
+  function setupZoom(gallery: HTMLElement, prefix: string) {
+    const controls = gallery.previousElementSibling as HTMLElement | null;
+    if (!controls?.hasAttribute("data-gallery-zoom")) return;
+
+    const smaller = controls.querySelector<HTMLButtonElement>('[data-zoom-step="-1"]')!;
+    const larger = controls.querySelector<HTMLButtonElement>('[data-zoom-step="1"]')!;
+    const storageKey = `gallery-zoom:${location.pathname}:${prefix}`;
+
+    const gap = () => parseFloat(getComputedStyle(gallery).columnGap) || 0;
+    const columnsNow = () =>
+      getComputedStyle(gallery).gridTemplateColumns.split(" ").filter(Boolean).length;
+    const maxColumns = () =>
+      Math.max(
+        1,
+        Math.min(
+          MAX_COLUMNS,
+          Math.floor((gallery.clientWidth + gap()) / (MIN_THUMB + gap())),
+        ),
+      );
+
+    // null = not zoomed yet: keep the layout the page's author chose.
+    let chosen: number | null = null;
+    try {
+      const saved = Number(localStorage.getItem(storageKey));
+      if (saved > 0) chosen = saved;
+    } catch {}
+
+    const apply = () => {
+      const max = maxColumns();
+      if (chosen !== null) {
+        const cols = Math.min(Math.max(chosen, 1), max);
+        gallery.style.setProperty("--gallery-cols", String(cols));
+        gallery.style.setProperty("--gallery-min", "0px");
+        gallery.setAttribute("data-columns", "");
+      }
+      const cols = Math.min(columnsNow(), max);
+      smaller.disabled = cols >= max;
+      larger.disabled = cols <= 1;
+    };
+
+    const setColumns = (cols: number) => {
+      chosen = Math.min(Math.max(cols, 1), maxColumns());
+      try {
+        localStorage.setItem(storageKey, String(chosen));
+      } catch {}
+      apply();
+    };
+
+    smaller.addEventListener("click", () => setColumns(columnsNow() + 1));
+    larger.addEventListener("click", () => setColumns(columnsNow() - 1));
+
+    // Keep the buttons' limits in step with the gallery's width.
+    new ResizeObserver(() => apply()).observe(gallery);
+
+    controls.hidden = false;
+    apply();
+  }
+
+  const init = () => {
+    galleryCount = 0;
+    document.querySelectorAll<HTMLElement>("[data-gallery]").forEach(setupGallery);
+  };
+
+  init();
+  document.addEventListener("astro:page-load", init);
+</script>
