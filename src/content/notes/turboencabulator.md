@@ -11,5 +11,5 @@ tags:
   - anime.js
   - shaders
   - physics
-href: /turbo-encabulator/
+href: https://liambeckman.com/turbo-encabulator/
 ---
