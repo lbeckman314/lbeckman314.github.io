@@ -8,6 +8,11 @@ export function githubEditUrl(filePath: string) {
   return `https://github.com/${GITHUB_USERNAME}/${REPO_NAME}/blob/${REPO_BRANCH}/${filePath}`;
 }
 
+// Where a note lives: its own page, or its `href` if it's hosted elsewhere.
+export function noteUrl(note: CollectionEntry<"notes">) {
+  return note.data.href ?? `/notes/${note.id}`;
+}
+
 export function formatDate(date: Date) {
   return Intl.DateTimeFormat("en-US", {
     year: "numeric",

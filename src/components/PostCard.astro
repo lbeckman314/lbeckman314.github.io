@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from "astro:content";
 import FormattedDate from "@components/FormattedDate.astro";
-import { shouldListPage } from "@lib/utils";
+import { noteUrl, shouldListPage } from "@lib/utils";
 import { Icon } from "astro-icon/components";
 
 type Props = { entry: CollectionEntry<"notes"> };
@@ -25,7 +25,7 @@ const subtitleText = entry.data.series
 ---
 
 <a
-  href={`/notes/${entry.id}`}
+  href={noteUrl(entry)}
   class="post-row"
   {...entry.data.draft ? { "data-draft": "" } : {}}
 >

@@ -27,6 +27,8 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<"notes">;
 
 const post = Astro.props;
+// Notes hosted elsewhere (see `href` in content.config.ts) get a redirect here.
+if (post.data.href) return Astro.redirect(post.data.href);
 const { Content, headings } = await render(post);
 const tags = post.data.tags ?? [];
 const socials = post.data.socials ?? [];

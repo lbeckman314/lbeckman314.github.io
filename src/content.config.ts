@@ -22,6 +22,10 @@ const notes = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/notes" }),
   schema: baseSchema.extend({
     date: z.coerce.date(),
+    // For notes that live outside the site (e.g. a separate GitHub Pages
+    // repo served at /turbo-encabulator/): listings link here instead, and
+    // /notes/<id> becomes a redirect to it.
+    href: z.string().optional(),
   }),
 });
 

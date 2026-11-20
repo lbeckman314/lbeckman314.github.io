@@ -43,7 +43,7 @@ export async function GET(context) {
       pubDate: post.data.date ?? new Date(),
       updated: post.data.updated,
       tags: post.data.tags ?? [],
-      link: `/notes/${post.id}/`,
+      link: post.data.href ?? `/notes/${post.id}/`,
     })),
     ...projects.map(({ entry, data }) => ({
       title: data.title,

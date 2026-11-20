@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { noteUrl } from "@lib/utils";
 
 type Props = {
   prevPost: CollectionEntry<"notes"> | undefined;
@@ -12,7 +13,7 @@ const { prevPost, nextPost } = Astro.props;
 <div class="prevnext">
   {
     prevPost !== undefined && Boolean(prevPost.id) && (
-      <a class="pn prev" href={`/${prevPost.collection}/${prevPost.id}`}>
+      <a class="pn prev" href={noteUrl(prevPost)}>
         <span class="dir">‹ Older</span>
         <span class="t">{prevPost.data.title}</span>
       </a>
@@ -20,7 +21,7 @@ const { prevPost, nextPost } = Astro.props;
   }
   {
     nextPost !== undefined && Boolean(nextPost.id) && (
-      <a class="pn next" href={`/${nextPost.collection}/${nextPost.id}`}>
+      <a class="pn next" href={noteUrl(nextPost)}>
         <span class="dir">Newer ›</span>
         <span class="t">{nextPost.data.title}</span>
       </a>
