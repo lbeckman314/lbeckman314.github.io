@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: withastro/action@v3
+      - uses: withastro/action@v6 # installs Node 24; Astro 7 needs Node >= 22.23.4
   deploy:
     needs: build
     runs-on: ubuntu-latest
