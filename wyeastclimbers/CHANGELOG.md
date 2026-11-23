@@ -25,6 +25,14 @@ cd /tmp/wyeast-old/wyeastclimbers && npm install && npm run dev
 
 ---
 
+## v0.5: Visual polish
+This version is purely visual. Roll back to v0.4 if you prefer the plainer look.
+- **"The Wy'east years at a glance"** on the homepage: a 1930–1942 strip with one dot per event, colored by category. Each dot links to its timeline entry.
+- **Timeline rail**: a vertical line with colored markers by category, instead of plain divider rules.
+- **Exhibits**: a drop cap on the opening paragraph and a rule under the header.
+- **People**: monogram avatars on cards, standing in until portraits are cleared.
+- Card labels made smaller so titles carry the visual weight.
+
 ## v0.4: Research desk & permissions log
 - New **/research** page that gathers every open question on the site: entries where sources disagree, claims that need a source (with their "To verify" notes), undated events, memberships to confirm, profiles that need writing, and a count of photographs wanted. It regenerates on every build, so it never goes stale.
 - **Photo permissions log** in `src/content/permissions.yaml`, pre-filled with seven known images and holders (Mazama Library, Mt. Hood Ski Patrol, OHS, Kahuna Books). Its progress is shown on the Research desk.

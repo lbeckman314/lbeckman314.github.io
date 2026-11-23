@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
+import YearStrip from "../components/YearStrip.astro";
 import { getExhibits, getMilestones } from "../lib";
 
 const exhibits = await getExhibits();
@@ -18,6 +19,12 @@ const highlights = ["1930-founding", "1937-sandy-headwall", "1938-03-ski-patrol-
       <p class="lede">A small, bold club of Depression-era alpinists who made the first ascents of Mount Hood's hardest faces, required every member to know first aid, and helped found the nation's first organized volunteer ski patrol.</p>
       <p class="ctas"><a class="btn" href="/timeline">Explore the timeline</a> <a class="btn ghost" href="/exhibits">Visit the exhibits</a></p>
     </div>
+  </section>
+
+  <section class="wrap band">
+    <h2>The Wy'east years at a glance</h2>
+    <YearStrip />
+    <p class="legend"><span class="k club"></span>Club life <span class="k climb"></span>Climbs <span class="k rescue"></span>Patrol &amp; rescue <span class="k ctx"></span>Context</p>
   </section>
 
   <section class="wrap band">
@@ -63,6 +70,9 @@ const highlights = ["1930-founding", "1937-sandy-headwall", "1938-03-ski-patrol-
   .highlights .when { display: block; font: 600 0.85rem/1.3 var(--sans); color: var(--ink-soft); margin-bottom: 0.25rem; }
   .highlights a { font: 600 1.15rem/1.3 var(--display); color: var(--ink); text-decoration: none; }
   .highlights a:hover { color: var(--accent); }
+  .legend { margin-top: 2.6rem; font: 0.82rem/1.6 var(--sans); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; align-items: center; }
+  .legend .k { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: -0.6rem; }
+  .k.club { background: var(--ok); } .k.climb { background: var(--accent); } .k.rescue { background: var(--rust); } .k.ctx { border: 1px solid var(--ink-soft); }
   .ask { background: var(--paper-2); padding: 2rem; border-radius: 6px; }
   @media (max-width: 520px) { .ask { padding: 1.25rem; } }
 </style>

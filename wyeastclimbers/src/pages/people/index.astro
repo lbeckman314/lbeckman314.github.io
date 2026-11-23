@@ -3,6 +3,10 @@ import Base from "../../layouts/Base.astro";
 import Badge from "../../components/Badge.astro";
 import { getPeople, membershipLabels } from "../../lib";
 const people = await getPeople();
+const initials = (name: string) => {
+  const words = name.split(":")[0].replace(/\(.*?\)/g, "").replace(/^The\s+/, "").replace(/["“”]/g, "").trim().split(/\s+/);
+  return (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : "")).toUpperCase();
+};
 const groups = [
   ["Wy'east Climbers", people.filter((p) => p.data.membership !== "associate")],
   ["Friends, rivals and fellow travelers", people.filter((p) => p.data.membership === "associate")],
@@ -18,10 +22,13 @@ const groups = [
         <h2>{label}</h2>
         <div class="card-grid">
           {list.map((p) => (
-            <a class="card" href={`/people/${p.id}`}>
-              <p class="kicker">{membershipLabels[p.data.membership]}{p.data.years && ` · ${p.data.years}`}</p>
-              <h3>{p.data.name}</h3>
-              {p.data.role && <p>{p.data.role}</p>}
+            <a class="card person" href={`/people/${p.id}`}>
+              <span class="mono" aria-hidden="true">{initials(p.data.name)}</span>
+              <div>
+                <p class="kicker">{membershipLabels[p.data.membership]}{p.data.years && ` · ${p.data.years}`}</p>
+                <h3>{p.data.name}</h3>
+                {p.data.role && <p>{p.data.role}</p>}
+              </div>
             </a>
           ))}
         </div>
@@ -29,3 +36,8 @@ const groups = [
     ))}
   </div>
 </Base>
+<style>
+  .person { display: flex; gap: 1rem; align-items: flex-start; }
+  .mono { flex: none; width: 3.25rem; height: 3.25rem; border-radius: 50%; display: grid; place-items: center; background: var(--paper-2); border: 1px solid var(--rule); font: 600 1.1rem/1 var(--display); color: var(--accent); }
+  section + section { margin-top: 1rem; }
+</style>

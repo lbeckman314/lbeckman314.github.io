@@ -1,0 +1,37 @@
+---
+// Compact 1930–1942 strip on the homepage: one tick per year, a dot per dated event.
+import { getMilestones } from "../lib";
+const { dated } = await getMilestones();
+const years = Array.from({ length: 13 }, (_, i) => 1930 + i);
+const byYear = new Map(years.map((y) => [y, dated.filter((m) => m.data.date!.getUTCFullYear() === y)]));
+---
+<div class="strip" role="list" aria-label="Events by year, 1930 to 1942">
+  {years.map((y) => {
+    const evs = byYear.get(y)!;
+    return (
+      <div class="yr" role="listitem">
+        <div class="dots">
+          {evs.map((m) => (
+            <a href={`/timeline#${m.id}`} class={`dot cat-${m.data.category}`} title={`${m.data.dateLabel}: ${m.data.title}`} aria-label={`${m.data.dateLabel}: ${m.data.title}`}></a>
+          ))}
+        </div>
+        <span class="label">{evs.length > 0 ? <a href={`/timeline#${evs[0].id}`}>{y}</a> : y}</span>
+      </div>
+    );
+  })}
+</div>
+<style>
+  .strip { display: grid; grid-template-columns: repeat(13, 1fr); border-bottom: 2px solid var(--ink); margin: 1rem 0 0.5rem; }
+  .yr { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 6.5rem; position: relative; border-left: 1px solid var(--rule); }
+  .yr:first-child { border-left: 0; }
+  .dots { display: flex; flex-direction: column-reverse; gap: 5px; padding-bottom: 8px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; display: block; background: var(--accent); border: 2px solid var(--paper); box-shadow: 0 0 0 1px var(--accent); transition: transform .15s; }
+  .dot:hover, .dot:focus-visible { transform: scale(1.35); }
+  .dot.cat-climb { background: var(--accent); }
+  .dot.cat-rescue { background: var(--rust); box-shadow: 0 0 0 1px var(--rust); }
+  .dot.cat-club { background: var(--ok); box-shadow: 0 0 0 1px var(--ok); }
+  .dot.cat-context, .dot.cat-legacy { background: var(--paper); box-shadow: 0 0 0 1px var(--ink-soft); }
+  .label { position: absolute; bottom: -1.6rem; font: 600 0.78rem/1 var(--sans); color: var(--ink-soft); }
+  .label a { color: var(--ink); text-decoration: none; }
+  @media (max-width: 640px) { .label { font-size: 0.6rem; transform: rotate(-50deg); bottom: -1.9rem; } .dot { width: 11px; height: 11px; } }
+</style>

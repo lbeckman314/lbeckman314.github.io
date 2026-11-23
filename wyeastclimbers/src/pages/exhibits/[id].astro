@@ -57,6 +57,8 @@ const related = (await getCollection("milestones", (m) => m.data.exhibit?.id ===
   .side li { margin-bottom: 0.9rem; }
   .side li span { display: block; color: var(--ink-soft); font-size: 0.8rem; }
   .body :global(h2) { margin-top: 2.75rem; }
+  .body > :global(p:first-child)::first-letter { float: left; font: 600 4.2rem/0.85 var(--display); margin: 0.35rem 0.6rem 0 0; color: var(--accent); }
+  .exhibit header { border-bottom: 1px solid var(--rule); padding-bottom: 1.5rem; }
   .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font: 600 0.95rem/1.4 var(--sans); }
   .pager a:last-child { text-align: right; }
   .sources-block { margin-top: 3rem; }

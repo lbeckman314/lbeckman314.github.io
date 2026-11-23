@@ -99,6 +99,7 @@ blockquote.pull { margin: 2.25rem 0; padding: 0 0 0 1.25rem; border-left: 3px so
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .card h3 { margin: 0.25rem 0 0.4rem; color: var(--ink); }
 .card p { font-size: 1rem; color: var(--ink-soft); margin: 0; }
+.card p.kicker { font-size: 0.72rem; margin-bottom: 0.35rem; }
 
 .sources-list { font: 0.9rem/1.5 var(--sans); color: var(--ink-soft); padding-left: 1.2rem; }
 .sources-list li { margin-bottom: 0.4rem; }
