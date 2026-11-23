@@ -1,0 +1,48 @@
+---
+import Base from "../layouts/Base.astro";
+const email = "hello@wyeastclimbers.com";
+---
+<Base title="About & Contribute" description="About the Wy'east Climbers history project, and how to contribute stories, photographs and corrections.">
+  <div class="wrap prose">
+    <p class="kicker">About</p>
+    <h1>A living history</h1>
+    <p class="lede">This site gathers what is known about the Wy'east Climbers, the small Portland club that put up new routes on Mount Hood in the 1930s and helped found the Mount Hood Ski Patrol, and keeps that record growing.</p>
+
+    <h2>What we're doing</h2>
+    <ul>
+      <li><strong>Recording milestones</strong> on a timeline, with every entry cited and marked by how well it's established.</li>
+      <li><strong>Telling the stories</strong> in long-form exhibits.</li>
+      <li><strong>Remembering the people</strong>: members, friends, rivals and one remarkable dog.</li>
+      <li><strong>Preserving material</strong> that survives in family collections, before it's lost.</li>
+    </ul>
+
+    <h2>Standing on Ric Conrad's shoulders</h2>
+    <p>Ric Conrad's <cite>Mount Hood: Adventures of the Wy'east Climbers, 1930–1942</cite> (Kahuna Books, 2014) is the essential history of the club. It is built on interviews with surviving members and years in the archives. This site is not a substitute for it. We summarize and cite it and point readers to it. Please buy the book, available from the Mount Hood Museum, the Oregon Historical Society and booksellers.</p>
+
+    <h2 id="contribute">Contribute</h2>
+    <p>Was someone in your family a Wy'easter? Do you have photographs, letters, climbing logs, issues of the <em>Wy'east Bulletin</em>, or a correction? We'd love to hear from you.</p>
+    <p><a class="btn" href={`mailto:${email}?subject=Wy'east%20Climbers%20history`}>Email {email}</a></p>
+    <p>When you share material, tell us:</p>
+    <ul>
+      <li>who is pictured or mentioned, and roughly when and where;</li>
+      <li>who took the photograph, if known;</li>
+      <li>whether you're happy for it to appear on the site, and how you'd like it credited.</li>
+    </ul>
+    <p>We would much rather scan and return originals than keep them, and we can work from good phone photos.</p>
+
+    <h2>Images and permissions</h2>
+    <p>Photographs appear only with permission from whoever holds the rights, and are always credited. Gray "photograph wanted" frames mark where we know a picture exists, or ought to, and are still seeking it.</p>
+
+    <h2>How entries are marked</h2>
+    <dl class="key">
+      <dt><span class="badge sourced">✓ Sourced</span></dt><dd>Backed by at least one cited source.</dd>
+      <dt><span class="badge conflicting">≠ Sources disagree</span></dt><dd>Sources conflict, and the entry explains how.</dd>
+      <dt><span class="badge unverified">? Needs a source</span></dt><dd>Plausible but not yet confirmed. Treat with care.</dd>
+    </dl>
+  </div>
+</Base>
+<style>
+  .key { display: grid; grid-template-columns: max-content 1fr; gap: 0.6rem 1rem; align-items: center; font-size: 1rem; }
+  .key dd { margin: 0; }
+  @media (max-width: 520px) { .key { grid-template-columns: 1fr; } .key dd { margin-bottom: 0.5rem; } }
+</style>

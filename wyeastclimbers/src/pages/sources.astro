@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+const sources = await getCollection("sources");
+const milestones = await getCollection("milestones");
+const exhibits = await getCollection("exhibits");
+const people = await getCollection("people");
+const usage = (id: string) =>
+  milestones.filter((m) => m.data.sources.some((s) => s.id === id)).length +
+  exhibits.filter((m) => m.data.sources.some((s) => s.id === id)).length +
+  people.filter((m) => m.data.sources.some((s) => s.id === id)).length;
+const kinds = { book: "Books", article: "Articles", web: "Web pages", film: "Film", archive: "Archives" } as const;
+const counts = {
+  sourced: milestones.filter((m) => m.data.status === "sourced").length,
+  conflicting: milestones.filter((m) => m.data.status === "conflicting").length,
+  unverified: milestones.filter((m) => m.data.status === "unverified").length,
+};
+---
+<Base title="Sources" description="Bibliography and research leads for the history of the Wy'east Climbers.">
+  <div class="wrap prose">
+    <p class="kicker">Sources</p>
+    <h1>Sources & research leads</h1>
+    <p class="lede">Every claim on this site should trace back to something listed here.</p>
+    <p class="status">Timeline: <strong>{counts.sourced}</strong> entries sourced · <strong>{counts.conflicting}</strong> where sources disagree · <strong>{counts.unverified}</strong> still need a source.</p>
+
+    {Object.entries(kinds).map(([k, label]) => {
+      const list = sources.filter((s) => s.data.kind === k);
+      return list.length > 0 && (
+        <section>
+          <h2>{label}</h2>
+          <ul class="bib">
+            {list.map((s) => (
+              <li id={s.id}>
+                {s.data.author && <>{s.data.author}. </>}
+                {s.data.url ? <a href={s.data.url} rel="noopener">{s.data.title}</a> : <cite>{s.data.title}</cite>}
+                {s.data.publisher && <>. {s.data.publisher}</>}{s.data.year && <>, {s.data.year}</>}.
+                <span class="used">Cited {usage(s.id)}×</span>
+                {s.data.note && <p class="note">{s.data.note}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })}
+
+    <section>
+      <h2>Archives to consult</h2>
+      <p>Most of the club's primary record sits in a few collections. Contacting them is the next step for verification and for photograph permissions.</p>
+      <ul class="bib">
+        <li><strong>Mazama Library & Historical Collections</strong> (Portland). Holds the Mazama Annuals, summit registers and many 1930s Mount Hood photographs, including Wy'east-era images by Joe Leuthold and Jim Harlow.</li>
+        <li><strong>Oregon Historical Society Research Library</strong>. The <em>Oregonian</em> and <em>Oregon Journal</em> archives, plus photograph collections.</li>
+        <li><strong>Mt. Hood Ski Patrol</strong>. Patrol records and early photographs from 1937–38.</li>
+        <li><strong>Mount Hood Museum</strong> (Government Camp). Local history collections and the Ranger story.</li>
+        <li><strong>The <em>Wy'east Bulletin</em></strong>. The club's own newsletter, cited by Conrad. Where the surviving copies are is unknown.</li>
+        <li><strong>Families of members</strong>. Letters, logbooks, photographs and oral histories.</li>
+      </ul>
+    </section>
+  </div>
+</Base>
+<style>
+  .status { font: 0.95rem/1.5 var(--sans); background: var(--paper-2); padding: 0.75rem 1rem; border-radius: 4px; }
+  .bib { padding-left: 1.1rem; }
+  .bib li { margin-bottom: 1rem; }
+  .used { font: 0.75rem/1 var(--sans); color: var(--ink-soft); margin-left: 0.4rem; }
+  .note { font-size: 0.95rem; color: var(--ink-soft); margin: 0.3rem 0 0; }
+</style>

@@ -1,0 +1,66 @@
+---
+import Base from "../layouts/Base.astro";
+import MilestoneItem from "../components/MilestoneItem.astro";
+import { getMilestones, categoryLabels } from "../lib";
+
+const { dated, undated } = await getMilestones();
+const decades = [...new Set(dated.map((m) => Math.floor(m.data.date!.getUTCFullYear() / 10) * 10))];
+---
+<Base title="Timeline" description="A dated timeline of the Wy'east Climbers and their legacy on Mount Hood.">
+  <div class="wrap">
+    <p class="kicker">Timeline</p>
+    <h1>The Wy'east years, and after</h1>
+    <p class="lede">The club's milestones as best we can date them, with the Mount Hood events that shaped them. Every entry shows its sources and how firmly it is established.</p>
+
+    <div class="filters" role="group" aria-label="Filter by category">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      {Object.entries(categoryLabels).map(([k, v]) => <button type="button" data-filter={k} aria-pressed="false">{v}</button>)}
+    </div>
+    <nav class="decades" aria-label="Jump to decade">
+      {decades.map((d) => <a href={`#d${d}`}>{d}s</a>)}
+      {undated.length > 0 && <a href="#undated">Undated</a>}
+    </nav>
+
+    {decades.map((d) => (
+      <section class="decade" id={`d${d}`}>
+        <h2>{d}s</h2>
+        <ol class="milestones">
+          {dated.filter((m) => Math.floor(m.data.date!.getUTCFullYear() / 10) * 10 === d).map((m) => <MilestoneItem m={m} />)}
+        </ol>
+      </section>
+    ))}
+
+    {undated.length > 0 && (
+      <section class="decade" id="undated">
+        <h2>Not yet dated</h2>
+        <p class="note">These events are documented, but we haven't pinned down when they happened. Can you help?</p>
+        <ol class="milestones">{undated.map((m) => <MilestoneItem m={m} />)}</ol>
+      </section>
+    )}
+  </div>
+</Base>
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 2rem 0 1rem; }
+  .filters button { font: 500 0.85rem/1 var(--sans); padding: 0.55em 0.9em; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft); cursor: pointer; }
+  .filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .decades { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font: 600 0.9rem/1.6 var(--sans); }
+  .decade h2 { position: sticky; top: 0; background: var(--paper); padding: 0.5rem 0; z-index: 1; margin-bottom: 0; }
+  .milestones { list-style: none; margin: 0; padding: 0; }
+  .note { color: var(--ink-soft); font-size: 1rem; }
+  .decade.empty { display: none; }
+</style>
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filters button");
+  buttons.forEach((b) =>
+    b.addEventListener("click", () => {
+      const f = b.dataset.filter;
+      buttons.forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      document.querySelectorAll<HTMLElement>(".milestone").forEach((li) => {
+        li.hidden = f !== "all" && li.dataset.category !== f;
+      });
+      document.querySelectorAll<HTMLElement>(".decade").forEach((s) => {
+        s.classList.toggle("empty", !s.querySelector(".milestone:not([hidden])"));
+      });
+    }),
+  );
+</script>

@@ -1,0 +1,68 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import { getExhibits, getMilestones } from "../lib";
+
+const exhibits = await getExhibits();
+const { dated } = await getMilestones();
+const highlights = ["1930-founding", "1937-sandy-headwall", "1938-03-ski-patrol-incorporated", "1940-07-ranger-burial"]
+  .map((id) => dated.find((m) => m.id === id))
+  .filter((m) => m !== undefined);
+---
+<Base>
+  <section class="hero">
+    <Hero />
+    <div class="wrap intro">
+      <p class="kicker">Portland, Oregon · 1930–1942</p>
+      <h1>The Wy'east Climbers</h1>
+      <p class="lede">A small, bold club of Depression-era alpinists who made the first ascents of Mount Hood's hardest faces, required every member to know first aid, and helped found the nation's first organized volunteer ski patrol.</p>
+      <p class="ctas"><a class="btn" href="/timeline">Explore the timeline</a> <a class="btn ghost" href="/exhibits">Visit the exhibits</a></p>
+    </div>
+  </section>
+
+  <section class="wrap band">
+    <h2>Milestones</h2>
+    <ol class="highlights">
+      {highlights.map((m) => (
+        <li>
+          <span class="when">{m.data.dateLabel}</span>
+          <a href={`/timeline#${m.id}`}>{m.data.title}</a>
+        </li>
+      ))}
+    </ol>
+    <p><a href="/timeline">All {dated.length}+ timeline entries →</a></p>
+  </section>
+
+  <section class="wrap band">
+    <h2>Exhibits</h2>
+    <div class="card-grid">
+      {exhibits.map((e) => (
+        <a class="card" href={`/exhibits/${e.id}`}>
+          <p class="kicker">{e.data.kicker}</p>
+          <h3>{e.data.title}</h3>
+          <p>{e.data.summary}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap band ask">
+    <div class="prose">
+      <h2>Help preserve this history</h2>
+      <p>Most of what survives of the Wy'east Climbers sits in archives and family albums. If you have photographs, letters, climbing logs or stories, or you spot a mistake here, please <a href="/about#contribute">get in touch</a>.</p>
+    </div>
+  </section>
+</Base>
+<style>
+  .hero { margin-top: -2.5rem; }
+  .intro { padding-top: 1.5rem; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  .band { margin-top: 3.5rem; }
+  .highlights { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 1rem; }
+  .highlights li { border-top: 3px solid var(--accent); padding-top: 0.75rem; }
+  .highlights .when { display: block; font: 600 0.85rem/1.3 var(--sans); color: var(--ink-soft); margin-bottom: 0.25rem; }
+  .highlights a { font: 600 1.15rem/1.3 var(--display); color: var(--ink); text-decoration: none; }
+  .highlights a:hover { color: var(--accent); }
+  .ask { background: var(--paper-2); padding: 2rem; border-radius: 6px; }
+  @media (max-width: 520px) { .ask { padding: 1.25rem; } }
+</style>

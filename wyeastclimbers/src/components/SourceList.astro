@@ -1,0 +1,21 @@
+---
+import { getEntries, type CollectionEntry } from "astro:content";
+interface Props { refs: { id: string; collection: "sources" }[]; heading?: string }
+const { refs, heading = "Sources" } = Astro.props;
+const sources = (await getEntries(refs)) as CollectionEntry<"sources">[];
+---
+{sources.length > 0 && (
+  <section class="sources-block">
+    <h2 class="kicker">{heading}</h2>
+    <ol class="sources-list">
+      {sources.map((s) => (
+        <li>
+          {s.data.author && <>{s.data.author}, </>}
+          {s.data.url ? <a href={s.data.url} rel="noopener">{s.data.title}</a> : <cite>{s.data.title}</cite>}
+          {s.data.publisher && <>. {s.data.publisher}</>}
+          {s.data.year && <> ({s.data.year})</>}.
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

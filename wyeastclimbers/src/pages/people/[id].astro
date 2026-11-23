@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Badge from "../../components/Badge.astro";
+import SourceList from "../../components/SourceList.astro";
+import { membershipLabels } from "../../lib";
+
+export async function getStaticPaths() {
+  return (await getCollection("people")).map((p) => ({ params: { id: p.id }, props: { person: p } }));
+}
+const { person } = Astro.props;
+const { Content } = await render(person);
+const milestones = (await getCollection("milestones", (m) => m.data.people.some((r) => r.id === person.id)))
+  .sort((a, b) => (a.data.date?.getTime() ?? Infinity) - (b.data.date?.getTime() ?? Infinity));
+---
+<Base title={person.data.name} description={person.data.role}>
+  <article class="wrap">
+    <div class="prose">
+      <p class="kicker"><a href="/people">People</a> · {membershipLabels[person.data.membership]}</p>
+      <h1>{person.data.name}</h1>
+      <p class="sub">{person.data.years}{person.data.years && person.data.role && " · "}{person.data.role}</p>
+      <Badge status={person.data.status} />
+      <figure class="photo-needed">
+        <div class="frame"><span>Portrait wanted</span></div>
+      </figure>
+      <Content />
+      {milestones.length > 0 && (
+        <section>
+          <h2>On the timeline</h2>
+          <ul class="tl">
+            {milestones.map((m) => <li><span>{m.data.dateLabel}</span> <a href={`/timeline#${m.id}`}>{m.data.title}</a></li>)}
+          </ul>
+        </section>
+      )}
+      <SourceList refs={person.data.sources} />
+    </div>
+  </article>
+</Base>
+<style>
+  .sub { font: 1rem/1.4 var(--sans); color: var(--ink-soft); margin-bottom: 0.75rem; }
+  .photo-needed { max-width: 16rem; }
+  .photo-needed .frame { aspect-ratio: 4 / 5; }
+  .tl { padding-left: 1.1rem; }
+  .tl span { font: 600 0.85rem/1 var(--sans); color: var(--ink-soft); }
+  section { margin-bottom: 2rem; }
+</style>

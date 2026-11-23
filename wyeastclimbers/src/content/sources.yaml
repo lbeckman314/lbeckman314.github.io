@@ -1,0 +1,123 @@
+# Every citation on the site points at an id in this file.
+# Add new sources here first, then reference them from milestones/people/exhibits.
+
+- id: conrad-2014
+  title: "Mount Hood: Adventures of the Wy'east Climbers, 1930–1942"
+  author: Ric Conrad
+  publisher: Kahuna Books
+  year: 2014
+  kind: book
+  note: >-
+    The principal history of the club, built on oral histories with surviving
+    members, the Wy'east Bulletins, Mazama Annuals and archives, period newspapers
+    and summit registers. Most entries on this site should eventually be checked
+    against it page-by-page.
+
+- id: conrad-qa-2015
+  title: "A Mount Hood Q&A: Ric Conrad, author of 'Mount Hood: Adventures of the Wy'east Climbers, 1930–1942'"
+  author: Jon Bell
+  publisher: On Mount Hood
+  year: 2015
+  url: https://onmounthood.com/2015/02/23/a-mount-hood-qa-ric-conrad-author-of-mount-hood-adventures-of-the-wyeast-climbers-1930-1942/
+  kind: article
+
+- id: book-listing
+  title: "Publisher / retailer description of Conrad's book"
+  publisher: Oregon Historical Society Museum Store
+  url: https://www.ohs.org/shop/museum-store/books-and-publications/mount-hood-adventures-of-the-wy-east-climbers.cfm
+  kind: web
+  note: >-
+    Source of the "December 1930" founding date and the 1934 cabin as summarised
+    by a search tool. Re-check the wording directly against the book.
+
+- id: pnwsar-history
+  title: "The History of PNWSAR"
+  author: Jerry King
+  publisher: Pacific Northwest Search and Rescue
+  url: https://pnwsar.org/history
+  kind: web
+
+- id: mhsp-history
+  title: "Our History"
+  publisher: Mt. Hood Ski Patrol
+  url: https://mthoodskipatrol.org/our-history/
+  kind: web
+
+- id: aac-darr-1982
+  title: "Everett L. Darr, 1907–1981 (In Memoriam)"
+  publisher: American Alpine Journal
+  year: 1982
+  url: https://publications.americanalpineclub.org/articles/12198233800/Everett-L-Darr-1907-1981
+  kind: article
+
+- id: mountain-shop
+  title: "Our Story"
+  publisher: Mountain Shop (Portland)
+  url: https://mountainshop.net/about-us/our-story.html
+  kind: web
+
+- id: travel-oregon-mountain-shop
+  title: "Gear Up for Adventure at Portland's Historic Mountain Shop"
+  publisher: Travel Oregon
+  url: https://traveloregon.com/things-to-do/outdoor-recreation/bicycling/gear-adventure-portlands-historic-mountain-shop/
+  kind: web
+
+- id: ranger-mhh
+  title: "Ranger and Laddie on Mount Hood: Legendary Climbing Dogs"
+  publisher: Mount Hood History
+  year: 2026
+  url: https://mounthoodhistory.com/mount-hood/ranger-and-laddie-on-mount-hood-legendary-climbing-dogs/
+  kind: web
+  note: >-
+    Cites Conrad's book and reproduces photographs credited to the Mazama Library
+    & Historical Collections — a good lead for image permissions.
+
+- id: shredhood-timeline
+  title: "The History of Mount Hood: A Timeline"
+  publisher: Shred Hood
+  year: 2013
+  url: https://shredhood.com/2013/06/15/a-storied-history/
+  kind: web
+
+- id: shredhood-son-of-10th
+  title: "Son of the 10th"
+  publisher: Shred Hood
+  year: 2015
+  url: https://shredhood.com/2015/04/27/son-of-the-10th/
+  kind: web
+  note: Credits Russ McJury with four Mount Hood first ascents.
+
+- id: mountainproject-eliot
+  title: "Eliot Glacier Headwall"
+  publisher: Mountain Project
+  url: https://www.mountainproject.com/route/108214095/eliot-glacier-headwall
+  kind: web
+
+- id: portlandrockclimbs-eliot
+  title: "Eliot Headwall on Mt Hood"
+  publisher: Portland Rock Climbs
+  url: https://www.portlandrockclimbs.com/mt-hood-rock-climbs/eliot-headwall.htm
+  kind: web
+
+- id: grauer-1975
+  title: "Mount Hood: A Complete History"
+  author: Jack Grauer
+  year: 1975
+  url: http://www.alpenglow.org/ski-history/notes/book/grauer-1975.html
+  kind: book
+  note: >-
+    Linked page is Lowell Skoog's research notes on Grauer's book (it was
+    unreachable when this draft was written). Grauer is also said to give
+    December 1930 as the founding month.
+
+- id: timberline-lodge
+  title: "Timberline Lodge"
+  publisher: Wikipedia
+  url: https://en.wikipedia.org/wiki/Timberline_Lodge
+  kind: web
+
+- id: ranger-film-2024
+  title: "Ranger: The Climbing Dog of Mount Hood"
+  author: Ned Thanhouser and Jeff Thomas
+  year: 2024
+  kind: film

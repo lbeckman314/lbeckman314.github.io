@@ -1,0 +1,21 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getExhibits } from "../../lib";
+const exhibits = await getExhibits();
+---
+<Base title="Exhibits" description="Long-form exhibits on the history of the Wy'east Climbers.">
+  <div class="wrap">
+    <p class="kicker">Exhibits</p>
+    <h1>Stories from the mountain</h1>
+    <p class="lede">Longer pieces on particular parts of the club's history. More will be added as research and permissions allow.</p>
+    <div class="card-grid" style="margin-top:2rem">
+      {exhibits.map((e) => (
+        <a class="card" href={`/exhibits/${e.id}`}>
+          <p class="kicker">{e.data.kicker}</p>
+          <h3>{e.data.title}</h3>
+          <p>{e.data.summary}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>

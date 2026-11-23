@@ -1,0 +1,31 @@
+---
+import Base from "../../layouts/Base.astro";
+import Badge from "../../components/Badge.astro";
+import { getPeople, membershipLabels } from "../../lib";
+const people = await getPeople();
+const groups = [
+  ["Wy'east Climbers", people.filter((p) => p.data.membership !== "associate")],
+  ["Friends, rivals and fellow travelers", people.filter((p) => p.data.membership === "associate")],
+] as const;
+---
+<Base title="People" description="Members and friends of the Wy'east Climbers.">
+  <div class="wrap">
+    <p class="kicker">People</p>
+    <h1>The Wy'easters</h1>
+    <p class="lede">Profiles of members and of the people who climbed with them. The list is far from complete. If someone in your family was a Wy'easter, <a href="/about#contribute">we'd love to hear from you</a>.</p>
+    {groups.map(([label, list]) => (
+      <section>
+        <h2>{label}</h2>
+        <div class="card-grid">
+          {list.map((p) => (
+            <a class="card" href={`/people/${p.id}`}>
+              <p class="kicker">{membershipLabels[p.data.membership]}{p.data.years && ` · ${p.data.years}`}</p>
+              <h3>{p.data.name}</h3>
+              {p.data.role && <p>{p.data.role}</p>}
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>

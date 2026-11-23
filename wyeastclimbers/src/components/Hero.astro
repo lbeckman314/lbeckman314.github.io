@@ -1,0 +1,25 @@
+---
+// Original line illustration of Mount Hood for the homepage.
+---
+<svg class="hero-art" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--sky)" />
+      <stop offset="1" stop-color="var(--paper)" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="480" fill="url(#sky)" />
+  <g transform="translate(0 60)">
+  <!-- far ridges -->
+  <path d="M0 330 L120 290 L210 312 L330 270 L420 300 L520 282 L600 300 L700 276 L820 304 L930 280 L1040 306 L1200 286 L1200 420 L0 420 Z" fill="var(--rule)" opacity="0.7" />
+  <!-- the mountain -->
+  <path d="M250 360 L470 190 L540 128 L578 82 L600 40 L618 70 L650 112 L700 160 L760 205 L980 360 Z" fill="var(--accent)" />
+  <!-- snow -->
+  <path d="M470 190 L540 128 L578 82 L600 40 L618 70 L650 112 L700 160 L760 205 L728 214 L700 196 L676 224 L648 182 L622 220 L600 170 L580 214 L556 178 L530 218 L508 196 L488 214 Z" fill="var(--snow)" />
+  <!-- near forest -->
+  <path d="M0 420 L0 352 L40 340 L60 300 L80 342 L120 330 L140 292 L160 336 L220 348 L260 320 L280 352 L360 366 L420 350 L440 318 L460 356 L540 372 L620 360 L660 326 L680 362 L760 370 L840 352 L860 318 L880 354 L960 362 L1010 330 L1030 296 L1050 338 L1110 346 L1140 306 L1160 344 L1200 350 L1200 420 Z" fill="var(--forest)" />
+  </g>
+</svg>
+<style>
+  .hero-art { display: block; width: 100%; height: clamp(200px, 36vw, 460px); }
+</style>

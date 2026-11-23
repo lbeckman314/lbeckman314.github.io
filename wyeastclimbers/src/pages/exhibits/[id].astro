@@ -1,0 +1,64 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import SourceList from "../../components/SourceList.astro";
+import { getExhibits } from "../../lib";
+
+export async function getStaticPaths() {
+  const exhibits = (await getCollection("exhibits", (e) => !e.data.draft)).sort((a, b) => a.data.order - b.data.order);
+  return exhibits.map((e) => ({ params: { id: e.id }, props: { exhibit: e } }));
+}
+const { exhibit } = Astro.props;
+const { Content } = await render(exhibit);
+const all = await getExhibits();
+const i = all.findIndex((e) => e.id === exhibit.id);
+const prev = all[i - 1];
+const next = all[i + 1];
+const related = (await getCollection("milestones", (m) => m.data.exhibit?.id === exhibit.id))
+  .sort((a, b) => (a.data.date?.getTime() ?? Infinity) - (b.data.date?.getTime() ?? Infinity));
+---
+<Base title={exhibit.data.title} description={exhibit.data.summary}>
+  <article class="wrap exhibit">
+    <header class="prose">
+      <p class="kicker">{exhibit.data.kicker}</p>
+      <h1>{exhibit.data.title}</h1>
+      <p class="lede">{exhibit.data.summary}</p>
+    </header>
+    <div class="layout">
+      <div class="prose body"><Content /></div>
+      <aside class="side">
+        {related.length > 0 && (
+          <section>
+            <h2 class="kicker">On the timeline</h2>
+            <ol>
+              {related.map((m) => (
+                <li><span>{m.data.dateLabel}</span><a href={`/timeline#${m.id}`}>{m.data.title}</a></li>
+              ))}
+            </ol>
+          </section>
+        )}
+      </aside>
+    </div>
+    <div class="prose"><SourceList refs={exhibit.data.sources} /></div>
+    <nav class="pager" aria-label="More exhibits">
+      {prev ? <a href={`/exhibits/${prev.id}`}>← {prev.data.title}</a> : <span />}
+      {next ? <a href={`/exhibits/${next.id}`}>{next.data.title} →</a> : <span />}
+    </nav>
+  </article>
+</Base>
+<style>
+  .exhibit header { margin-bottom: 2rem; }
+  .layout { display: grid; grid-template-columns: minmax(0, var(--measure)) minmax(0, 18rem); gap: 3.5rem; }
+  .side section { position: sticky; top: 1.5rem; border-left: 1px solid var(--rule); padding-left: 1.25rem; }
+  .side ol { list-style: none; margin: 0; padding: 0; font: 0.9rem/1.4 var(--sans); }
+  .side li { margin-bottom: 0.9rem; }
+  .side li span { display: block; color: var(--ink-soft); font-size: 0.8rem; }
+  .body :global(h2) { margin-top: 2.75rem; }
+  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font: 600 0.95rem/1.4 var(--sans); }
+  .pager a:last-child { text-align: right; }
+  .sources-block { margin-top: 3rem; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    .side section { position: static; border-left: 0; border-top: 1px solid var(--rule); padding: 1.5rem 0 0; margin-top: 2rem; }
+  }
+</style>
