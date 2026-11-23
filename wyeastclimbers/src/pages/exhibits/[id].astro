@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import SourceList from "../../components/SourceList.astro";
+import RouteMap from "../../components/RouteMap.astro";
 import { getExhibits } from "../../lib";
 
 export async function getStaticPaths() {
@@ -24,6 +25,7 @@ const related = (await getCollection("milestones", (m) => m.data.exhibit?.id ===
       <h1>{exhibit.data.title}</h1>
       <p class="lede">{exhibit.data.summary}</p>
     </header>
+    {exhibit.data.feature === "route-map" && <RouteMap />}
     <div class="layout">
       <div class="prose body"><Content /></div>
       <aside class="side">

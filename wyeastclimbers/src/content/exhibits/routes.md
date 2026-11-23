@@ -3,6 +3,7 @@ title: New Lines on Wy'east
 kicker: "Exhibit II · The Climbs"
 summary: The first ascents that made the club's name, and the old routes it brought back into use.
 order: 2
+feature: route-map
 sources: [conrad-qa-2015, shredhood-timeline, shredhood-son-of-10th, mountainproject-eliot, portlandrockclimbs-eliot, aac-darr-1982]
 ---
 
@@ -42,5 +43,5 @@ The Wy'easters also revived routes that earlier climbers had pioneered and then 
 Members wrote articles about these routes and led guests up them so other climbers would start using them again.
 
 <aside class="callout">
-<strong>Help wanted.</strong> A map of these routes, drawn from period descriptions, is planned. Summit register entries, trip reports in the <em>Wy'east Bulletin</em> and members' route photographs would all help.
+<strong>Help wanted.</strong> The map above is schematic. We would like to replace it with one drawn from period route descriptions. Summit register entries, trip reports in the <em>Wy'east Bulletin</em> and members' route photographs would all help.
 </aside>

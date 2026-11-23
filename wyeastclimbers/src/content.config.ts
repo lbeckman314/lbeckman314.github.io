@@ -63,6 +63,8 @@ const exhibits = defineCollection({
     order: z.number(),
     sources: z.array(reference("sources")).default([]),
     draft: z.boolean().default(false),
+    // Optional interactive feature rendered above the exhibit text.
+    feature: z.enum(["route-map"]).optional(),
   }),
 });
 

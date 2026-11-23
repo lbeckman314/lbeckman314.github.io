@@ -1,0 +1,111 @@
+---
+import { routes, kindLabels } from "../data/routes";
+
+const C = 300;
+const pt = (bearing: number, r: number) => {
+  const a = ((bearing - 90) * Math.PI) / 180;
+  return [C + r * Math.cos(a), C + r * Math.sin(a)] as const;
+};
+// Irregular "contour" rings so the mountain doesn't look like a target.
+const ring = (r: number, wobble: number, seed: number) => {
+  const pts = Array.from({ length: 36 }, (_, i) => {
+    const b = i * 10;
+    const rr = r + wobble * Math.sin((b + seed) * 0.11) + wobble * 0.6 * Math.cos((b * 3 + seed) * 0.05);
+    return pt(b, rr);
+  });
+  return "M" + pts.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L") + " Z";
+};
+const lines = routes.map((r) => {
+  const [x1, y1] = pt(r.bearing, 225);
+  const [cx, cy] = pt(r.bearing + 6, 130);
+  const [x2, y2] = pt(r.bearing, 18);
+  const [lx, ly] = pt(r.bearing, 246);
+  const anchor = lx < C - 20 ? "end" : lx > C + 20 ? "start" : "middle";
+  const dy = ly > C + 200 ? 14 : ly < C - 200 ? -4 : 4;
+  return { ...r, d: `M${x1.toFixed(1)} ${y1.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`, lx, ly: ly + dy, anchor };
+});
+const [tx, ty] = pt(163, 272);
+---
+<figure class="route-map">
+  <div class="map-grid">
+    <svg viewBox="-165 -5 900 625" role="img" aria-labelledby="map-title map-desc">
+      <title id="map-title">Schematic map of Mount Hood routes</title>
+      <desc id="map-desc">A plan view of Mount Hood with the summit at the centre and the routes associated with the Wy'east Climbers drawn on the side of the mountain they climb.</desc>
+      <path d={ring(250, 10, 3)} class="r0" />
+      <path d={ring(185, 14, 40)} class="r1" />
+      <path d={ring(115, 10, 90)} class="r2" />
+      <path d={ring(55, 6, 10)} class="r3" />
+      {lines.map((l) => (
+        <g class={`route ${l.kind}`} data-route={l.id} tabindex="0">
+          <path d={l.d} class="hit" />
+          <path d={l.d} class="line" />
+          <text x={l.lx} y={l.ly} text-anchor={l.anchor}>{l.name}</text>
+        </g>
+      ))}
+      <circle cx={C} cy={C} r="7" class="summit" />
+      <text x={C + 12} y={C - 10} class="small on-snow">Summit</text>
+      <circle cx={tx} cy={ty} r="5" class="lodge" />
+      <text x={tx + 10} y={ty + 4} class="small">Timberline Lodge</text>
+      <g class="compass" transform="translate(640 30)">
+        <path d="M0 -22 L7 4 L0 0 L-7 4 Z" />
+        <text y="20" text-anchor="middle" class="small">N</text>
+      </g>
+    </svg>
+    <ol class="route-list">
+      {routes.map((r) => (
+        <li data-route={r.id} class={r.kind}>
+          <span class="swatch" aria-hidden="true"></span>
+          <div>
+            <strong>{r.milestone ? <a href={`/timeline#${r.milestone}`}>{r.name}</a> : r.name}</strong>
+            <span class="kind">{kindLabels[r.kind]}</span>
+            <p>{r.summary}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+  <figcaption>Schematic only: not to scale, and route positions are approximate aspects. Do not use for navigation.</figcaption>
+</figure>
+<style>
+  .route-map { margin: 2rem 0; }
+  .map-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+  svg { width: 100%; height: auto; font: 600 17px/1 var(--sans); }
+  .r0 { fill: var(--paper-2); stroke: var(--rule); }
+  .r1 { fill: color-mix(in srgb, var(--accent) 14%, var(--paper)); stroke: var(--rule); }
+  .r2 { fill: color-mix(in srgb, var(--snow) 70%, var(--accent) 12%); stroke: var(--rule); }
+  .r3 { fill: var(--snow); stroke: var(--rule); }
+  text { fill: var(--ink); }
+  .small { font-size: 12px; font-weight: 500; fill: var(--ink-soft); }
+  .summit, .on-snow { fill: #1e2226 !important; }
+  .lodge { fill: var(--rust); }
+  .compass path { fill: var(--ink-soft); }
+  .route .line { fill: none; stroke-width: 3.5; stroke-linecap: round; transition: stroke-width .15s; }
+  .route .hit { fill: none; stroke: transparent; stroke-width: 18; }
+  .route.first-ascent .line { stroke: var(--accent); }
+  .route.reopened .line { stroke: var(--warn); stroke-dasharray: 7 6; }
+  .route.standard .line { stroke: var(--ink-soft); stroke-dasharray: 2 6; }
+  .route { cursor: pointer; outline: none; }
+  .route.active .line, .route:focus-visible .line { stroke-width: 7; }
+  .route.active text, .route:focus-visible text { text-decoration: underline; }
+  .route-list { list-style: none; margin: 0; padding: 0; font: 0.9rem/1.4 var(--sans); }
+  .route-list li { display: flex; gap: 0.7rem; padding: 0.55rem 0.6rem; border-radius: 4px; }
+  .route-list li.active { background: var(--paper-2); }
+  .route-list p { margin: 0.15rem 0 0; color: var(--ink-soft); }
+  .route-list .kind { display: block; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+  .swatch { flex: none; width: 1.4rem; height: 0; margin-top: 0.6rem; border-top: 4px solid var(--accent); }
+  .reopened .swatch { border-top: 4px dashed var(--warn); }
+  .standard .swatch { border-top: 4px dotted var(--ink-soft); }
+  @media (max-width: 760px) { .map-grid { grid-template-columns: 1fr; } }
+</style>
+<script>
+  document.querySelectorAll<HTMLElement>(".route-map").forEach((fig) => {
+    const set = (id: string | null) =>
+      fig.querySelectorAll<HTMLElement | SVGElement>("[data-route]").forEach((el) => el.classList.toggle("active", el.dataset.route === id));
+    fig.querySelectorAll<HTMLElement | SVGElement>("[data-route]").forEach((el) => {
+      el.addEventListener("mouseenter", () => set(el.dataset.route!));
+      el.addEventListener("focus", () => set(el.dataset.route!));
+      el.addEventListener("mouseleave", () => set(null));
+      el.addEventListener("click", () => set(el.dataset.route!));
+    });
+  });
+</script>
