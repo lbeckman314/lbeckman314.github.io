@@ -1,0 +1,129 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Badge from "../components/Badge.astro";
+import { getMilestones, getPeople } from "../lib";
+
+const { all } = await getMilestones();
+const people = await getPeople();
+const exhibits = await getCollection("exhibits");
+const permissions = await getCollection("permissions");
+
+// Pull the "*To verify:* …" note out of an entry's markdown, if it has one.
+const toVerify = (body = "") => {
+  const m = body.match(/\*To verify:\*\s*([^\n]+)/);
+  return m ? m[1].replace(/\*/g, "").trim() : undefined;
+};
+
+const conflicting = all.filter((m) => m.data.status === "conflicting");
+const unverified = all.filter((m) => m.data.status === "unverified");
+const undated = all.filter((m) => m.data.undated);
+const otherNotes = all
+  .filter((m) => m.data.status === "sourced" && !m.data.undated && toVerify(m.body))
+  .map((m) => ({ m, note: toVerify(m.body)! }));
+const probable = people.filter((p) => p.data.membership === "probable");
+const thinProfiles = people.filter((p) => (p.body ?? "").includes("Profile needed"));
+const photoSlots =
+  exhibits.reduce((n, e) => n + (e.body?.match(/class="photo-needed"/g)?.length ?? 0), 0) + people.length;
+const byStatus = (s: string) => permissions.filter((p) => p.data.status === s).length;
+const sorted = (xs: typeof all) => xs.sort((a, b) => (a.data.date?.getTime() ?? Infinity) - (b.data.date?.getTime() ?? Infinity));
+---
+<Base title="Research desk" description="Open questions, unverified claims and photo permissions for the Wy'east Climbers history project.">
+  <div class="wrap">
+    <p class="kicker">For contributors</p>
+    <h1>Research desk</h1>
+    <p class="lede">Everything still open on the site, collected in one place and regenerated each time the site is built. If you can answer any of these, please <a href="/about#contribute">get in touch</a>.</p>
+
+    <dl class="stats">
+      <div><dt>Sources disagree</dt><dd>{conflicting.length}</dd></div>
+      <div><dt>Need a source</dt><dd>{unverified.length}</dd></div>
+      <div><dt>Not yet dated</dt><dd>{undated.length}</dd></div>
+      <div><dt>Membership to confirm</dt><dd>{probable.length}</dd></div>
+      <div><dt>Photographs wanted</dt><dd>{photoSlots}</dd></div>
+    </dl>
+
+    <div class="cols">
+      <section>
+        <h2>Where sources disagree</h2>
+        <ul class="qs">
+          {sorted(conflicting).map((m) => (
+            <li><span class="when">{m.data.dateLabel}</span><a href={`/timeline#${m.id}`}>{m.data.title}</a> <Badge status="conflicting" /></li>
+          ))}
+        </ul>
+
+        <h2>Claims that need a source</h2>
+        <ul class="qs">
+          {sorted(unverified).map((m) => (
+            <li>
+              <span class="when">{m.data.dateLabel}</span><a href={`/timeline#${m.id}`}>{m.data.title}</a>
+              {toVerify(m.body) && <p>{toVerify(m.body)}</p>}
+            </li>
+          ))}
+        </ul>
+
+        <h2>Events we can't yet date</h2>
+        <ul class="qs">
+          {undated.map((m) => (
+            <li><a href={`/timeline#${m.id}`}>{m.data.title}</a>{toVerify(m.body) && <p>{toVerify(m.body)}</p>}</li>
+          ))}
+        </ul>
+
+        {otherNotes.length > 0 && (
+          <>
+            <h2>Other details to check</h2>
+            <ul class="qs">
+              {otherNotes.map(({ m, note }) => (
+                <li><span class="when">{m.data.dateLabel}</span><a href={`/timeline#${m.id}`}>{m.data.title}</a><p>{note}</p></li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+
+      <section>
+        <h2>People</h2>
+        <h3>Membership to confirm</h3>
+        <ul class="qs">{probable.map((p) => <li><a href={`/people/${p.id}`}>{p.data.name}</a></li>)}</ul>
+        <h3>Profiles needed</h3>
+        <ul class="qs">{thinProfiles.map((p) => <li><a href={`/people/${p.id}`}>{p.data.name}</a></li>)}</ul>
+
+        <h2 id="permissions">Photo permissions</h2>
+        <p class="small">{byStatus("granted")} granted · {byStatus("requested")} requested · {byStatus("wanted")} not yet requested</p>
+        <ul class="perm">
+          {permissions.map((p) => (
+            <li class={p.data.status}>
+              <span class="pill">{p.data.status}</span>
+              <strong>{p.data.item}</strong>
+              <span class="holder">{p.data.holder}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="small">Kept in <code>src/content/permissions.yaml</code>.</p>
+      </section>
+    </div>
+  </div>
+</Base>
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; margin: 2rem 0; }
+  .stats div { background: var(--paper); padding: 1rem 1.1rem; }
+  .stats dt { font: 600 0.72rem/1.3 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+  .stats dd { margin: 0.3rem 0 0; font: 600 2rem/1 var(--display); }
+  .cols { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 3rem; }
+  .cols h2:first-child { margin-top: 0; }
+  .qs { list-style: none; padding: 0; margin: 0; font: 0.95rem/1.45 var(--sans); }
+  .qs li { padding: 0.65rem 0; border-top: 1px solid var(--rule); }
+  .qs .when { display: block; font-size: 0.78rem; color: var(--ink-soft); }
+  .qs p { margin: 0.25rem 0 0; color: var(--ink-soft); font-size: 0.88rem; }
+  .qs p::first-letter { text-transform: uppercase; }
+  .qs :global(.badge) { margin-left: 0.4rem; vertical-align: 1px; }
+  .perm { list-style: none; padding: 0; margin: 0; font: 0.9rem/1.4 var(--sans); }
+  .perm li { padding: 0.65rem 0; border-top: 1px solid var(--rule); }
+  .perm strong { display: block; font-weight: 500; margin: 0.25rem 0 0.1rem; }
+  .holder { color: var(--ink-soft); font-size: 0.82rem; }
+  .pill { font: 600 0.68rem/1 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25em 0.5em; border-radius: 3px; background: var(--paper-2); color: var(--ink-soft); }
+  .granted .pill { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+  .requested .pill { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+  .declined .pill { background: color-mix(in srgb, var(--rust) 20%, transparent); color: var(--rust); }
+  .small { font: 0.85rem/1.5 var(--sans); color: var(--ink-soft); }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+</style>

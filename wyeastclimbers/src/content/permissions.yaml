@@ -1,0 +1,46 @@
+# Permissions log: one row per image (or group of images) we'd like to use.
+# status: wanted → requested → granted | declined
+# Nothing is shown on the site as an image until status is "granted"
+# and `credit` is filled in.
+
+- id: leuthold-ranger-1936
+  item: "Joe Leuthold and Ranger near the future Timberline Lodge site (1936, photo by Joe Leuthold)"
+  holder: Mazama Library & Historical Collections
+  status: wanted
+  for: [ranger, joe-leuthold]
+
+- id: harlow-ranger-grave-1940
+  item: "Party digging Ranger's grave below the summit (1940, photo by Jim Harlow)"
+  holder: Mazama Library & Historical Collections
+  status: wanted
+  for: [ranger, jim-harlow]
+
+- id: calkin-harlow-plaque-1946
+  item: "Harlow and Calkin after installing Ranger's plaque (1946)"
+  holder: Mazama Library & Historical Collections
+  status: wanted
+  for: [ranger, ralph-calkin]
+
+- id: calkin-leuthold-mcjury
+  item: "Ralph Calkin, Joe Leuthold and Russ McJury (Wy'east Climbers group photo)"
+  holder: Unknown (reproduced by Shred Hood)
+  status: wanted
+  for: [routes, russ-mcjury]
+
+- id: haverly-illustrations
+  item: "Lon Haverly's charcoal illustrations from Conrad's book"
+  holder: Ric Conrad / Kahuna Books
+  status: wanted
+  for: [founding, routes]
+
+- id: mhsp-early-patrol
+  item: "Early Mount Hood Ski Patrol photographs, 1937–38"
+  holder: Mt. Hood Ski Patrol
+  status: wanted
+  for: [patrol-and-rescue, hank-lewis]
+
+- id: carnival-illumination
+  item: "Newspaper coverage of a Winter Sports Carnival mountain illumination"
+  holder: Oregon Historical Society (Oregonian / Oregon Journal)
+  status: wanted
+  for: [traditions]

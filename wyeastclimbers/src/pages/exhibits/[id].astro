@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import SourceList from "../../components/SourceList.astro";
 import RouteMap from "../../components/RouteMap.astro";
+import CiteBox from "../../components/CiteBox.astro";
 import { getExhibits } from "../../lib";
 
 export async function getStaticPaths() {
@@ -41,7 +42,7 @@ const related = (await getCollection("milestones", (m) => m.data.exhibit?.id ===
         )}
       </aside>
     </div>
-    <div class="prose"><SourceList refs={exhibit.data.sources} /></div>
+    <div class="prose"><SourceList refs={exhibit.data.sources} /><CiteBox title={exhibit.data.title} /></div>
     <nav class="pager" aria-label="More exhibits">
       {prev ? <a href={`/exhibits/${prev.id}`}>← {prev.data.title}</a> : <span />}
       {next ? <a href={`/exhibits/${next.id}`}>{next.data.title} →</a> : <span />}

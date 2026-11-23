@@ -107,3 +107,12 @@ blockquote.pull { margin: 2.25rem 0; padding: 0 0 0 1.25rem; border-left: 3px so
 .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
 
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media print {
+  .draft-banner, .site-header .nav, .site-footer, .filters, .decades, .cite .copy, .pager, .photo-needed { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  a { color: inherit; }
+  .prose a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; word-break: break-all; }
+  details.cites > ul { display: block; }
+  .decade h2 { position: static; }
+}

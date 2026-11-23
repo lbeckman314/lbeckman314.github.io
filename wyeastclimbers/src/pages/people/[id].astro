@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Badge from "../../components/Badge.astro";
 import SourceList from "../../components/SourceList.astro";
+import CiteBox from "../../components/CiteBox.astro";
 import { membershipLabels } from "../../lib";
 
 export async function getStaticPaths() {
@@ -33,6 +34,7 @@ const milestones = (await getCollection("milestones", (m) => m.data.people.some(
         </section>
       )}
       <SourceList refs={person.data.sources} />
+      <CiteBox title={person.data.name} />
     </div>
   </article>
 </Base>

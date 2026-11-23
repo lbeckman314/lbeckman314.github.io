@@ -68,4 +68,18 @@ const exhibits = defineCollection({
   }),
 });
 
-export const collections = { sources, milestones, people, exhibits };
+const permissions = defineCollection({
+  loader: file("src/content/permissions.yaml"),
+  schema: z.object({
+    item: z.string(),
+    holder: z.string(),
+    status: z.enum(["wanted", "requested", "granted", "declined"]),
+    requested: z.coerce.date().optional(),
+    terms: z.string().optional(),
+    credit: z.string().optional(),
+    // exhibit or person ids this image is meant for
+    for: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { sources, milestones, people, exhibits, permissions };
