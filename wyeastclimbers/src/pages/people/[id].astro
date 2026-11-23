@@ -20,7 +20,7 @@ const milestones = (await getCollection("milestones", (m) => m.data.people.some(
       <h1>{person.data.name}</h1>
       <p class="sub">{person.data.years}{person.data.years && person.data.role && " · "}{person.data.role}</p>
       <Badge status={person.data.status} />
-      <figure class="photo-needed">
+      <figure class="photo-needed" data-pagefind-ignore>
         <div class="frame"><span>Portrait wanted</span></div>
       </figure>
       <Content />

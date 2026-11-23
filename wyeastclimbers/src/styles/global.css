@@ -48,6 +48,8 @@ p { margin: 0 0 1.1rem; }
 
 .wrap { width: min(72rem, 100% - 2rem); margin-inline: auto; }
 .prose { max-width: var(--measure); }
+.wrap.prose { max-width: none; }
+.wrap.prose > * { max-width: var(--measure); }
 .kicker { font: 600 0.75rem/1.2 var(--sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 0.75rem; }
 .lede { font-size: 1.3rem; color: var(--ink-soft); max-width: var(--measure); }
 
@@ -64,6 +66,8 @@ p { margin: 0 0 1.1rem; }
 .nav a { color: var(--ink-soft); text-decoration: none; padding: 0.35rem 0; border-bottom: 2px solid transparent; }
 .nav a:hover, .nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
 
+.nav .icon { display: inline-flex; align-items: center; padding: 0.35rem 0.1rem; border: 0; background: none; color: var(--ink-soft); cursor: pointer; border-bottom: 2px solid transparent; }
+.nav .icon:hover { color: var(--ink); }
 main { padding: 2.5rem 0 4rem; }
 
 /* footer */

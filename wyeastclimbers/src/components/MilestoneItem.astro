@@ -11,14 +11,14 @@ const sources = await getEntries(m.data.sources);
 const exhibit = m.data.exhibit ? await getEntry(m.data.exhibit) : undefined;
 const year = m.data.date && !m.data.undated ? m.data.date.getUTCFullYear() : undefined;
 ---
-<li class="milestone" id={m.id} data-category={m.data.category} data-year={year}>
+<li class="milestone" data-category={m.data.category} data-year={year}>
   <div class="when">{m.data.dateLabel ?? m.data.date?.toISOString().slice(0, 10)}</div>
   <div class="what">
     <div class="meta">
       <span class={`cat cat-${m.data.category}`}>{categoryLabels[m.data.category]}</span>
       <Badge status={m.data.status} />
     </div>
-    <h3><a href={`#${m.id}`}>{m.data.title}</a></h3>
+    <h3 id={m.id}><a href={`#${m.id}`}>{m.data.title}</a></h3>
     <div class="body"><Content /></div>
     {(people.length > 0 || exhibit) && (
       <p class="links">
@@ -43,7 +43,7 @@ const year = m.data.date && !m.data.undated ? m.data.date.getUTCFullYear() : und
   .when { font: 600 0.95rem/1.3 var(--sans); color: var(--accent); padding-top: 0.15rem; }
   .meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.4rem; }
   .cat { font: 600 0.7rem/1 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
-  h3 { margin: 0 0 0.5rem; font-size: 1.3rem; }
+  h3 { margin: 0 0 0.5rem; font-size: 1.3rem; scroll-margin-top: 4rem; }
   h3 a { color: inherit; text-decoration: none; }
   h3 a:hover { color: var(--accent); }
   .body { max-width: var(--measure); }

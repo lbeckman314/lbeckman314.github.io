@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Search" index={false} description="Search the Wy'east Climbers history site.">
+  <div class="wrap prose">
+    <p class="kicker">Search</p>
+    <h1>Search the archive</h1>
+    <p class="lede">Find people, routes, places and events across the timeline, exhibits and profiles.</p>
+    <div id="search"></div>
+    <noscript><p>Search needs JavaScript. The <a href="/timeline">timeline</a> lists every entry on one page.</p></noscript>
+    <p class="hint">Try: <a href="/search?q=Leuthold">Leuthold</a> · <a href="/search?q=Timberline">Timberline</a> · <a href="/search?q=summit%20register">summit register</a> · <a href="/search?q=Ida%20Darr">Ida Darr</a></p>
+  </div>
+</Base>
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+<script is:inline src="/pagefind/pagefind-ui.js"></script>
+<script is:inline>
+  window.addEventListener("DOMContentLoaded", () => {
+    if (!window.PagefindUI) {
+      document.getElementById("search").innerHTML = "<p>The search index is built with <code>npm run build</code>. It isn't available in dev mode.</p>";
+      return;
+    }
+    const ui = new PagefindUI({ element: "#search", showSubResults: true, showImages: false, resetStyles: false });
+    const q = new URLSearchParams(location.search).get("q");
+    if (q) ui.triggerSearch(q);
+  });
+</script>
+<style is:global>
+  #search {
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--ink);
+    --pagefind-ui-background: var(--paper);
+    --pagefind-ui-border: var(--rule);
+    --pagefind-ui-tag: var(--paper-2);
+    --pagefind-ui-font: var(--sans);
+    margin: 1.5rem 0;
+  }
+  #search mark { background: color-mix(in srgb, var(--accent) 25%, transparent); color: inherit; }
+  .hint { font: 0.9rem/1.5 var(--sans); color: var(--ink-soft); }
+</style>

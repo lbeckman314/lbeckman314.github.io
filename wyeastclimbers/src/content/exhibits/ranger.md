@@ -14,7 +14,7 @@ In the summer of 1927 a dog belonging to a Warm Springs family who were picking 
 
 Ranger made his first recorded summit in 1928 with a party of Mazamas, and went home with a satin summit ribbon pinned to his collar. In the ten years that followed he is said to have reached the summit **more than 500 times**. He often joined any party heading up, and he also went out on patrol with forest ranger and snowshoe maker Ole Lien.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph wanted</span></div>
   <figcaption>Joe Leuthold and Ranger near the future site of Timberline Lodge, 1936. Photo by Joe Leuthold, credited to the Mazama Library &amp; Historical Collections.</figcaption>
 </figure>

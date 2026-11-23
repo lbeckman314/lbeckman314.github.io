@@ -10,7 +10,7 @@ In 1930 the Mazamas were already thirty-six years old. Founded on Mount Hood's s
 
 Some of their younger members wanted something else. As Ric Conrad puts it, a group of young men, "several of whom were members of the Mazamas and the Portland Trail's Club, desired a smaller, more elite group of mountain climbing colleagues." They were not looking for more company on the standard routes. They wanted *virgin terrain*: Hood's steep, icy north and west faces, which almost nobody had seriously attempted.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph wanted</span></div>
   <figcaption>An early group portrait of the Wy'east Climbers. <em>Lead:</em> Mazama Library &amp; Historical Collections; members' families.</figcaption>
 </figure>
@@ -33,7 +33,7 @@ What set the Wy'easters apart, apart from their ambition, was how seriously they
 
 The club also put up its own building. By most accounts members built a **club cabin in 1934**. We are still trying to find out where it stood and what became of it.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph wanted</span></div>
   <figcaption>The Wy'east Climbers' cabin, c. 1934.</figcaption>
 </figure>

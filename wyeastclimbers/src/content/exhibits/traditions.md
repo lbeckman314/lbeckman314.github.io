@@ -12,7 +12,7 @@ The Wy'easters climbed hard, and they also clearly enjoyed themselves.
 
 Portland's **Winter Sports Carnival** wanted a spectacle, and the Wy'easters supplied one. Climbers hauled magnesium flares high onto Mount Hood. Each was rated at "a million candle power," and at a set time they lit them. Depending on the flare it burned for one to six minutes, and the light could be seen from the city.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph or newspaper clipping wanted</span></div>
   <figcaption>A mountain illumination, as reported in the <em>Oregonian</em> or <em>Oregon Journal</em>.</figcaption>
 </figure>

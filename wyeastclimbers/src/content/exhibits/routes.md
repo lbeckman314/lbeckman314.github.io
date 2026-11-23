@@ -19,7 +19,7 @@ On Hood's west side the Sandy Glacier ends against a steep, ice-plastered headwa
 
 The Eliot Glacier, on Hood's north side, is the mountain's largest. Above it rises a headwall of loose volcanic rock and ice, about 800 feet of exposed climbing. McJury and Leuthold climbed it as well. Most sources date the ascent to 1938, though one route database gives 1935. A climbing guide still calls the route on the right side of the upper headwall the *McJury–Leuthold*.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph wanted</span></div>
   <figcaption>Ralph Calkin, Joe Leuthold and Russ McJury. A well-known Wy'east photograph of the three exists; we are tracing who holds it.</figcaption>
 </figure>

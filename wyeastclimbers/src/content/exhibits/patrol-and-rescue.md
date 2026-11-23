@@ -16,7 +16,7 @@ The club is remembered as possibly the first climbing team to require **first-ai
 
 On **September 28, 1937**, President Franklin D. Roosevelt dedicated **Timberline Lodge**, the grand stone and timber hotel built by the Works Progress Administration on Hood's south slope. Skiers came in large numbers, and so did injuries.
 
-<figure class="photo-needed">
+<figure class="photo-needed" data-pagefind-ignore>
   <div class="frame"><span>Photograph wanted</span></div>
   <figcaption>Early ski patrollers at Timberline, late 1930s.</figcaption>
 </figure>

@@ -4,4 +4,4 @@ const { status } = Astro.props;
 const label = { sourced: "Sourced", conflicting: "Sources disagree", unverified: "Needs a source" }[status];
 const icon = { sourced: "✓", conflicting: "≠", unverified: "?" }[status];
 ---
-<span class={`badge ${status}`} title={label}><span aria-hidden="true">{icon}</span>{label}</span>
+<span data-pagefind-ignore class={`badge ${status}`} title={label}><span aria-hidden="true">{icon}</span>{label}</span>
