@@ -6,6 +6,7 @@ tags:
 - foobar
 - foo
 - bar
+draft: true
 ---
 
 > [!IMPORTANT]
