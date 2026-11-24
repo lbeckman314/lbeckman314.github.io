@@ -51,3 +51,6 @@
 
 - id: wiki-space
   repo: https://github.com/lbeckman314/wiki-space
+
+- id: wyeast-climbers
+  repo: https://github.com/lbeckman314/wyeast-climbers

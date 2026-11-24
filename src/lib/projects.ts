@@ -19,14 +19,20 @@ export type ProjectWithData = {
 
 export type ProjectLink = { href: string; text: string };
 
-// Screenshots live at src/assets/projects/<project id>.webp.
+// Screenshots live at src/assets/projects/<project id>.<webp|png|jpg|jpeg>.
+const screenshotExtensions = ["webp", "png", "jpg", "jpeg"] as const;
 const screenshots = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/projects/*.webp",
+  "/src/assets/projects/*.{webp,png,jpg,jpeg}",
   { eager: true },
 );
 
 export function getProjectScreenshot(id: string): ImageMetadata | undefined {
-  return screenshots[`/src/assets/projects/${id}.webp`]?.default;
+  return screenshotExtensions
+    .map(
+      (extension) =>
+        screenshots[`/src/assets/projects/${id}.${extension}`]?.default,
+    )
+    .find((screenshot) => screenshot !== undefined);
 }
 
 // Where a project card should link to: its site when it has one, otherwise
