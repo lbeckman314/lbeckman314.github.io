@@ -6,7 +6,7 @@ import DraftsToggle from "@components/DraftsToggle.astro";
 import TagsToggle from "@components/TagsToggle.astro";
 import PageSearch from "@components/PageSearch.astro";
 import { NOTES } from "@consts";
-import { shouldListPage } from "@lib/utils";
+import { isNotDraft, shouldListPage } from "@lib/utils";
 import { Icon } from "astro-icon/components";
 
 const posts = (await getCollection("notes"))
@@ -16,6 +16,11 @@ const posts = (await getCollection("notes"))
 const tags = posts
   .flatMap((post) => post.data.tags ?? [])
   .filter((tag, index, self) => self.indexOf(tag) === index);
+
+// Tags that only appear on drafts are hidden along with them.
+const publishedTags = new Set(
+  posts.filter(isNotDraft).flatMap((post) => post.data.tags ?? []),
+);
 
 type Acc = {
   [year: string]: CollectionEntry<"notes">[];
@@ -51,7 +56,13 @@ const years = Object.keys(postsMap).sort((a, b) => parseInt(b) - parseInt(a));
     </button>
     {
       tags.map((tag) => (
-        <button class="pill" type="button" data-tag={tag} aria-pressed="false">
+        <button
+          class="pill"
+          type="button"
+          data-tag={tag}
+          data-draft={publishedTags.has(tag) ? undefined : ""}
+          aria-pressed="false"
+        >
           #{tag}
         </button>
       ))

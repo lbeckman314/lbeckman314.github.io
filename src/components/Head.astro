@@ -170,7 +170,7 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
 <link
   rel="preload"
   as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
+  onload={"this.onload=null;this.rel='stylesheet'"}
   href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
   integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
   crossorigin="anonymous"
@@ -188,8 +188,6 @@ const articleSchema: WithContext<BlogPosting> | undefined = article && {
   const MOON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z"/></svg>`;
 
   const THEMES = ["light", "dark"];
-
-  let scrollBound = false;
 
   function resolveTheme(choice) {
     return choice === "light" ? "light" : "dark";

@@ -34,34 +34,6 @@ const projects = allProjectCards
     ),
   )
   .slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
-
-// Topics: the most recently used tags across blog posts and projects, newest
-// first. Each links to that tag's page in the collection it last appeared in.
-const NUM_TOPICS = 8;
-const recentlyTagged = [
-  ...allPosts.map((entry) => ({
-    collection: entry.collection,
-    date: entry.data.date,
-    tags: entry.data.tags ?? [],
-  })),
-  ...allProjectCards.map((project) => ({
-    collection: project.entry.collection,
-    date: project.data.date,
-    tags: project.data.tags,
-  })),
-].sort((a, b) => dateSortDesc(a.date, b.date));
-const seenTags = new Set<string>();
-const topics: { tag: string; href: string }[] = [];
-for (const entry of recentlyTagged) {
-  for (const tag of entry.tags) {
-    if (seenTags.has(tag)) {
-      continue;
-    }
-    seenTags.add(tag);
-    topics.push({ tag, href: `/${entry.collection}?tags=${encodeURIComponent(tag)}` });
-  }
-}
-const recentTopics = topics.slice(0, NUM_TOPICS);
 ---
 
 <Layout title={HOME.TITLE} description={HOME.DESCRIPTION} route="index">
@@ -79,15 +51,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
         <Icon name="tabler:rss" />
       </a>
     </div>
-    <!-- <div class="topics">
-      {
-        recentTopics.map((topic) => (
-          <a class="topic" href={topic.href}>
-            #{topic.tag}
-          </a>
-        ))
-      }
-    </div> -->
   </section>
 
   <div class="sec-head">
@@ -162,29 +125,6 @@ const recentTopics = topics.slice(0, NUM_TOPICS);
     gap: 12px;
     margin-bottom: 30px;
     flex-wrap: wrap;
-  }
-  .topics {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    padding-bottom: 56px;
-    border-bottom: 1px solid var(--line);
-  }
-  .topic {
-    font-family: var(--mono);
-    font-size: calc(12px * var(--fsm));
-    color: var(--mut);
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 5px 12px;
-    text-decoration: none;
-    transition:
-      border-color 0.15s,
-      color 0.15s;
-  }
-  .topic:hover {
-    border-color: var(--accent);
-    color: var(--ink);
   }
 
   /* ============ CONTACT ============ */

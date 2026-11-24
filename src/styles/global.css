@@ -1013,6 +1013,14 @@ p {
 html:not([data-show-drafts]) [data-draft] {
   display: none !important;
 }
+/* Hide a year on the notes page when all of its posts are hidden, either as
+   drafts or by search/tag filters. */
+html:not([data-show-drafts])
+  [data-search-group]:has(> .post-list):not(
+    :has(> .post-list > :not([hidden]) > .post-row:not([data-draft]))
+  ) {
+  display: none;
+}
 .series-note {
   margin-top: 0;
 }

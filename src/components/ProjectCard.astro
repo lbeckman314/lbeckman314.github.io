@@ -16,7 +16,6 @@ import {
 type Props = { entry: CollectionEntry<"projects">; data?: ProjectData };
 
 const { entry, data: projectData = await getProjectData(entry) } = Astro.props;
-const tags = projectData.tags;
 const links = getProjectLinks(entry, projectData);
 const href = getPrimaryProjectLink(entry, projectData);
 const screenshot = getProjectScreenshot(entry.id);
@@ -63,15 +62,6 @@ const screenshot = getProjectScreenshot(entry.id);
   </Fragment>
   <Fragment slot="chevron" />
   <Fragment slot="foot">
-    <!-- {
-      tags.length > 0 && (
-        <span class="tags">
-          {tags.map((tag) => (
-            <span class="tag">#{tag}</span>
-          ))}
-        </span>
-      )
-    } -->
     <span class="card-links">
       <ProjectLinks links={links} />
     </span>
