@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unboxed</title>
+<meta name="description" content="Try popular command-line tools and GitHub repositories in a real Linux machine that boots in your browser tab. No install, no account, no server.">
+<meta property="og:title" content="Unboxed">
+<meta property="og:description" content="Unbox a tool. It's already running: a real Linux machine in your browser tab.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="unboxed.css">
+<style>
+/* Layout: split hero (headline | live terminal on a strip of tape), the shelf as a 3-column floor
+   of tiles, three ways in, figures, the stack in cross-section, FAQ, cardboard sign-off. */
+h1 { font-weight: 700; font-size: clamp(2.7rem, 6.8vw, 5.2rem); line-height: .98; letter-spacing: -0.04em; }
+h2 { font-weight: 700; font-size: clamp(1.9rem, 4.2vw, 3.1rem); line-height: 1.04; letter-spacing: -0.035em; }
+h3 { font-weight: 500; font-size: 1.15rem; letter-spacing: -0.01em; }
+h1 em { font-style: normal; color: var(--accent); }
+
+/* Hero */
+.hero {
+  background:
+    radial-gradient(42% 60% at 80% 48%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 72%),
+    radial-gradient(38% 55% at 4% 100%, color-mix(in srgb, var(--hl) 24%, transparent), transparent 72%),
+    radial-gradient(30% 40% at 55% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
+}
+.hero::before {
+  content: ""; position: absolute; left: 38%; right: -10%; top: 46%; height: 84px; pointer-events: none;
+  background: linear-gradient(180deg, var(--tape), rgba(255, 255, 255, .04) 45%, var(--tape));
+  transform: rotate(-5deg);
+}
+.hero .wrap { padding-block: 64px 72px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 48px; align-items: center; }
+@media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; padding-block: 44px 56px; } .hero::before { left: -10%; top: 70%; } }
+.hero .copy { display: grid; gap: 22px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; font: 400 .85rem var(--mono); color: var(--muted); }
+.facts span::before { content: "■ "; color: var(--accent); font-size: .7em; vertical-align: .15em; }
+
+.term { background: var(--term); color: var(--term-fg); border: 1px solid var(--line); box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .55); min-width: 0; }
+.term .bar { display: flex; gap: 2px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid #22252d; font: 400 .8rem var(--mono); color: var(--term-dim); }
+.term .tab { padding: 3px 8px; border: 1px solid transparent; }
+.term .tab.on { border-color: #343844; color: var(--term-fg); }
+.term pre { margin: 0; padding: 16px; min-height: 300px; font: 400 .86rem/1.65 var(--mono); white-space: pre-wrap; word-break: break-word; }
+.term .p { color: var(--ok); }
+.term .d { color: var(--term-dim); }
+.term .h { color: var(--hl); }
+
+/* Sections */
+.sec { padding-block: 84px; display: grid; gap: 34px; border-top: 1px solid var(--line); }
+.sechead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px; }
+.sechead .lede { max-width: 46ch; }
+
+/* The shelf */
+.floor { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+@media (max-width: 900px) { .floor { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .floor { grid-template-columns: 1fr; } }
+.item {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 18px; min-width: 0;
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-decoration: none; transition: background .15s;
+}
+.item:hover { background: var(--raised); }
+.item:hover .go { color: var(--accent); }
+.item b { font: 500 1.05rem/1.2 var(--display); }
+.item .stars { font: 400 .78rem var(--mono); color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.item .blurb { grid-column: 1 / -1; color: var(--muted); font-size: .9rem; line-height: 1.4; }
+.item code {
+  grid-column: 1 / -1; font-size: .78rem; line-height: 1.45; color: var(--muted); overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.item .go { grid-column: 1 / -1; font: 600 .78rem var(--mono); color: var(--muted); }
+
+/* Three ways in */
+.ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .ways { grid-template-columns: 1fr; } }
+.way { background: var(--raised); border: 1px solid var(--line); padding: 24px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.way p { color: var(--muted); }
+.way pre { margin: 6px 0 0; padding: 12px; background: var(--term); color: var(--term-fg); font: 400 .8rem/1.6 var(--mono); overflow-x: auto; }
+
+/* Figures */
+.numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+@media (max-width: 900px) { .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; } }
+.stat { padding: 24px 20px 0 0; display: grid; gap: 6px; align-content: start; }
+.stat b { font: 700 clamp(2rem, 4vw, 3rem)/1 var(--display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: .92rem; }
+.note { font-size: .88rem; color: var(--muted); }
+
+/* Cross-section */
+.stack { display: grid; border: 1px solid var(--line); }
+.layer { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 20px; padding: 18px 22px; border-top: 1px solid var(--line); align-items: baseline; }
+.layer:first-child { border-top: 0; }
+.layer b { font: 500 1.05rem var(--display); }
+.layer span { color: var(--muted); }
+.layer.mid { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); }
+.layer.mid b { color: var(--accent); }
+@media (max-width: 640px) { .layer { grid-template-columns: 1fr; gap: 4px; } }
+
+/* FAQ */
+.faq { display: grid; border-top: 1px solid var(--line); }
+details { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; list-style: none; padding: 18px 0; font: 500 1.08rem var(--display); display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-family: var(--mono); color: var(--accent); }
+details[open] summary::after { content: "−"; }
+details p { padding: 0 0 20px; color: var(--muted); max-width: 70ch; }
+
+/* Sign-off on cardboard */
+.signoff .wrap { padding-block: 104px; display: grid; justify-items: center; text-align: center; gap: 16px; }
+.signoff h2 { font-size: clamp(2.6rem, 7vw, 4.8rem); }
+.signoff p { font-size: 1.1rem; opacity: .9; }
+.signoff .btn { background: #121318; border-color: #121318; color: #fff; }
+
+footer .wrap { padding-block: 28px 44px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 28px; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="logo" href="./" aria-label="Unboxed home">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><path d="M3 9h20v14H3z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M3 9 7 3h6v6M23 9l-4-6h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg>
+      unboxed
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#shelf">Tools</a>
+      <a href="#ways">Repos</a>
+      <a href="#stack">How it works</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Switch theme"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <a class="btn ghost" href="play/">Playground</a>
+  </div>
+</header>
+
+<main>
+<section class="hero grainy">
+  <div class="wrap">
+    <div class="copy">
+      <span class="label">Linux, in this tab</span>
+      <h1>Unbox a tool.<br><em>It's already running.</em></h1>
+      <p class="lede">Twenty-one command-line favorites, each a click away from a working terminal. No install, no account, no server: the whole machine runs on your device.</p>
+      <div class="actions">
+        <a class="btn" href="#shelf">Browse the shelf →</a>
+        <a class="btn ghost" href="play/#any-repo">Run your own repo</a>
+      </div>
+      <div class="facts"><span>boots in 0.3 s</span><span>Linux 7.x kernel</span><span>Alpine 3.24</span><span>no network needed</span></div>
+    </div>
+    <div class="term" role="img" aria-label="A terminal cycling through demos of jq, ripgrep and sd">
+      <div class="bar" id="tabs"><span class="tab on">jq</span><span class="tab">ripgrep</span><span class="tab">sd</span></div>
+<pre id="screen"><span class="d">alpine 3.24 · aarch64 · offline</span>
+<span class="p">~ ⇒</span> sudo apk add jq
+(1/2) Installing oniguruma (6.9.10-r0)
+(2/2) Installing jq (1.8.2-r0)
+<span class="p">~ ⇒</span> jq '.tools[] | select(.stars > 50000) | .name' tools.json
+<span class="h">"fzf"</span>
+<span class="h">"ripgrep"</span>
+<span class="p">~ ⇒</span> <span class="caret"></span></pre>
+    </div>
+  </div>
+</section>
+
+<section id="shelf">
+  <div class="wrap sec">
+    <div class="sechead">
+      <h2>The shelf</h2>
+      <p class="lede">Each tile boots a fresh machine, installs the tool and runs a short demo. Then it's yours to play with.</p>
+    </div>
+    <div class="floor" id="floor"></div>
+  </div>
+</section>
+
+<section id="ways">
+  <div class="wrap sec">
+    <div class="sechead">
+      <h2>Three ways in</h2>
+      <p class="lede">Start from the shelf, from any public repository, or ship a demo with your own project.</p>
+    </div>
+    <div class="ways">
+      <div class="way">
+        <span class="label">Shelf</span>
+        <h3>Pick a tool</h3>
+        <p>Every tile has its own link, so you can send someone straight to a running htop.</p>
+        <pre>unboxed/play/?app=htop</pre>
+      </div>
+      <div class="way">
+        <span class="label">Any repo</span>
+        <h3>Paste a GitHub link</h3>
+        <p>The files are copied into the machine with their executable bits, and you land in a shell inside them.</p>
+        <pre>unboxed/play/?repo=owner/project</pre>
+      </div>
+      <div class="way">
+        <span class="label">Maintainers</span>
+        <h3>Ship a demo</h3>
+        <p>Put a <code>.unkernel.sh</code> at the root of your repo. It runs first, in the repo's directory.</p>
+        <pre>#!/bin/sh
+sudo apk add python3
+python3 demo.py</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap sec">
+    <h2>Fast where it counts</h2>
+    <div class="numbers">
+      <div class="stat"><b>0.3 s</b><span>from start to the Alpine prompt</span></div>
+      <div class="stat"><b>170 ns</b><span>per getppid syscall (native: 110 ns)</span></div>
+      <div class="stat"><b>60 µs</b><span>fork, exit and wait (native: 70 µs)</span></div>
+      <div class="stat"><b>~10 MB</b><span>downloaded before the shell appears</span></div>
+    </div>
+    <p class="note">Figures from <a href="https://github.com/pithings/unkernel">unkernel</a>'s README, measured under Node on 2026-11-14. CPU-heavy programs run well behind native speed.</p>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap sec">
+    <div class="sechead">
+      <h2>What's in the box</h2>
+      <p class="lede">The kernel runs at WebAssembly speed. Only the programs on top are emulated.</p>
+    </div>
+    <div class="stack">
+      <div class="layer"><b>Your tool</b><span>Neovim, ripgrep, Python… unmodified Alpine packages</span></div>
+      <div class="layer"><b>Alpine Linux 3.24</b><span>aarch64 user space, with apk and BusyBox</span></div>
+      <div class="layer"><b>kwemu</b><span>an aarch64 CPU with a JIT that compiles hot code to WebAssembly</span></div>
+      <div class="layer mid"><b>Linux 7.x kernel</b><span>compiled to WebAssembly, with a real MMU: fork, mmap, signals and /proc behave as on a server</span></div>
+      <div class="layer"><b>Your browser tab</b><span>Chrome, Edge, Firefox or Safari, on a laptop or a phone</span></div>
+    </div>
+    <p class="note">Built on <a href="https://github.com/pithings/unkernel">unkernel</a>. The tools install from Alpine's signed packages, hosted next to this page.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap sec">
+    <h2>Questions</h2>
+    <div class="faq">
+      <details open>
+        <summary>Does anything run on a server?</summary>
+        <p>No. The kernel, the emulated CPU and your programs all run in your browser tab. The page downloads about 10 MB, plus each tool's packages when you open it.</p>
+      </details>
+      <details>
+        <summary>Can programs reach the internet?</summary>
+        <p>Not by default. Browsers can't open raw TCP sockets, so internet access goes through a Wisp proxy you can set in the playground's options. Every tool on the shelf works without one.</p>
+      </details>
+      <details>
+        <summary>Which programs can run?</summary>
+        <p>Anything built for 64-bit ARM Linux, which covers Alpine's and Debian's package archives. x86-only binaries won't run, and CPU-heavy work is well behind native speed.</p>
+      </details>
+      <details>
+        <summary>Which browsers work?</summary>
+        <p>Chrome and Edge 137 or later, Firefox 153 or later, and Safari 27 or later, including on phones. Older browsers lack a WebAssembly feature the kernel needs, and the playground says so.</p>
+      </details>
+      <details>
+        <summary>What happens to my changes?</summary>
+        <p>They live in memory and vanish when you close the tab, so you can't break anything.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="signoff cardboard grainy">
+  <div class="wrap">
+    <h2>Open the box.</h2>
+    <p>21 tools, one click each, nothing to install.</p>
+    <a class="btn" href="#shelf">Pick a tool →</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>unboxed · by <a href="/">liambeckman.com</a></span>
+    <span>Runs on <a href="https://github.com/pithings/unkernel">unkernel</a></span>
+  </div>
+</footer>
+
+<script type="module">
+import { CATALOG } from "./play/catalog.js";
+
+// The shelf, from the playground's own catalog.
+const k = (n) => n >= 10000 ? `${Math.round(n / 1000)}k` : `${(n / 1000).toFixed(1)}k`;
+const floor = document.getElementById("floor");
+for (const app of CATALOG) {
+  const a = document.createElement("a");
+  a.className = "item";
+  a.href = `play/?app=${encodeURIComponent(app.id)}`;
+  a.innerHTML = `<b></b><span class="stars"></span><span class="blurb"></span><code></code><span class="go">Run →</span>`;
+  a.querySelector("b").textContent = app.title;
+  a.querySelector(".stars").textContent = `★ ${k(app.stars)}`;
+  a.querySelector(".blurb").textContent = app.blurb;
+  a.querySelector("code").textContent = `$ ${app.run}`;
+  floor.append(a);
+}
+
+// The hero terminal: starts on a finished jq demo, then types the others in turn.
+const DEMOS = [
+  { lines: [
+    ["d", "alpine 3.24 · aarch64 · offline"],
+    ["cmd", "sudo apk add jq"],
+    ["", "(1/2) Installing oniguruma (6.9.10-r0)"],
+    ["", "(2/2) Installing jq (1.8.2-r0)"],
+    ["cmd", "jq '.tools[] | select(.stars > 50000) | .name' tools.json"],
+    ["h", "\"fzf\""], ["h", "\"ripgrep\""] ] },
+  { lines: [
+    ["d", "BurntSushi/ripgrep: 140 files in ~/ripgrep"],
+    ["cmd", "rg -n 'fn search_path' crates"],
+    ["", "crates/core/search.rs:376:    fn search_path(&mut self, path: &Path)"],
+    ["", "crates/searcher/src/searcher/mod.rs:658:    pub fn search_path<P, M, S>("],
+    ["cmd", "rg --stats 'fn search_' crates | grep -E 'matches$|searched$'"],
+    ["h", "18 matches"], ["h", "140 files searched"] ] },
+  { lines: [
+    ["d", "alpine 3.24 · aarch64 · offline"],
+    ["cmd", "sudo apk add sd"],
+    ["", "(1/2) Installing libgcc (15.2.0-r5)"],
+    ["", "(2/2) Installing sd (1.1.0-r0)"],
+    ["cmd", "echo 'Hello, world! Goodbye, world!' | sd world unkernel"],
+    ["h", "Hello, unkernel! Goodbye, unkernel!"] ] },
+];
+const screen = document.getElementById("screen");
+const tabs = [...document.querySelectorAll("#tabs .tab")];
+const esc = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+const prompt = '<span class="p">~ ⇒</span> ';
+const render = (lines) => lines.map(([kind, text]) => kind === "cmd" ? prompt + esc(text) : `<span class="${kind}">${esc(text)}</span>`).join("\n");
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function play() {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  for (let i = 0; ; ) {
+    await sleep(4200);
+    i = (i + 1) % DEMOS.length;
+    tabs.forEach((t, j) => t.classList.toggle("on", j === i));
+    const done = [];
+    for (const line of DEMOS[i].lines) {
+      if (line[0] === "cmd") {
+        for (let c = 1; c <= line[1].length; c++) {
+          screen.innerHTML = render(done) + (done.length ? "\n" : "") + prompt + esc(line[1].slice(0, c)) + '<span class="caret"></span>';
+          await sleep(28);
+        }
+        await sleep(300);
+      } else {
+        await sleep(140);
+      }
+      done.push(line);
+      screen.innerHTML = render(done);
+    }
+    screen.innerHTML = render(done) + "\n" + prompt + '<span class="caret"></span>';
+  }
+}
+play();
+</script>
+</body>
+</html>

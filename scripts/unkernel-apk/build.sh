@@ -1,6 +1,6 @@
 #!/bin/sh
 # Mirror just the Alpine packages the playground needs into
-# public/try-unkernel/apk/, next to Alpine's own signed indexes (unmodified, so
+# public/unboxed/play/apk/, next to Alpine's own signed indexes (unmodified, so
 # the guest's apk verifies them as usual). The guest reads them as
 # http://pkgs.local/, which the page answers with fetch().
 #
@@ -13,7 +13,7 @@ ALPINE=v3.24
 ARCH=aarch64
 MIRROR=https://dl-cdn.alpinelinux.org/alpine
 here=$(cd "$(dirname "$0")" && pwd)
-out="$here/../../public/try-unkernel/apk"
+out="$here/../../public/unboxed/play/apk"
 idx=$(mktemp -d)
 trap 'rm -rf "$idx"' EXIT
 
