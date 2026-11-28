@@ -20,7 +20,8 @@ npm run dev        # then open /unboxed/
 1. Check Alpine packages it for aarch64 (`resolve.py` prints its dependencies).
 2. Add the package to `packages.txt` and run `build-apk.sh`.
 3. Add an entry to `public/unboxed/play/catalog.js`: `pkgs`, a `run` demo, a
-   `tip`, and a `check` (text the terminal shows once the demo works). For a
+   `tip`, and a `check`: text the terminal shows once the demo works, and
+   never text from the `run` command or `tip` (those are echoed first). For a
    demo that needs repo files, add `files` with the repo, a pinned commit
    (`git ls-remote https://github.com/OWNER/REPO HEAD`) and only the `paths` it
    needs. Fewer files start faster.
@@ -29,7 +30,10 @@ npm run dev        # then open /unboxed/
 ## Tests
 
 `node scripts/unboxed/smoke.mjs [id...]` serves `public/`, boots each entry in
-headless Chromium, and waits for its `check`. It needs Playwright
+headless Chromium, and waits for its `check`. It also runs `unkernel.sh`: a
+simulated repo (the GitHub API and jsDelivr are intercepted) whose
+`.unkernel.sh` installs a package and runs a file that needs its executable
+bit, so the maintainer path stays tested without a real repo. It needs Playwright
 (`npm i --no-save playwright && npx playwright install chromium`).
 
 ## Update cadence

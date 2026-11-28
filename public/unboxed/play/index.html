@@ -249,7 +249,6 @@ const fit = new FitAddon.FitAddon();
 term.loadAddon(fit);
 term.open($("term"));
 fit.fit();
-if (!EMBED) term.writeln("\x1b[2mPick a tool or enter a repository above. Linux boots here, in this tab.\x1b[0m");
 
 // ---- Repository fetching -------------------------------------------------
 
@@ -515,6 +514,8 @@ if (EMBED && start) {
   $("term-box").append(b);
 } else if (start) {
   start();
+} else if (!EMBED) {
+  term.writeln("\x1b[2mPick a tool or enter a repository above. Linux boots here, in this tab.\x1b[0m");
 }
 </script>
 </body>
