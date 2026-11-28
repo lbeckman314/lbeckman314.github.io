@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Repo Playground</title>
+<meta name="description" content="Run a GitHub repository in a real Linux kernel, compiled to WebAssembly, entirely in your browser.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css">
+<style>
+  :root {
+    --bg: #eff1f5; --panel: #e6e9ef; --text: #4c4f69; --muted: #6c6f85;
+    --accent: #1e66f5; --border: #ccd0da; --error: #d20f39; --term: #1e1e2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #303446; --panel: #292c3c; --text: #c6d0f5; --muted: #a5adce;
+      --accent: #8caaee; --border: #414559; --error: #e78284; --term: #232634;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #303446; --panel: #292c3c; --text: #c6d0f5; --muted: #a5adce;
+    --accent: #8caaee; --border: #414559; --error: #e78284; --term: #232634;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  p.lede { margin: 0 0 20px; color: var(--muted); }
+  form { display: grid; gap: 10px; grid-template-columns: 1fr auto; }
+  input[type=text] {
+    width: 100%; padding: 10px 12px; font: inherit; color: var(--text);
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+  }
+  button {
+    padding: 10px 18px; font: inherit; font-weight: 600; cursor: pointer;
+    color: #fff; background: var(--accent); border: 0; border-radius: 8px;
+  }
+  button:disabled { opacity: .55; cursor: default; }
+  details { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; }
+  details[open] summary { margin-bottom: 8px; }
+  .opts { display: grid; gap: 8px; grid-template-columns: max-content 1fr; align-items: center; }
+  .opts label { white-space: nowrap; }
+  #status { min-height: 1.5em; margin: 16px 0 8px; font-size: .92rem; color: var(--muted); }
+  #status.error { color: var(--error); }
+  .term-box {
+    padding: 10px; border-radius: 10px; background: var(--term);
+    border: 1px solid var(--border);
+  }
+  #term { height: 460px; overflow: hidden; }
+  .help { margin-top: 20px; font-size: .92rem; color: var(--muted); }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+  pre { background: var(--panel); padding: 10px 12px; border-radius: 8px; overflow-x: auto; }
+  a { color: var(--accent); }
+  @media (max-width: 560px) {
+    form { grid-template-columns: 1fr; }
+    .opts { grid-template-columns: 1fr; }
+    #term { height: 400px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Repo Playground</h1>
+  <p class="lede">
+    Enter a public GitHub repository and run it in
+    <a href="https://github.com/pithings/unkernel">unkernel</a>, a real Linux
+    kernel compiled to WebAssembly. Everything runs in this tab, on your device.
+  </p>
+
+  <form id="form">
+    <input id="repo" type="text" placeholder="owner/repo or https://github.com/owner/repo" autocomplete="off" spellcheck="false" required>
+    <button id="go" type="submit">Run</button>
+    <details>
+      <summary>Options</summary>
+      <div class="opts">
+        <label for="ref">Branch, tag or commit</label>
+        <input id="ref" type="text" placeholder="default branch" autocomplete="off" spellcheck="false">
+        <label for="cmd">Command to run</label>
+        <input id="cmd" type="text" placeholder="the repo's .unkernel.sh, if it has one" autocomplete="off" spellcheck="false">
+        <label for="wisp">Wisp proxy (network)</label>
+        <input id="wisp" type="text" placeholder="wss://… (empty: no network)" autocomplete="off" spellcheck="false">
+      </div>
+    </details>
+  </form>
+
+  <div id="status" role="status"></div>
+  <div class="term-box"><div id="term"></div></div>
+
+  <div class="help">
+    <p>
+      The repository is copied to <code>~/&lt;repo&gt;</code> in an Alpine Linux guest
+      (aarch64 user space). If it has a <code>.unkernel.sh</code> at its root, that
+      script runs first, so a project can set up its own demo:
+    </p>
+<pre>#!/bin/sh
+# .unkernel.sh: runs in the repo's directory when someone opens it here
+sudo apk add python3        # needs a network (a Wisp proxy)
+python3 demo.py</pre>
+    <p>
+      Without a Wisp proxy the guest has no network, so only what Alpine's base
+      image carries (BusyBox and a POSIX shell) is available. Changes vanish
+      when you leave the page.
+    </p>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.js"></script>
+<script type="module">
+// The kernel and the distro image must come from the same release (their ABI must match).
+const UNKERNEL = "https://cdn.jsdelivr.net/npm/unkernel@0.2.0-261127-3b71fa5/dist/web.mjs";
+const DISTRO = new URL("alpine.erofs", location.href).href;
+
+const LIMITS = { files: 3000, bytes: 64 << 20, file: 16 << 20 };
+
+const $ = (id) => document.getElementById(id);
+const status = (msg, isError = false) => {
+  $("status").textContent = msg;
+  $("status").classList.toggle("error", isError);
+};
+
+const term = new Terminal({
+  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
+  fontSize: 14, cursorBlink: true, convertEol: false,
+  theme: { background: getComputedStyle(document.documentElement).getPropertyValue("--term").trim() || "#1e1e2e" },
+});
+const fit = new FitAddon.FitAddon();
+term.loadAddon(fit);
+term.open($("term"));
+fit.fit();
+
+// ---- Repository fetching -------------------------------------------------
+
+function parseRepo(input) {
+  const s = input.trim().replace(/\.git$/, "").replace(/\/+$/, "");
+  const m = s.match(/^(?:https?:\/\/)?(?:www\.)?(?:github\.com\/)?([\w.-]+)\/([\w.-]+)(?:\/tree\/([^?#]+))?$/);
+  if (!m) throw new Error("Enter a repository as owner/repo or a github.com URL.");
+  return { owner: m[1], name: m[2], ref: m[3] ? decodeURIComponent(m[3]) : "" };
+}
+
+async function getJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText} from ${new URL(url).host}`);
+  return res.json();
+}
+
+// The file list, with executable bits. GitHub's API first (it knows file
+// modes); jsDelivr's when the API refuses (60 requests an hour without a token).
+async function listFiles({ owner, name, ref }) {
+  try {
+    const repo = await getJson(`https://api.github.com/repos/${owner}/${name}`);
+    const commit = await getJson(`https://api.github.com/repos/${owner}/${name}/commits/${encodeURIComponent(ref || repo.default_branch)}`);
+    const sha = commit.sha;
+    const tree = await getJson(`https://api.github.com/repos/${owner}/${name}/git/trees/${sha}?recursive=1`);
+    if (tree.truncated) throw new Error("This repository is too large for the playground.");
+    const files = tree.tree
+      .filter((e) => e.type === "blob" && e.mode !== "120000") // skip symlinks
+      .map((e) => ({ path: e.path, size: e.size, exec: e.mode === "100755" }));
+    return { sha, files, via: "github" };
+  } catch (err) {
+    if (/too large/.test(err.message)) throw err;
+    console.warn("GitHub API failed, trying jsDelivr:", err);
+  }
+  for (const candidate of ref ? [ref] : ["main", "master"]) {
+    try {
+      const data = await getJson(`https://data.jsdelivr.com/v1/packages/gh/${owner}/${name}@${encodeURIComponent(candidate)}?structure=flat`);
+      const files = data.files.map((f) => ({ path: f.name.replace(/^\//, ""), size: f.size, exec: null }));
+      return { sha: candidate, files, via: "jsdelivr" };
+    } catch (err) {
+      console.warn(`jsDelivr ${candidate}:`, err);
+    }
+  }
+  throw new Error(`Could not read ${owner}/${name}. Is it a public repository?`);
+}
+
+async function fetchFile({ owner, name }, sha, path) {
+  const enc = path.split("/").map(encodeURIComponent).join("/");
+  const urls = [
+    `https://cdn.jsdelivr.net/gh/${owner}/${name}@${sha}/${enc}`,
+    `https://raw.githubusercontent.com/${owner}/${name}/${sha}/${enc}`,
+  ];
+  let last;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return new Uint8Array(await res.arrayBuffer());
+      last = new Error(`${res.status} for ${path}`);
+    } catch (err) { last = err; }
+  }
+  throw last;
+}
+
+async function downloadRepo(repo) {
+  status(`Listing ${repo.owner}/${repo.name}…`);
+  const { sha, files } = await listFiles(repo);
+  let wanted = files.filter((f) => f.size <= LIMITS.file);
+  const skipped = files.length - wanted.length;
+  if (wanted.length > LIMITS.files) throw new Error(`${wanted.length} files is more than this playground takes (${LIMITS.files}).`);
+  const total = wanted.reduce((n, f) => n + f.size, 0);
+  if (total > LIMITS.bytes) throw new Error(`${(total / 1048576).toFixed(0)} MB is more than this playground takes (${LIMITS.bytes / 1048576} MB).`);
+
+  const tree = {};
+  const execs = [];
+  let done = 0, i = 0;
+  const worker = async () => {
+    while (i < wanted.length) {
+      const f = wanted[i++];
+      const bytes = await fetchFile(repo, sha, f.path);
+      const exec = f.exec ?? (bytes[0] === 0x23 && bytes[1] === 0x21); // "#!"
+      if (exec) execs.push(f.path);
+      const parts = f.path.split("/");
+      let dir = tree;
+      for (const p of parts.slice(0, -1)) dir = dir[p] ??= {};
+      dir[parts.at(-1)] = bytes;
+      status(`Downloading ${repo.owner}/${repo.name}: ${++done} of ${wanted.length} files…`);
+    }
+  };
+  await Promise.all(Array.from({ length: 12 }, worker));
+  return { sha, tree, execs, count: wanted.length, skipped };
+}
+
+// ---- Booting ---------------------------------------------------------------
+
+let current = null; // { vm, pty, disposers }
+
+async function stopCurrent() {
+  if (!current) return;
+  for (const d of current.disposers) try { d(); } catch {}
+  try { await current.vm.stop?.(); } catch {}
+  current = null;
+}
+
+const shq = (s) => `'${String(s).replace(/'/g, `'\\''`)}'`;
+
+async function run(e) {
+  e?.preventDefault();
+  $("go").disabled = true;
+  try {
+    const repo = parseRepo($("repo").value);
+    if ($("ref").value.trim()) repo.ref = $("ref").value.trim();
+    const params = new URLSearchParams({ repo: `${repo.owner}/${repo.name}` });
+    if (repo.ref) params.set("ref", repo.ref);
+    if ($("cmd").value.trim()) params.set("cmd", $("cmd").value.trim());
+    history.replaceState(null, "", `?${params}`);
+
+    await stopCurrent();
+    term.reset();
+
+    const sdk = import(UNKERNEL);
+    const { sha, tree, execs, count, skipped } = await downloadRepo(repo);
+
+    status("Starting Linux…");
+    const { createKernel, checkSupport, wispBackend } = await sdk;
+    const support = await checkSupport();
+    if (!support.ok) throw new Error(`This browser can't run unkernel: ${support.problems.join("; ")}`);
+
+    const wisp = $("wisp").value.trim();
+    const vm = await createKernel({
+      distro: DISTRO,
+      memoryMiB: 512,
+      net: wisp ? wispBackend(wisp) : undefined,
+      mounts: { "/mnt/repo": { fs: tree, readOnly: true } },
+    });
+
+    const dir = `/home/user/${repo.name}`;
+    status("Copying the repository into the guest…");
+    const prep = [
+      `rm -rf ${shq(dir)}`,
+      `cp -r /mnt/repo ${shq(dir)}`,
+      `cd ${shq(dir)}`,
+      ...execs.map((p) => `chmod +x ${shq(p)}`),
+    ].join(" && ");
+    const r = await vm.exec("sh", ["-c", prep]);
+    if (r.exitCode !== 0) throw new Error(`Copying failed: ${r.stderr || r.stdout}`);
+
+    fit.fit();
+    const cmd = $("cmd").value.trim();
+    const banner = `printf '\\033[1;34m%s\\033[0m\\n' ${shq(`${repo.owner}/${repo.name} @ ${sha.slice(0, 12)}: ${count} files in ${dir}${skipped ? ` (${skipped} large files skipped)` : ""}`)}`;
+    const startup = cmd
+      ? `${banner}; printf '$ %s\\n' ${shq(cmd)}; ${cmd}`
+      : `${banner}; if [ -f .unkernel.sh ]; then echo '$ sh .unkernel.sh'; sh .unkernel.sh; else ls -la; echo; echo 'No .unkernel.sh in this repository: explore it from the shell.'; fi`;
+    const pty = await vm.spawn("sh", ["-c", `${startup}; exec sh -l`], {
+      cwd: dir, cols: term.cols, rows: term.rows,
+      env: { ENV: "/etc/profile" },
+    });
+
+    const disposers = [];
+    const sub = term.onData((d) => pty.write(d));
+    disposers.push(() => sub.dispose());
+    const onResize = () => { fit.fit(); pty.resize(term.cols, term.rows); };
+    window.addEventListener("resize", onResize);
+    disposers.push(() => window.removeEventListener("resize", onResize));
+    pty.output.pipeTo(new WritableStream({ write: (b) => term.write(b) })).catch(() => {});
+    pty.ended.then(() => status("The shell exited. Press Run to start again."));
+    current = { vm, pty, disposers };
+
+    status(`Running ${repo.owner}/${repo.name}${wisp ? "" : " (no network)"}.`);
+    term.focus();
+  } catch (err) {
+    console.error(err);
+    status(err.message || String(err), true);
+  } finally {
+    $("go").disabled = false;
+  }
+}
+
+$("form").addEventListener("submit", run);
+
+const q = new URLSearchParams(location.search);
+if (q.get("repo")) $("repo").value = q.get("repo");
+if (q.get("ref")) $("ref").value = q.get("ref");
+if (q.get("cmd")) $("cmd").value = q.get("cmd");
+if (q.get("wisp")) $("wisp").value = q.get("wisp");
+if (q.get("ref") || q.get("cmd") || q.get("wisp")) document.querySelector("details").open = true;
+</script>
+</body>
+</html>
