@@ -332,6 +332,16 @@ async function launch(spec) {
       memoryMiB: 512,
       net: fetchRoutes(wisp ? wispBackend(wisp) : undefined, { [PKG_HOST]: PKG_BASE }),
       mounts: files ? { "/mnt/repo": { fs: files.tree, readOnly: true } } : undefined,
+      onProgress: (p) => {
+        // The kernel compiles while it streams in, and the CDN doesn't always
+        // say how big it is: unkernel.wasm in this release is 10.8 MB.
+        const mb = (n) => (n / 1048576).toFixed(1);
+        if (p.stage === "download" && p.what === "kernel" && !p.done) {
+          status(`Downloading Linux: ${mb(p.loaded)} of ${mb(p.total || 11328192)} MB…`);
+        } else if (p.stage === "compiled") {
+          status("Booting Linux…");
+        }
+      },
     });
     current = { vm, disposers: [] };
 
