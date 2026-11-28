@@ -32,7 +32,7 @@ export const CATALOG = [
     id: "lazygit", title: "lazygit", repo: "jesseduffield/lazygit", stars: 84138,
     blurb: "A simple terminal UI for git commands.",
     pkgs: ["lazygit"],
-    setup: `git init -q demo && cd demo && git config user.name you && git config user.email you@example.com && printf 'hello\\n' > README.md && git add . && git commit -qm "Initial commit" && printf 'hello, unboxed\\n' >> README.md && printf 'notes\\n' > notes.txt`,
+    setup: `mkdir -p ~/.config/lazygit && printf 'disableStartupPopups: true\\n' > ~/.config/lazygit/config.yml && git init -q demo && cd demo && git config user.name you && git config user.email you@example.com && printf 'hello\\n' > README.md && git add . && git commit -qm "Initial commit" && printf 'hello, unboxed\\n' >> README.md && printf 'notes\\n' > notes.txt`,
     run: "lazygit",
     tip: "A demo repo with one commit and two changes. Space stages a file, c commits, q quits.",
     check: "Files",
