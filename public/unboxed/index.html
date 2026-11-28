@@ -70,6 +70,77 @@ h1 em { font-style: normal; color: var(--accent); }
 }
 .item .go { grid-column: 1 / -1; font: 600 .78rem var(--mono); color: var(--muted); }
 
+/* From repo to running: framed like a blueprint, with corner ticks */
+.frame { position: relative; border: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); }
+.frame::before, .frame::after { content: "+"; position: absolute; font: 400 14px/1 var(--mono); color: var(--muted); }
+.frame::before { top: -8px; left: -5px; }
+.frame::after { bottom: -8px; right: -5px; }
+@media (max-width: 900px) { .frame { grid-template-columns: 1fr; } }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; border-right: 1px solid var(--line); align-content: start; }
+@media (max-width: 900px) { .steps { border-right: 0; border-bottom: 1px solid var(--line); } }
+.step {
+  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; width: 100%; text-align: left; cursor: pointer;
+  padding: 18px 22px; background: transparent; color: var(--fg); border: 0; border-bottom: 1px solid var(--line); font: inherit;
+}
+.step .n { grid-row: 1 / span 2; font: 600 .78rem/1.9 var(--mono); color: var(--muted); }
+.step b { font: 500 1.08rem var(--display); }
+.step span:last-child { grid-column: 2; color: var(--muted); font-size: .92rem; }
+.step[aria-current="step"] { background: var(--raised); }
+.step[aria-current="step"] .n, .step.done .n { color: var(--accent); }
+.step::after { /* progress while this step is on screen */
+  content: ""; position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--accent);
+}
+#how[data-stage] .step[aria-current="step"]::after { animation: fill var(--dwell, 4800ms) linear forwards; }
+#how.still .step::after { animation: none; }
+@keyframes fill { to { width: 100%; } }
+.mini { margin: 18px 22px 22px; background: var(--term); color: var(--term-fg); border: 1px solid var(--line); }
+.mini header { padding: 8px 12px; border-bottom: 1px solid #22252d; font: 400 .74rem var(--mono); color: var(--term-dim); }
+.mini pre { margin: 0; padding: 12px; min-height: 8.4em; font: 400 .8rem/1.65 var(--mono); white-space: pre-wrap; word-break: break-word; }
+.mini .d { color: var(--term-dim); } .mini .ok { color: var(--ok); } .mini .c { color: var(--term-fg); }
+.scene { position: relative; min-width: 0; display: grid; place-items: center; padding: 18px; overflow: hidden;
+  background: radial-gradient(60% 55% at 50% 60%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 75%); }
+.scene svg { width: 100%; max-width: 620px; height: auto; display: block; overflow: visible; }
+.iso .slab { transition: transform .9s cubic-bezier(.2, .8, .2, 1) var(--delay, 0ms), opacity .55s ease var(--delay, 0ms); }
+#how.still .iso .slab { transition: none; }
+.iso polygon { stroke-width: 1; stroke-linejoin: round; }
+.iso text { font-family: var(--mono); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+.iso .box .t { fill: var(--kraft); stroke: color-mix(in srgb, var(--kraft-deep) 70%, black); }
+.iso .box .l { fill: color-mix(in srgb, var(--kraft-deep) 85%, black); }
+.iso .box .r { fill: var(--kraft-deep); }
+.iso .box text { fill: var(--kraft-ink); opacity: .85; }
+.iso .tape { fill: var(--tape); }
+.iso .plate .t { fill: var(--raised); stroke: var(--line); }
+.iso .plate .l { fill: color-mix(in srgb, var(--raised) 75%, black); stroke: var(--line); }
+.iso .plate .r { fill: color-mix(in srgb, var(--raised) 60%, black); stroke: var(--line); }
+.iso .plate text { fill: var(--muted); }
+.iso .chip .t { fill: var(--term); stroke: #3a3e4a; }
+.iso .chip .l, .iso .chip .r { fill: #050608; }
+.iso .chip text { fill: var(--term-fg); }
+.iso .pkg .t { fill: color-mix(in srgb, var(--accent) 22%, var(--term)); stroke: var(--accent); }
+.iso .pkg .l, .iso .pkg .r { fill: color-mix(in srgb, var(--accent) 40%, black); }
+.iso .pkg text { fill: var(--accent); }
+.iso .tile .t { fill: var(--raised); stroke: var(--muted); }
+.iso .tile .l { fill: color-mix(in srgb, var(--raised) 70%, black); }
+.iso .tile .r { fill: color-mix(in srgb, var(--raised) 55%, black); }
+.iso .tile text { fill: var(--fg); }
+.iso .tile.hot .t { fill: var(--accent); stroke: var(--accent); }
+.iso .tile.hot .l { fill: color-mix(in srgb, var(--accent) 70%, black); }
+.iso .tile.hot .r { fill: color-mix(in srgb, var(--accent) 55%, black); }
+.iso .tile.hot text { fill: var(--accent-ink); font-weight: 600; }
+#how[data-stage="4"] .iso .tile.hot { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 70%, transparent)); }
+.iso .out .t { fill: var(--term); stroke: var(--ok); }
+.iso .out .l, .iso .out .r { fill: #050608; }
+.iso .out text { fill: var(--ok); }
+.iso .src .t { fill: transparent; stroke: var(--muted); stroke-dasharray: 3 3; }
+.iso .src .l, .iso .src .r { fill: transparent; stroke: var(--line); }
+.iso .src text { fill: var(--muted); }
+.iso .src.on .t { stroke: var(--accent); stroke-dasharray: none; }
+.iso .src.on text { fill: var(--fg); }
+.iso .wire { stroke: var(--line); stroke-width: 1.2; stroke-dasharray: 4 6; transition: stroke .4s; }
+.iso .wire.on { stroke: var(--accent); animation: march .8s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -20; } }
+@media (prefers-reduced-motion: reduce) { .iso .wire.on { animation: none; } .iso .slab { transition: none; } }
+
 /* Three ways in */
 .ways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 900px) { .ways { grid-template-columns: 1fr; } }
@@ -124,7 +195,7 @@ footer .wrap { padding-block: 28px 44px; display: flex; flex-wrap: wrap; justify
     <nav class="links" aria-label="Sections">
       <a href="#shelf">Tools</a>
       <a href="#ways">Repos</a>
-      <a href="#stack">How it works</a>
+      <a href="#how">How it works</a>
       <a href="#faq">FAQ</a>
     </nav>
     <button class="theme-toggle" type="button" aria-label="Switch theme"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
@@ -166,6 +237,27 @@ footer .wrap { padding-block: 28px 44px; display: flex; flex-wrap: wrap; justify
       <p class="lede">Each tile boots a fresh machine, installs the tool and runs a short demo. Then it's yours to play with.</p>
     </div>
     <div class="floor" id="floor"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap sec">
+    <div class="sechead">
+      <h2>From repo to running</h2>
+      <p class="lede">What happens in the second or so after you pick a tile. All of it in your tab.</p>
+    </div>
+    <div class="frame" id="how">
+      <div>
+        <ol class="steps">
+          <li><button class="step" type="button"><span class="n">01</span><b>Clone</b><span>The repo's files are fetched from GitHub and copied into the machine.</span></button></li>
+          <li><button class="step" type="button"><span class="n">02</span><b>Install</b><span>apk installs the tool from Alpine's signed packages, served with this page.</span></button></li>
+          <li><button class="step" type="button"><span class="n">03</span><b>Catalog</b><span>Each tool on the shelf is a tested recipe: packages, files and a demo.</span></button></li>
+          <li><button class="step" type="button"><span class="n">04</span><b>Run</b><span>The demo starts in a real terminal, and the shell is yours.</span></button></li>
+        </ol>
+        <div class="mini"><header>ripgrep · alpine 3.24 · aarch64</header><pre aria-live="off"></pre></div>
+      </div>
+      <div class="scene"><svg class="iso" viewBox="-320 -290 660 450" role="img" aria-label="An open box (the Linux machine). Repo files drop in from github.com, packages stack up from the mirror, the shelf of tools assembles above, and ripgrep lifts off and runs."></svg></div>
+    </div>
   </div>
 </section>
 
@@ -276,6 +368,9 @@ python3 demo.py</pre>
 
 <script type="module">
 import { CATALOG } from "./play/catalog.js";
+import { mountPipeline } from "./pipeline.js";
+
+mountPipeline(document.getElementById("how"));
 
 // The shelf, from the playground's own catalog.
 const k = (n) => n >= 10000 ? `${Math.round(n / 1000)}k` : `${(n / 1000).toFixed(1)}k`;
