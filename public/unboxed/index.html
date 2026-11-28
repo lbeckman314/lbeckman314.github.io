@@ -312,7 +312,7 @@ python3 demo.py</pre>
     <div class="maker" id="badge">
       <div>
         <h3>Give your README a try-it button</h3>
-        <p>Enter a public repository to get a badge that opens it here, straight into its <code>.unkernel.sh</code> demo if it has one.</p>
+        <p>Enter a public repository to get a badge that opens it here, straight into its <code>.unkernel.sh</code> demo if it has one. Or embed the terminal in your own docs: it boots only when a reader clicks.</p>
         <label class="label" for="badge-repo">Repository</label>
         <input id="badge-repo" type="text" value="BurntSushi/ripgrep" autocomplete="off" spellcheck="false" aria-describedby="badge-err">
         <span class="err" id="badge-err" role="status"></span>
@@ -326,6 +326,10 @@ python3 demo.py</pre>
         <div class="snippet">
           <div class="row"><span class="label">HTML</span><button class="copybtn" type="button" data-copy="badge-html">Copy</button></div>
           <pre id="badge-html"></pre>
+        </div>
+        <div class="snippet">
+          <div class="row"><span class="label">Embed in your docs</span><button class="copybtn" type="button" data-copy="badge-embed">Copy</button></div>
+          <pre id="badge-embed"></pre>
         </div>
       </div>
     </div>
@@ -430,6 +434,7 @@ mountPipeline(document.getElementById("how"));
     document.getElementById("badge-link").href = play;
     document.getElementById("badge-md").textContent = `[![Try it in Unboxed](${img})](${play})`;
     document.getElementById("badge-html").textContent = `<a href="${play}"><img src="${img}" alt="Try it in Unboxed" width="122" height="20"></a>`;
+    document.getElementById("badge-embed").textContent = `<iframe src="${play}&embed=1" title="${r} in Unboxed" width="100%" height="420" style="border:0" loading="lazy"></iframe>`;
   };
   input.addEventListener("input", update);
   update();
