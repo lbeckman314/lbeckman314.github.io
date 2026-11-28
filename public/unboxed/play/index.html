@@ -88,6 +88,15 @@
   .start span { font: 400 .8rem var(--mono); color: var(--term-dim); }
   .start i { font-style: normal; padding: 10px 16px; background: var(--accent); color: var(--accent-ink); font-weight: 600; }
   .term-box { position: relative; }
+  /* Keys a phone's keyboard lacks, for Neovim, tmux, htop and friends */
+  .keys { display: none; gap: 6px; padding: 8px 0 0; overflow-x: auto; }
+  @media (pointer: coarse) { .keys { display: flex; } }
+  .keys button {
+    flex: 0 0 auto; min-width: 44px; height: 40px; padding: 0 10px; cursor: pointer;
+    font: 600 .85rem var(--mono); color: var(--fg); background: var(--raised); border: 1px solid var(--line);
+  }
+  .keys button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  html.embed .keys { padding: 6px; background: var(--raised); }
   @media (max-width: 560px) {
     form { grid-template-columns: 1fr; }
     .opts { grid-template-columns: 1fr; }
@@ -141,6 +150,19 @@
   <div class="embed-bar"><span id="embed-title">unboxed</span><a id="embed-open" href="./" target="_blank" rel="noopener">Open in Unboxed ↗</a></div>
   <div id="status" role="status"></div>
   <div class="term-box" id="term-box"><div id="term"></div></div>
+  <div class="keys" id="keys" role="toolbar" aria-label="Extra keys">
+    <button type="button" data-seq="\x1b">Esc</button>
+    <button type="button" data-seq="\t">Tab</button>
+    <button type="button" data-ctrl aria-pressed="false">Ctrl</button>
+    <button type="button" data-seq="\x03" aria-label="Control C">^C</button>
+    <button type="button" data-seq="\x1b[A" aria-label="Up">↑</button>
+    <button type="button" data-seq="\x1b[B" aria-label="Down">↓</button>
+    <button type="button" data-seq="\x1b[D" aria-label="Left">←</button>
+    <button type="button" data-seq="\x1b[C" aria-label="Right">→</button>
+    <button type="button" data-seq="|">|</button>
+    <button type="button" data-seq="~">~</button>
+    <button type="button" data-seq="/">/</button>
+  </div>
 
   <div class="help">
     <p>
@@ -192,6 +214,31 @@ const status = (msg, isError = false) => {
   $("status").classList.toggle("error", isError);
 };
 const shq = (s) => `'${String(s).replace(/'/g, `'\\''`)}'`;
+
+// Typing goes through here so the key bar's sticky Ctrl can turn the next
+// letter into its control code (Ctrl then b is tmux's prefix, ^B).
+let ctrlArmed = false;
+function send(d) {
+  if (!current?.pty) return;
+  if (ctrlArmed && d.length === 1 && /[@-_a-z]/i.test(d)) {
+    d = String.fromCharCode(d.toUpperCase().charCodeAt(0) & 31);
+    setCtrl(false);
+  }
+  current.pty.write(d);
+}
+function setCtrl(on) {
+  ctrlArmed = on;
+  document.querySelector("[data-ctrl]").setAttribute("aria-pressed", String(on));
+}
+for (const b of document.querySelectorAll("#keys button")) {
+  // pointerdown + preventDefault keeps focus (and the phone's keyboard) on the terminal
+  b.addEventListener("pointerdown", (e) => e.preventDefault());
+  b.addEventListener("click", () => {
+    if (b.hasAttribute("data-ctrl")) setCtrl(!ctrlArmed);
+    else send(JSON.parse(`"${b.dataset.seq.replace(/\\x/g, "\\u00")}"`));
+    term.focus();
+  });
+}
 
 const term = new Terminal({
   fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
@@ -374,7 +421,8 @@ async function launch(spec) {
     const pty = await vm.spawn("sh", ["-c", `${lines.join("; ")}; exec sh -l`], {
       cwd: dir, cols: term.cols, rows: term.rows,
     });
-    const sub = term.onData((d) => pty.write(d));
+    current.pty = pty;
+    const sub = term.onData((d) => send(d));
     current.disposers.push(() => sub.dispose());
     const onResize = () => { fit.fit(); pty.resize(term.cols, term.rows); };
     window.addEventListener("resize", onResize);
