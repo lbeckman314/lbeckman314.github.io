@@ -16,6 +16,13 @@
 <link rel="canonical" href="https://liambeckman.com/unboxed/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <script src="theme.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bricolage-grotesque@5.3.0/latin-500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/bricolage-grotesque@5.3.0/latin-700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-sans@5.3.0/latin-400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-sans@5.3.0/latin-600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.3.0/latin-400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.3.0/latin-600.css">
 <link rel="stylesheet" href="unboxed.css">
 <style>
 /* Layout: split hero (headline | live terminal on a strip of tape), the shelf as a 3-column floor
@@ -190,7 +197,7 @@ h1 em { font-style: normal; color: var(--accent); }
 .layer b { font: 500 1.05rem var(--display); }
 .layer span { color: var(--muted); }
 .layer.mid { background: color-mix(in srgb, var(--accent) 12%, var(--bg)); }
-.layer.mid b { color: var(--accent); }
+.layer.mid b { color: color-mix(in srgb, var(--accent) 75%, var(--fg)); }
 @media (max-width: 640px) { .layer { grid-template-columns: 1fr; gap: 4px; } }
 
 /* FAQ */

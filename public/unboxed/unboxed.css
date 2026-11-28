@@ -1,14 +1,8 @@
 /* Unboxed: shared look for the landing page (/unboxed/) and the playground (/unboxed/play/).
    Dark-first, an amber "packing tape" accent, cardboard for the loudest moments. Square corners.
    The site's theme choice (localStorage "ddb-theme", default dark) is applied by theme.js as
-   data-theme on <html>; the media query only matters without JavaScript. */
-
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/bricolage-grotesque@5.3.0/latin-500.css");
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/bricolage-grotesque@5.3.0/latin-700.css");
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/instrument-sans@5.3.0/latin-400.css");
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/instrument-sans@5.3.0/latin-600.css");
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.3.0/latin-400.css");
-@import url("https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.3.0/latin-600.css");
+   data-theme on <html>; the media query only matters without JavaScript.
+   Fonts (Fontsource, from jsDelivr) are linked from each page's <head>. */
 
 :root {
   --bg: #0c0d10;
@@ -21,7 +15,7 @@
   --error: #ff8a7a;
   --term: #08090b;
   --term-fg: #e6e8ee;
-  --term-dim: #6f7684;
+  --term-dim: #7c8392;
   --hl: #8fd0ff;
   --ok: #7ed9a6;
   --kraft: #7a5a33;
@@ -40,7 +34,7 @@
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg: #f5f4f0; --raised: #ffffff; --fg: #121318; --muted: #5b606c; --line: #dddbd3;
-    --accent: #a8620a; --accent-ink: #ffffff; --error: #b3261e;
+    --accent: #9a5a08; --accent-ink: #ffffff; --error: #b3261e;
     --term: #121318; --term-fg: #eceef3; --term-dim: #7d8492;
     --kraft: #c49a63; --kraft-deep: #8f6435; --kraft-ink: #fffaf1; --tape: rgba(255, 246, 225, .38);
     --grain-strength: .38; --grain-blend: overlay;
@@ -49,7 +43,7 @@
 }
 :root[data-theme="light"] {
   --bg: #f5f4f0; --raised: #ffffff; --fg: #121318; --muted: #5b606c; --line: #dddbd3;
-  --accent: #a8620a; --accent-ink: #ffffff; --error: #b3261e;
+  --accent: #9a5a08; --accent-ink: #ffffff; --error: #b3261e;
   --term: #121318; --term-fg: #eceef3; --term-dim: #7d8492;
   --kraft: #c49a63; --kraft-deep: #8f6435; --kraft-ink: #fffaf1; --tape: rgba(255, 246, 225, .38);
   --grain-strength: .38; --grain-blend: overlay;
