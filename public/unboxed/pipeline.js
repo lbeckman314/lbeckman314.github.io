@@ -34,7 +34,7 @@ function slab(parent, { w, d, t, kind, label, side, size = 9 }) {
   return g;
 }
 
-export function mountPipeline(root) {
+export function mountPipeline(root, { tools = 23 } = {}) {
   const svg = root.querySelector("svg.iso");
   const steps = [...root.querySelectorAll(".step")];
   const screen = root.querySelector(".mini pre");
@@ -94,7 +94,7 @@ export function mountPipeline(root) {
   const lines = {
     1: [["d", "GET api.github.com/repos/BurntSushi/ripgrep"], ["", "140 files from crates/ and README.md"], ["ok", "→ ~/ripgrep, executable bits kept"]],
     2: [["c", "sudo apk add ripgrep"], ["", "(1/3) Installing libgcc (15.2.0-r5)"], ["", "(2/3) Installing pcre2 (10.49-r0)"], ["", "(3/3) Installing ripgrep (15.1.0-r0)"]],
-    3: [["d", "catalog.js · 21 tools"], ["", "{ id: \"ripgrep\", pkgs: [\"ripgrep\"],"], ["", "  run: \"rg --stats -n 'fn search_' crates\" }"], ["ok", "nightly: boot, install, run, exit 0"]],
+    3: [["d", `catalog.js · ${tools} tools`], ["", "{ id: \"ripgrep\", pkgs: [\"ripgrep\"],"], ["", "  run: \"rg --stats -n 'fn search_' crates\" }"], ["ok", "weekly: boot, install, run, check"]],
     4: [["c", "rg --stats -n 'fn search_' crates"], ["", "crates/core/search.rs:376: fn search_path(…)"], ["ok", "18 matches"], ["ok", "140 files searched"]],
   };
 

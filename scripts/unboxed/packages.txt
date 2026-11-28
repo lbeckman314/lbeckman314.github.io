@@ -1,4 +1,4 @@
 # Alpine packages hosted for public/unboxed/play/ (catalog.js installs them).
 # Space- or line-separated; run build-apk.sh after changing this.
 neovim fzf ripgrep bat tmux helix fd yazi jq delta hyperfine fastfetch eza nnn bottom dust htop sd cmatrix
-python3 zsh
+python3 zsh lazygit gum

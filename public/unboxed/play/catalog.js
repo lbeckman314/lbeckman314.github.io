@@ -29,6 +29,15 @@ export const CATALOG = [
     check: "/etc/",
   },
   {
+    id: "lazygit", title: "lazygit", repo: "jesseduffield/lazygit", stars: 84138,
+    blurb: "A simple terminal UI for git commands.",
+    pkgs: ["lazygit"],
+    setup: `git init -q demo && cd demo && git config user.name you && git config user.email you@example.com && printf 'hello\\n' > README.md && git add . && git commit -qm "Initial commit" && printf 'hello, unboxed\\n' >> README.md && printf 'notes\\n' > notes.txt`,
+    run: "lazygit",
+    tip: "A demo repo with one commit and two changes. Space stages a file, c commits, q quits.",
+    check: "Files",
+  },
+  {
     id: "ripgrep", title: "ripgrep", repo: "BurntSushi/ripgrep", stars: 70397,
     blurb: "Recursively search directories for a regex pattern.",
     pkgs: ["ripgrep"], files: { repo: "BurntSushi/ripgrep", ref: "3e85c6c148fdce38a99ceeb9d2780dc7b03b4a4f", paths: ["crates/", "README.md"] },
@@ -42,7 +51,7 @@ export const CATALOG = [
     pkgs: ["bat"], files: { repo: "sharkdp/bat", ref: "836e3e5676b60aa490beea07e23948ea3cbe6a90", paths: ["src/", "README.md"] },
     run: "bat --paging=never --line-range :60 src/bin/bat/main.rs",
     tip: "bat showing its own source. Try: bat README.md",
-    check: "main.rs",
+    check: "│",
   },
   {
     id: "tmux", title: "tmux", repo: "tmux/tmux", stars: 50594,
@@ -106,6 +115,14 @@ export const CATALOG = [
     check: "Alpine Linux",
   },
   {
+    id: "gum", title: "gum", repo: "charmbracelet/gum", stars: 24709,
+    blurb: "A tool for glamorous shell scripts.",
+    pkgs: ["gum"],
+    run: "gum style --border double --padding '0 2' --border-foreground 214 'Unboxed' && gum choose --header 'Pick a tool to try next' Neovim Helix ripgrep fzf lazygit",
+    tip: "Arrow keys move, Enter picks. Try: gum input --placeholder 'Your name'",
+    check: "╔",
+  },
+  {
     id: "eza", title: "eza", repo: "eza-community/eza", stars: 24086,
     blurb: "A modern alternative to ls.",
     pkgs: ["eza"], run: "eza -la --group-directories-first /etc && eza --tree -L 2 /usr/lib | head -30",
@@ -117,7 +134,7 @@ export const CATALOG = [
     blurb: "The unorthodox terminal file manager.",
     pkgs: ["nnn"], run: "nnn /usr",
     tip: "Arrow keys move, ? shows help, q quits.",
-    check: "/usr",
+    check: "drwxr-xr-x",
   },
   {
     id: "bottom", title: "bottom", repo: "ClementTsang/bottom", stars: 14321,
@@ -131,7 +148,7 @@ export const CATALOG = [
     blurb: "A more intuitive version of du.",
     pkgs: ["dust"], run: "dust -n 25 /usr",
     tip: "Try: dust -d 1 /",
-    check: "usr",
+    check: "100%",
   },
   {
     id: "htop", title: "htop", repo: "htop-dev/htop", stars: 8483,

@@ -49,6 +49,14 @@ if (wanted.length && entries.length !== wanted.length) {
   process.exit(2);
 }
 
+// The playground echoes each demo's command and tip before running it, so a
+// check made of their text would pass before the demo does anything.
+const echoes = entries.filter((a) => a.check && `${a.tip ?? ""} $ ${a.run}`.includes(a.check));
+if (echoes.length) {
+  for (const a of echoes) console.error(`${a.id}: check ${JSON.stringify(a.check)} is part of its own command or tip; pick text only the demo's output shows`);
+  process.exit(2);
+}
+
 const proxy = process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY, bypass: "127.0.0.1,localhost" } : undefined;
 const browser = await chromium.launch({ proxy });
 

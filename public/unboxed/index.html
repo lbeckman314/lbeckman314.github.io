@@ -243,7 +243,7 @@ footer .wrap { padding-block: 28px 44px; display: flex; flex-wrap: wrap; justify
     <div class="copy">
       <span class="label">Linux, in this tab</span>
       <h1>Unbox a tool.<br><em>It's already running.</em></h1>
-      <p class="lede">Twenty-one command-line favorites, each a click away from a working terminal. No install, no account, no server: the whole machine runs on your device.</p>
+      <p class="lede"><span data-count="words">Twenty-three</span> command-line favorites, each a click away from a working terminal. No install, no account, no server: the whole machine runs on your device.</p>
       <div class="actions">
         <a class="btn" href="#shelf">Browse the shelf →</a>
         <a class="btn ghost" href="play/#any-repo">Run your own repo</a>
@@ -411,7 +411,7 @@ python3 demo.py</pre>
 <section class="signoff cardboard grainy">
   <div class="wrap">
     <h2>Open the box.</h2>
-    <p>21 tools, one click each, nothing to install.</p>
+    <p><span data-count>23</span> tools, one click each, nothing to install.</p>
     <a class="btn" href="#shelf">Pick a tool →</a>
   </div>
 </section>
@@ -428,7 +428,17 @@ python3 demo.py</pre>
 import { CATALOG } from "./play/catalog.js";
 import { mountPipeline } from "./pipeline.js";
 
-mountPipeline(document.getElementById("how"));
+mountPipeline(document.getElementById("how"), { tools: CATALOG.length });
+
+// Counts follow the catalog (the HTML holds the right numbers for a still page).
+{
+  const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+  const TENS = { 2: "Twenty", 3: "Thirty", 4: "Forty", 5: "Fifty" };
+  const n = CATALOG.length;
+  const words = n < 10 ? WORDS[n] : TENS[Math.floor(n / 10)]
+    ? TENS[Math.floor(n / 10)] + (n % 10 ? `-${WORDS[n % 10].toLowerCase()}` : "") : String(n);
+  for (const el of document.querySelectorAll("[data-count]")) el.textContent = el.dataset.count === "words" ? words : n;
+}
 
 // The badge maker: a README snippet that opens a repo in the playground.
 {
