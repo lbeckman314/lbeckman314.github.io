@@ -398,8 +398,11 @@ if (q.get("ref")) $("ref").value = q.get("ref");
 if (q.get("cmd")) $("cmd").value = q.get("cmd");
 if (q.get("wisp")) $("wisp").value = q.get("wisp");
 if (q.get("ref") || q.get("cmd") || q.get("wisp")) document.querySelector("details").open = true;
+// A link that names a tool or a repo (a shelf tile, a README badge) starts it
+// right away; that is what the visitor clicked for.
 const linked = CATALOG.find((a) => a.id === q.get("app"));
-if (linked) select(linked.id);
+if (linked) openApp(linked);
+else if (q.get("repo")) $("form").requestSubmit();
 </script>
 </body>
 </html>

@@ -148,6 +148,26 @@ h1 em { font-style: normal; color: var(--accent); }
 .way p { color: var(--muted); }
 .way pre { margin: 6px 0 0; padding: 12px; background: var(--term); color: var(--term-fg); font: 400 .8rem/1.6 var(--mono); overflow-x: auto; }
 
+/* Badge maker */
+.maker { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); border: 1px solid var(--line); }
+@media (max-width: 900px) { .maker { grid-template-columns: 1fr; } }
+.maker > div { padding: 24px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.maker > div + div { border-left: 1px solid var(--line); background: var(--raised); }
+@media (max-width: 900px) { .maker > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+.maker p { color: var(--muted); }
+.maker input {
+  width: 100%; padding: 11px 12px; font: 400 .95rem var(--mono); color: var(--fg);
+  background: var(--bg); border: 1px solid var(--line); border-radius: 0;
+}
+.maker .err { color: var(--error); font-size: .88rem; min-height: 1.3em; }
+.maker .preview { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: .88rem; color: var(--muted); }
+.maker .preview img { display: block; height: 20px; }
+.snippet { display: grid; gap: 6px; }
+.snippet pre { margin: 0; padding: 12px; background: var(--term); color: var(--term-fg); font: 400 .78rem/1.6 var(--mono); white-space: pre-wrap; word-break: break-all; }
+.snippet .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.copybtn { cursor: pointer; padding: 6px 10px; font: 600 .78rem var(--mono); color: var(--fg); background: transparent; border: 1px solid var(--line); }
+.copybtn:hover { border-color: var(--accent); }
+
 /* Figures */
 .numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
 @media (max-width: 900px) { .numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; } }
@@ -289,6 +309,26 @@ sudo apk add python3
 python3 demo.py</pre>
       </div>
     </div>
+    <div class="maker" id="badge">
+      <div>
+        <h3>Give your README a try-it button</h3>
+        <p>Enter a public repository to get a badge that opens it here, straight into its <code>.unkernel.sh</code> demo if it has one.</p>
+        <label class="label" for="badge-repo">Repository</label>
+        <input id="badge-repo" type="text" value="BurntSushi/ripgrep" autocomplete="off" spellcheck="false" aria-describedby="badge-err">
+        <span class="err" id="badge-err" role="status"></span>
+      </div>
+      <div>
+        <div class="preview"><a id="badge-link" href="play/?repo=BurntSushi/ripgrep"><img src="badge.svg" alt="Try it in Unboxed" width="122" height="20"></a><span>Preview: the badge opens the playground.</span></div>
+        <div class="snippet">
+          <div class="row"><span class="label">Markdown</span><button class="copybtn" type="button" data-copy="badge-md">Copy</button></div>
+          <pre id="badge-md"></pre>
+        </div>
+        <div class="snippet">
+          <div class="row"><span class="label">HTML</span><button class="copybtn" type="button" data-copy="badge-html">Copy</button></div>
+          <pre id="badge-html"></pre>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -371,6 +411,42 @@ import { CATALOG } from "./play/catalog.js";
 import { mountPipeline } from "./pipeline.js";
 
 mountPipeline(document.getElementById("how"));
+
+// The badge maker: a README snippet that opens a repo in the playground.
+{
+  const input = document.getElementById("badge-repo");
+  const err = document.getElementById("badge-err");
+  const parse = (v) => {
+    const m = v.trim().replace(/\.git$/, "").replace(/\/+$/, "")
+      .match(/^(?:https?:\/\/)?(?:www\.)?(?:github\.com\/)?([\w.-]+)\/([\w.-]+)$/);
+    return m ? `${m[1]}/${m[2]}` : null;
+  };
+  const update = () => {
+    const repo = parse(input.value);
+    err.textContent = repo || !input.value.trim() ? "" : "Enter it as owner/repo or a github.com link.";
+    const r = repo ?? "owner/repo";
+    const play = new URL(`play/?repo=${r}`, location.href).href;
+    const img = new URL("badge.svg", location.href).href;
+    document.getElementById("badge-link").href = play;
+    document.getElementById("badge-md").textContent = `[![Try it in Unboxed](${img})](${play})`;
+    document.getElementById("badge-html").textContent = `<a href="${play}"><img src="${img}" alt="Try it in Unboxed" width="122" height="20"></a>`;
+  };
+  input.addEventListener("input", update);
+  update();
+  for (const b of document.querySelectorAll("[data-copy]")) {
+    b.addEventListener("click", async () => {
+      const pre = document.getElementById(b.dataset.copy);
+      try {
+        await navigator.clipboard.writeText(pre.textContent);
+        b.textContent = "Copied";
+      } catch {
+        getSelection().selectAllChildren(pre); // let them copy it themselves
+        b.textContent = "Selected";
+      }
+      setTimeout(() => { b.textContent = "Copy"; }, 1600);
+    });
+  }
+}
 
 // The shelf, from the playground's own catalog.
 const k = (n) => n >= 10000 ? `${Math.round(n / 1000)}k` : `${(n / 1000).toFixed(1)}k`;

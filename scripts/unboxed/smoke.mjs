@@ -4,7 +4,7 @@
 //   node scripts/unboxed/smoke.mjs jq sd htop      just these
 //
 // Serves public/ itself (with HTTP Range, which the distro image needs), opens
-// /unboxed/play/?app=<id>, starts the entry and waits for its `check` text in
+// /unboxed/play/?app=<id> (which starts the entry) and waits for its `check` text in
 // the terminal. Exits non-zero if any entry fails. Needs Playwright with
 // Chromium (npm i --no-save playwright && npx playwright install chromium).
 // Set CONCURRENCY to run more entries at once (default 3).
@@ -60,8 +60,7 @@ async function run(app) {
   const screen = () => page.evaluate(() =>
     [...document.querySelectorAll(".xterm-rows > div")].map((d) => d.textContent.trimEnd()).join("\n"));
   try {
-    await page.goto(`${base}?app=${encodeURIComponent(app.id)}`);
-    await page.click(`.card[data-app="${app.id}"]`);
+    await page.goto(`${base}?app=${encodeURIComponent(app.id)}`); // starts it
     await page.waitForFunction(() => {
       const s = document.querySelector("#status");
       return s.classList.contains("error") || /^Running|exited/.test(s.textContent);
