@@ -46,6 +46,15 @@
 - id: tao-te-ching
   repo: https://github.com/lbeckman314/tao-te-ching
 
+- id: unboxed
+  title: Unboxed
+  description: Try popular command-line tools and GitHub repos in a real Linux machine that boots in your browser tab, built on unkernel.
+  repo: https://github.com/lbeckman314/lbeckman314.github.io/tree/main/public/unboxed
+  demo: /unboxed/
+  date: 2026-11-28
+  tags: [linux, webassembly, terminal]
+  languages: [JavaScript, HTML, CSS, Shell]
+
 - id: with-feathers
   repo: https://github.com/lbeckman314/withfeathers
 
