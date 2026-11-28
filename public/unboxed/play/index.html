@@ -368,7 +368,7 @@ function openApp(app) {
   if (busy) return;
   select(app.id);
   history.replaceState(null, "", `?app=${encodeURIComponent(app.id)}${wispParam()}`);
-  const files = app.files ? { repo: { ...parseRepo(app.files.repo) }, paths: app.files.paths } : {};
+  const files = app.files ? { repo: { ...parseRepo(app.files.repo), ref: app.files.ref ?? "" }, paths: app.files.paths } : {};
   launch({ label: app.title, pkgs: app.pkgs, setup: app.setup, run: app.run, tip: app.tip, ...files });
 }
 

@@ -35,6 +35,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Unboxed's Alpine image and package mirror are pinned in
+      # scripts/unboxed/assets.lock rather than kept in git.
+      - name: Fetch Unboxed assets
+        run: scripts/unboxed/fetch.sh
+
       - name: Build with Astro
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

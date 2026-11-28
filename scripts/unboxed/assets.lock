@@ -1,0 +1,13 @@
+# Pins for Unboxed's binary assets, which are not kept in git. fetch.sh reads
+# this file (it is sourced by sh). The weekly "Unboxed refresh" workflow updates
+# APK_SNAPSHOT* in a pull request; bump UNKERNEL_RELEASE by hand, together with
+# UNKERNEL in public/unboxed/play/index.html (the kernel and image must match).
+
+# The Alpine image, from unkernel's GitHub release.
+UNKERNEL_RELEASE=v0.2.0-261127-3b71fa5
+IMAGE_SHA256=2b4d5ce3a4eaec57d772bce26d15647b1fd9fd48d52eeb2563b3a1bd66735115
+
+# The package mirror, a tested snapshot attached to a release of this repo.
+# Empty: fetch.sh builds the mirror fresh from Alpine instead (untested).
+APK_SNAPSHOT=
+APK_SNAPSHOT_SHA256=

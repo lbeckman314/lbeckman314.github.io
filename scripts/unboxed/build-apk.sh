@@ -1,10 +1,11 @@
 #!/bin/sh
 # Mirror just the Alpine packages the playground needs into
-# public/unboxed/play/apk/, next to Alpine's own signed indexes (unmodified, so
-# the guest's apk verifies them as usual). The guest reads them as
-# http://pkgs.local/, which the page answers with fetch().
+# public/unboxed/play/apk/ (not kept in git: see fetch.sh), next to Alpine's
+# own signed indexes (unmodified, so the guest's apk verifies them as usual).
+# The guest reads them as http://pkgs.local/, which the page answers with
+# fetch().
 #
-# usage: scripts/unkernel-apk/build.sh      (needs curl and python3)
+# usage: scripts/unboxed/build-apk.sh      (needs curl and python3)
 #
 # installed.txt lists what the Alpine image already has (`apk info` in the
 # guest); update it, ALPINE and the image together when upgrading unkernel.
@@ -29,4 +30,6 @@ pkgs=$(grep -v '^#' "$here/packages.txt")
 python3 -I "$here/resolve.py" "$idx" "$here/installed.txt" $pkgs | while read -r repo name ver _size; do
   curl -sSfo "$out/$ALPINE/$repo/$ARCH/$name-$ver.apk" "$MIRROR/$ALPINE/$repo/$ARCH/$name-$ver.apk"
 done
-echo "$(find "$out" -name '*.apk' | wc -l) packages, $(du -sh "$out" | cut -f1) in $out"
+# The manifest is committed, so a refresh's pull request shows which packages changed.
+(cd "$out/$ALPINE" && find . -name '*.apk' | sed 's#^\./##; s#/'"$ARCH"'/#/#' | LC_ALL=C sort) > "$here/apk-manifest.txt"
+echo "$(wc -l < "$here/apk-manifest.txt") packages, $(du -sh "$out" | cut -f1) in $out"

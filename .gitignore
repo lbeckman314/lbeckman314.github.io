@@ -33,3 +33,8 @@ pnpm-debug.log*
 # lychee link checker
 .lycheecache
 lychee-report.log
+
+# Unboxed binary assets: pinned in scripts/unboxed/assets.lock, fetched by scripts/unboxed/fetch.sh
+public/unboxed/play/alpine.erofs
+public/unboxed/play/apk/
+public/unboxed/play/.apk-*

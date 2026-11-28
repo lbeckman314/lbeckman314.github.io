@@ -1,0 +1,95 @@
+name: Unboxed refresh
+
+# Every Monday: rebuild Unboxed's Alpine package mirror (security and bug
+# fixes land in Alpine's stable branch continuously), boot every tool on the
+# shelf in a headless browser, and if the packages changed and every tool
+# still works, publish the mirror as a release and open a pull request that
+# pins it. A failing tool fails the run, so GitHub notifies the repo owner.
+#
+# Opening the pull request needs Settings > Actions > General > "Allow GitHub
+# Actions to create and approve pull requests".
+
+on:
+  schedule:
+    - cron: "37 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: unboxed-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Refresh and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+
+      - name: Fetch the Alpine image
+        run: scripts/unboxed/fetch.sh --image-only
+
+      - name: Build the package mirror from Alpine
+        run: scripts/unboxed/build-apk.sh
+
+      - name: Did the packages change?
+        id: diff
+        run: |
+          . scripts/unboxed/assets.lock
+          if [ -z "$APK_SNAPSHOT" ] || ! git diff --quiet -- scripts/unboxed/apk-manifest.txt; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- scripts/unboxed/apk-manifest.txt || true
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Same packages as snapshot $APK_SNAPSHOT."
+          fi
+
+      - name: Install Playwright
+        run: |
+          npm install --prefix "$RUNNER_TEMP/pw" --no-audit --no-fund playwright@1.63.0
+          "$RUNNER_TEMP/pw/node_modules/.bin/playwright" install --with-deps chromium
+
+      - name: Boot every tool on the shelf
+        env:
+          NODE_PATH: ${{ runner.temp }}/pw/node_modules
+        run: node scripts/unboxed/smoke.mjs
+
+      - name: Publish the snapshot and open a pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          stamp=$(date -u +%Y%m%d-%H%M)
+          tag="unboxed-apk-$stamp"
+          tar --sort=name --owner=0 --group=0 --numeric-owner --mtime=2000-01-01 \
+            -czf unboxed-apk.tar.gz -C public/unboxed/play apk
+          sum=$(sha256sum unboxed-apk.tar.gz | cut -d' ' -f1)
+
+          {
+            echo "Alpine package mirror for Unboxed, rebuilt from Alpine's stable branch."
+            echo "Every tool on the shelf booted and passed its check (scripts/unboxed/smoke.mjs)."
+            echo
+            echo '```diff'
+            git diff --no-color -U0 -- scripts/unboxed/apk-manifest.txt | grep '^[-+][^-+]' || echo "(first snapshot)"
+            echo '```'
+          } > notes.md
+
+          gh release create "$tag" unboxed-apk.tar.gz --title "Unboxed packages $stamp" --notes-file notes.md --latest=false
+
+          sed -i "s/^APK_SNAPSHOT=.*/APK_SNAPSHOT=$tag/; s/^APK_SNAPSHOT_SHA256=.*/APK_SNAPSHOT_SHA256=$sum/" scripts/unboxed/assets.lock
+          git switch -c "unboxed/$tag"
+          git add scripts/unboxed/assets.lock scripts/unboxed/apk-manifest.txt
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "chore(unboxed): Update packages to $tag"
+          git push origin "unboxed/$tag"
+          gh pr create --title "Unboxed: update packages ($stamp)" --body-file notes.md
